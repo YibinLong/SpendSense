@@ -324,8 +324,7 @@ spendsense/
 ```
 
 
-## Testing Plan (≥10 tests)
-- Unit: feature calculators (subscriptions, savings, credit, income), persona rules, eligibility checks, tone checks, consent enforcement.
+## Testing Plan
 - Integration: end-to-end persona assignment and recommendation generation for a seeded synthetic user; operator approve/override flow.
 - Deterministic: fix `SEED` for synthetic data and random choices.
 
