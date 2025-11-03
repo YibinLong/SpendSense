@@ -1,0 +1,29 @@
+# Node
+node_modules/
+.dist/
+dist/
+.vite/
+coverage/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.venv/
+.env
+.env.*
+.pytest_cache/
+.mypy_cache/
+# OS
+.DS_Store
+# Data
+*.db
+*.sqlite
+*.sqlite3
+data/**/*.parquet
+logs/
+# Editor
+.vscode/
+.idea/
+
