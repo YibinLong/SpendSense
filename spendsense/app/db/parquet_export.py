@@ -26,6 +26,7 @@ from spendsense.app.core.config import settings
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.session import get_session
 from spendsense.app.db.models import User, Account, Transaction, Liability
+from spendsense.app.features import subscriptions, savings, credit, income
 
 
 logger = get_logger(__name__)
@@ -100,6 +101,12 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
     - Recent behavior (30d) shows current state
     - Longer window (180d) shows trends
     
+    Why this is now simpler:
+    - Feature computation logic extracted to dedicated modules
+    - Each module (subscriptions, savings, credit, income) is independently testable
+    - This function now orchestrates the feature modules
+    - Separation of concerns makes maintenance easier
+    
     Args:
         window_days: Number of days to look back (30 or 180)
     
@@ -125,7 +132,7 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
         for user in users:
             logger.debug("computing_features_for_user", user_id=user.user_id, window_days=window_days)
             
-            # Get user's accounts (individual only)
+            # Check if user has accounts
             accounts = session.query(Account).filter(
                 Account.user_id == user.user_id,
                 Account.holder_category == "individual"
@@ -135,181 +142,64 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
                 logger.warning("no_accounts_for_user", user_id=user.user_id)
                 continue
             
-            account_ids = [acc.account_id for acc in accounts]
-            
-            # Get transactions in window
-            transactions = session.query(Transaction).filter(
-                Transaction.account_id.in_(account_ids),
-                Transaction.transaction_date >= cutoff_date,
-                Transaction.pending == False  # Exclude pending
-            ).all()
-            
-            # Initialize feature dict
+            # Initialize feature dict with metadata
             features: Dict[str, Any] = {
                 "user_id": user.user_id,
                 "window_days": window_days,
                 "computed_at": pd.Timestamp.now()
             }
             
-            # === SUBSCRIPTION SIGNALS ===
-            # Recurring merchants (≥3 occurrences with similar amounts monthly)
-            subscription_candidates = [tx for tx in transactions if tx.category == "Subscription"]
-            recurring_merchants = set()
-            for merchant_name in set(tx.merchant_name for tx in subscription_candidates if tx.merchant_name):
-                merchant_txs = [tx for tx in subscription_candidates if tx.merchant_name == merchant_name]
-                if len(merchant_txs) >= 3:
-                    recurring_merchants.add(merchant_name)
+            # === COMPUTE SIGNALS USING FEATURE MODULES ===
+            # This is the refactored approach - each signal type has its own module
             
-            features["recurring_merchant_count"] = len(recurring_merchants)
-            
-            # Monthly recurring spend (average monthly spend on subscriptions)
-            subscription_total = sum(tx.amount for tx in subscription_candidates)
-            months_in_window = window_days / 30.0
-            features["monthly_recurring_spend"] = float(subscription_total / Decimal(str(months_in_window)))
-            
-            # Subscription share of total spend (debits only, positive amounts)
-            total_debit = sum(abs(tx.amount) for tx in transactions if tx.amount > 0)
-            features["subscription_share_pct"] = (
-                (float(subscription_total / total_debit) * 100) if total_debit > 0 else 0.0
+            # Subscription signals
+            subscription_signal = subscriptions.compute_subscription_signals(
+                user.user_id, window_days, session
             )
+            features["recurring_merchant_count"] = subscription_signal.recurring_merchant_count
+            features["monthly_recurring_spend"] = float(subscription_signal.monthly_recurring_spend)
+            features["subscription_share_pct"] = float(subscription_signal.subscription_share_pct)
             
-            # === SAVINGS SIGNALS ===
-            savings_accounts = [acc for acc in accounts if acc.account_subtype == "savings"]
+            # Savings signals
+            savings_signal = savings.compute_savings_signals(
+                user.user_id, window_days, session
+            )
+            features["savings_net_inflow"] = float(savings_signal.savings_net_inflow)
+            features["savings_growth_rate_pct"] = float(savings_signal.savings_growth_rate_pct)
+            features["emergency_fund_months"] = float(savings_signal.emergency_fund_months)
             
-            if savings_accounts:
-                # Net inflow to savings (credits - debits)
-                savings_account_ids = [acc.account_id for acc in savings_accounts]
-                savings_txs = [tx for tx in transactions if tx.account_id in savings_account_ids]
-                
-                credits = sum(abs(tx.amount) for tx in savings_txs if tx.amount < 0)  # Credits are negative
-                debits = sum(tx.amount for tx in savings_txs if tx.amount > 0)
-                net_inflow = credits - debits
-                
-                features["savings_net_inflow"] = float(net_inflow)
-                
-                # Growth rate (current balance vs. N days ago estimate)
-                current_savings_balance = sum(acc.balance_current for acc in savings_accounts)
-                # Estimate past balance: current - net_inflow
-                past_balance_estimate = current_savings_balance - net_inflow
-                features["savings_growth_rate_pct"] = (
-                    (float(net_inflow / past_balance_estimate) * 100) if past_balance_estimate > 0 else 0.0
-                )
-                
-                # Emergency fund coverage (savings balance / avg monthly expenses)
-                checking_txs = [tx for tx in transactions if any(
-                    tx.account_id == acc.account_id for acc in accounts if acc.account_subtype == "checking"
-                ) and tx.amount > 0]  # Debits only
-                
-                avg_monthly_expenses = sum(tx.amount for tx in checking_txs) / Decimal(str(months_in_window))
-                features["emergency_fund_months"] = (
-                    float(current_savings_balance / avg_monthly_expenses) if avg_monthly_expenses > 0 else 0.0
-                )
-            else:
-                features["savings_net_inflow"] = 0.0
-                features["savings_growth_rate_pct"] = 0.0
-                features["emergency_fund_months"] = 0.0
+            # Credit signals
+            credit_signal = credit.compute_credit_signals(
+                user.user_id, window_days, session
+            )
+            features["credit_utilization_max_pct"] = float(credit_signal.credit_utilization_max_pct)
+            features["credit_utilization_avg_pct"] = float(credit_signal.credit_utilization_avg_pct)
+            features["credit_util_flag_30"] = credit_signal.credit_util_flag_30
+            features["credit_util_flag_50"] = credit_signal.credit_util_flag_50
+            features["credit_util_flag_80"] = credit_signal.credit_util_flag_80
+            features["has_interest_charges"] = credit_signal.has_interest_charges
+            features["has_minimum_payment_only"] = credit_signal.has_minimum_payment_only
+            features["is_overdue"] = credit_signal.is_overdue
             
-            # === CREDIT SIGNALS ===
-            liabilities = session.query(Liability).filter(
-                Liability.user_id == user.user_id,
-                Liability.liability_type == "credit_card"
-            ).all()
-            
-            utilizations = []
-            has_interest_charges = False
-            has_minimum_payment_only = False
-            has_overdue = False
-            
-            for liab in liabilities:
-                if liab.credit_limit and liab.credit_limit > 0:
-                    util = float((liab.current_balance / liab.credit_limit) * 100)
-                    utilizations.append(util)
-                
-                # Check for interest charges in transactions
-                if liab.account_id:
-                    interest_txs = [tx for tx in transactions 
-                                   if tx.account_id == liab.account_id 
-                                   and tx.merchant_name == "Interest Charge"]
-                    if interest_txs:
-                        has_interest_charges = True
-                
-                # Minimum payment only (last payment ≈ minimum payment)
-                if liab.last_payment_amount and liab.minimum_payment:
-                    if liab.last_payment_amount <= liab.minimum_payment * Decimal("1.1"):  # Within 10%
-                        has_minimum_payment_only = True
-                
-                if liab.is_overdue:
-                    has_overdue = True
-            
-            # Utilization stats
-            if utilizations:
-                features["credit_utilization_max_pct"] = max(utilizations)
-                features["credit_utilization_avg_pct"] = sum(utilizations) / len(utilizations)
-                features["credit_util_flag_30"] = any(u >= 30 for u in utilizations)
-                features["credit_util_flag_50"] = any(u >= 50 for u in utilizations)
-                features["credit_util_flag_80"] = any(u >= 80 for u in utilizations)
-            else:
-                features["credit_utilization_max_pct"] = 0.0
-                features["credit_utilization_avg_pct"] = 0.0
-                features["credit_util_flag_30"] = False
-                features["credit_util_flag_50"] = False
-                features["credit_util_flag_80"] = False
-            
-            features["has_interest_charges"] = has_interest_charges
-            features["has_minimum_payment_only"] = has_minimum_payment_only
-            features["is_overdue"] = has_overdue
-            
-            # === INCOME STABILITY SIGNALS ===
-            # Payroll deposits (negative amounts, category = Income)
-            payroll_txs = [tx for tx in transactions 
-                          if tx.category == "Income" 
-                          and tx.subcategory == "Paycheck"
-                          and tx.amount < 0]
-            
-            features["payroll_deposit_count"] = len(payroll_txs)
-            
-            if len(payroll_txs) >= 2:
-                # Sort by date
-                payroll_txs_sorted = sorted(payroll_txs, key=lambda x: x.transaction_date)
-                
-                # Calculate gaps between payrolls
-                gaps = []
-                for i in range(1, len(payroll_txs_sorted)):
-                    gap_days = (payroll_txs_sorted[i].transaction_date - payroll_txs_sorted[i-1].transaction_date).days
-                    gaps.append(gap_days)
-                
-                if gaps:
-                    features["median_pay_gap_days"] = float(pd.Series(gaps).median())
-                    features["pay_gap_variability"] = float(pd.Series(gaps).std())
-                else:
-                    features["median_pay_gap_days"] = 0.0
-                    features["pay_gap_variability"] = 0.0
-                
-                # Average income amount
-                avg_income = sum(abs(tx.amount) for tx in payroll_txs) / len(payroll_txs)
-                features["avg_payroll_amount"] = float(avg_income)
-            else:
-                features["median_pay_gap_days"] = 0.0
-                features["pay_gap_variability"] = 0.0
-                features["avg_payroll_amount"] = 0.0
-            
-            # Cash-flow buffer (checking balance / avg monthly expenses)
-            checking_accounts = [acc for acc in accounts if acc.account_subtype == "checking"]
-            if checking_accounts:
-                checking_balance = sum(acc.balance_current for acc in checking_accounts)
-                
-                checking_txs = [tx for tx in transactions if any(
-                    tx.account_id == acc.account_id for acc in checking_accounts
-                ) and tx.amount > 0]  # Debits only
-                
-                avg_monthly_expenses = sum(tx.amount for tx in checking_txs) / Decimal(str(months_in_window))
-                features["cashflow_buffer_months"] = (
-                    float(checking_balance / avg_monthly_expenses) if avg_monthly_expenses > 0 else 0.0
-                )
-            else:
-                features["cashflow_buffer_months"] = 0.0
+            # Income signals
+            income_signal = income.compute_income_signals(
+                user.user_id, window_days, session
+            )
+            features["payroll_deposit_count"] = income_signal.payroll_deposit_count
+            features["median_pay_gap_days"] = float(income_signal.median_pay_gap_days)
+            features["pay_gap_variability"] = float(income_signal.pay_gap_variability)
+            features["avg_payroll_amount"] = float(income_signal.avg_payroll_amount)
+            features["cashflow_buffer_months"] = float(income_signal.cashflow_buffer_months)
             
             # === GENERAL SPENDING METRICS ===
+            # These are still computed here as they don't fit into a specific signal category
+            account_ids = [acc.account_id for acc in accounts]
+            transactions = session.query(Transaction).filter(
+                Transaction.account_id.in_(account_ids),
+                Transaction.transaction_date >= cutoff_date,
+                Transaction.pending == False
+            ).all()
+            
             total_income = sum(abs(tx.amount) for tx in transactions if tx.amount < 0)  # Credits
             total_expenses = sum(tx.amount for tx in transactions if tx.amount > 0)  # Debits
             
