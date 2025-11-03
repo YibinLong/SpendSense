@@ -305,6 +305,7 @@ class Recommendation(Base):
     # Recommendation details
     user_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     persona_id: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    window_days: Mapped[int] = mapped_column(Integer, nullable=False, default=30)  # 30 or 180 - tracks which time window was used
     item_type: Mapped[str] = mapped_column(String(20), nullable=False)  # education, offer
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     rationale: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -318,7 +319,7 @@ class Recommendation(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
     
     def __repr__(self) -> str:
-        return f"<Recommendation(id={self.id}, type='{self.item_type}', user='{self.user_id}')>"
+        return f"<Recommendation(id={self.id}, type='{self.item_type}', user='{self.user_id}', window={self.window_days}d)>"
 
 
 class OperatorReview(Base):

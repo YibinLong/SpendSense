@@ -93,3 +93,7 @@ class UserInDB(User):
     """
     pass
 
+
+# Alias for API responses
+UserResponse = User
+

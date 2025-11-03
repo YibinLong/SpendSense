@@ -82,10 +82,11 @@ Why: Compute simple, explainable behavior signals that power personas and recomm
 Why: Personas simplify explaining behavior and choosing education content.
 
 ### Story: Persona rules and assignment
-- [ ] Implement persona criteria in `spendsense/app/personas/rules.py` per PRD definitions
-- [ ] Implement deterministic prioritization in `spendsense/app/personas/assign.py`
-- [ ] Store persona per user per window (30d, 180d) with rationale in `personas` table
-- [ ] Handle ties and insufficient data cases
+- [x] Implement persona criteria in `spendsense/app/personas/rules.py` per PRD definitions
+- [x] Implement deterministic prioritization in `spendsense/app/personas/assign.py`
+- [x] Store persona per user per window (30d, 180d) with rationale in `personas` table
+- [x] Handle ties and insufficient data cases
+- [x] Unit tests covering all 5 personas and priority order
 
 ---
 
@@ -93,17 +94,19 @@ Why: Personas simplify explaining behavior and choosing education content.
 Why: Provide clear next steps with plain-language reasons so users understand the “why”.
 
 ### Story: Recommendation engine and content
-- [ ] Create `spendsense/app/recommend/engine.py` (build items from persona + signals)
-- [ ] Add `spendsense/app/recommend/content_catalog.json` with tags mapped to personas/signals
-- [ ] Ensure every item has a rationale citing concrete data points
-- [ ] Append mandatory disclosure to every item (see PRD language)
-- [ ] Store items in `recommendation_items` with eligibility flags and disclosure
+- [x] Create `spendsense/app/recommend/engine.py` (build items from persona + signals)
+- [x] Add `spendsense/app/recommend/content_catalog.json` with tags mapped to personas/signals
+- [x] Ensure every item has a rationale citing concrete data points
+- [x] Append mandatory disclosure to every item (see PRD language)
+- [x] Store items in `recommendation_items` with eligibility flags and disclosure
+- [x] Unit tests for rationale formatting and duplicates handling
 
 ### Story: Eligibility and tone checks
-- [ ] Implement `spendsense/app/recommend/eligibility.py` (filter ineligible offers with reasons)
-- [ ] Implement `spendsense/app/recommend/tone.py` (no shaming, supportive, automated check)
-- [ ] Implement `spendsense/app/recommend/disclosure.py` (consistent disclaimer add)
-- [ ] Persist guardrail decisions JSON with tone/eligibility results
+- [x] Implement `spendsense/app/recommend/eligibility.py` (filter ineligible offers with reasons)
+- [x] Implement `spendsense/app/recommend/tone.py` (no shaming, supportive, automated check)
+- [x] Implement `spendsense/app/recommend/disclosure.py` (consistent disclaimer add)
+- [x] Persist guardrail decisions JSON with tone/eligibility results
+- [x] Unit tests for guardrail failures and edge cases
 
 ---
 
@@ -111,28 +114,31 @@ Why: Provide clear next steps with plain-language reasons so users understand th
 Why: Users must control their data; recommendations must be safe and respectful.
 
 ### Story: Consent enforcement
-- [ ] Add `spendsense/app/guardrails/consent.py` with helpers to record and check consent
-- [ ] Add `consent_events` table (user_id, action, timestamp, reason, by)
-- [ ] Middleware/hook to block processing until opt-in exists (return 403 with guidance)
+- [x] Add `spendsense/app/guardrails/consent.py` with helpers to record and check consent
+- [x] Add `consent_events` table (user_id, action, timestamp, reason, by)
+- [x] Middleware/hook to block processing until opt-in exists (return 403 with guidance)
+- [x] Unit tests: opt-in/out flows and blocked paths
+
 ### Story: Eligibility & tone guardrails (runtime)
-- [ ] Add `spendsense/app/guardrails/checks.py` to centralize policy checks for offers/tone
-- [ ] Ensure dev-mode logs show tone rejections for debugging
+- [x] Add `spendsense/app/guardrails/checks.py` to centralize policy checks for offers/tone
+- [x] Ensure dev-mode logs show tone rejections for debugging
+- [x] Unit tests
 ---
 
 ## Epic: FastAPI API
 Why: Expose functionality cleanly with auto docs and structured errors.
 
 ### Story: Endpoints and error handling
-- [ ] `POST /users` — create user
-- [ ] `POST /consent` — record opt-in/opt-out
-- [ ] `GET /profile/{user_id}` — return signals (30d/180d)
-- [ ] `GET /recommendations/{user_id}` — return items with rationales + disclosures
-- [ ] `POST /feedback` — record user feedback on items
-- [ ] `GET /operator/review` — operator approval queue
-- [ ] `POST /operator/recommendations/{id}/approve` — approve/override with notes
-- [ ] Structured errors via Pydantic models; consistent status codes (4xx/5xx)
-- [ ] structlog request IDs + decision trace IDs in logs
-- [ ] Integration tests for happy-path and validation failures
+- [x] `POST /users` — create user
+- [x] `POST /consent` — record opt-in/opt-out
+- [x] `GET /profile/{user_id}` — return signals (30d/180d)
+- [x] `GET /recommendations/{user_id}` — return items with rationales + disclosures
+- [x] `POST /feedback` — record user feedback on items
+- [x] `GET /operator/review` — operator approval queue
+- [x] `POST /operator/recommendations/{id}/approve` — approve/override with notes
+- [x] Structured errors via Pydantic models; consistent status codes (4xx/5xx)
+- [x] structlog request IDs + decision trace IDs in logs
+- [x] Integration tests for happy-path and validation failures
 
 ---
 

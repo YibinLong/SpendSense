@@ -12,9 +12,12 @@ Why this file exists:
 
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
+import uuid
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import configure_logging, get_logger
@@ -122,9 +125,93 @@ async def root() -> dict[str, str]:
     }
 
 
-# Future route modules will be added here:
-# app.include_router(users.router, prefix="/users", tags=["users"])
-# app.include_router(profiles.router, prefix="/profile", tags=["profiles"])
-# app.include_router(recommendations.router, prefix="/recommendations", tags=["recommendations"])
-# app.include_router(operator.router, prefix="/operator", tags=["operator"])
+# Import route modules
+from spendsense.app.api import (
+    routes_users,
+    routes_consent,
+    routes_profiles,
+    routes_recommendations,
+    routes_operator,
+)
+
+# Include all routers
+app.include_router(routes_users.router, prefix="/users", tags=["users"])
+app.include_router(routes_consent.router, prefix="/consent", tags=["consent"])
+app.include_router(routes_profiles.router, prefix="/profile", tags=["profiles"])
+app.include_router(routes_recommendations.router, prefix="/recommendations", tags=["recommendations"])
+app.include_router(routes_operator.router, prefix="/operator", tags=["operator"])
+
+
+# Exception handlers for structured error responses
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    """
+    Handle Pydantic validation errors.
+    
+    Returns 422 with structured error response showing field-level errors.
+    
+    Why this exists:
+    - PRD requires structured errors with clear field-level feedback
+    - Makes it easy for frontend to show validation errors
+    - Includes trace ID for debugging
+    """
+    trace_id = str(uuid.uuid4())
+    logger = get_logger(__name__)
+    
+    logger.warning(
+        "validation_error",
+        trace_id=trace_id,
+        path=request.url.path,
+        errors=exc.errors(),
+    )
+    
+    # Format field errors
+    field_errors = {}
+    for error in exc.errors():
+        field = ".".join(str(loc) for loc in error["loc"])
+        field_errors[field] = error["msg"]
+    
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "error": "Validation error",
+            "detail": "Request data failed validation",
+            "field_errors": field_errors,
+            "trace_id": trace_id,
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    """
+    Handle unexpected errors.
+    
+    Returns 500 with trace ID for debugging.
+    
+    Why this exists:
+    - Catch-all for unexpected errors
+    - Logs full exception for debugging
+    - Returns user-friendly error without exposing internals
+    """
+    trace_id = str(uuid.uuid4())
+    logger = get_logger(__name__)
+    
+    logger.error(
+        "unexpected_error",
+        trace_id=trace_id,
+        path=request.url.path,
+        error=str(exc),
+        exc_info=True,  # Include traceback
+    )
+    
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "error": "Internal server error",
+            "detail": "An unexpected error occurred. Please contact support with the trace ID.",
+            "trace_id": trace_id,
+        },
+    )
 
