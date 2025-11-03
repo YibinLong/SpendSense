@@ -31,7 +31,7 @@ from spendsense.app.schemas.signal import (
     IncomeSignalData,
 )
 from spendsense.app.schemas.persona import PersonaAssignment
-from spendsense.app.guardrails.consent import check_consent
+from spendsense.app.guardrails.consent import check_consent, get_consent_status
 
 
 logger = get_logger(__name__)
@@ -84,11 +84,24 @@ async def get_profile(
     # Check consent
     if not check_consent(user_id, db):
         logger.warning("profile_access_denied_no_consent", user_id=user_id)
+        
+        # Get detailed consent status to distinguish between opt-out and never consented
+        consent_status_info = get_consent_status(user_id, db)
+        
+        # Determine consent_status for the response
+        if consent_status_info["latest_action"] == "opt_out":
+            consent_status = "opt_out"
+            detail_msg = f"User {user_id} has opted out of data processing"
+        else:
+            consent_status = "not_found"
+            detail_msg = f"User {user_id} has not provided consent for data processing"
+        
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "error": "Consent required",
-                "detail": f"User {user_id} has not provided consent for data processing",
+                "detail": detail_msg,
+                "consent_status": consent_status,
                 "guidance": "POST /consent with action='opt_in' to continue",
             },
         )

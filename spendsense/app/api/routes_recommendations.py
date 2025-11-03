@@ -17,7 +17,7 @@ from spendsense.app.core.logging import get_logger
 from spendsense.app.db.session import get_db
 from spendsense.app.db.models import User, Recommendation
 from spendsense.app.schemas.recommendation import RecommendationItem, FeedbackRequest, FeedbackResponse
-from spendsense.app.guardrails.consent import check_consent
+from spendsense.app.guardrails.consent import check_consent, get_consent_status
 from spendsense.app.recommend.engine import generate_recommendations
 
 
@@ -71,11 +71,24 @@ async def get_recommendations(
     # Check consent
     if not check_consent(user_id, db):
         logger.warning("recommendations_access_denied_no_consent", user_id=user_id)
+        
+        # Get detailed consent status to distinguish between opt-out and never consented
+        consent_status_info = get_consent_status(user_id, db)
+        
+        # Determine consent_status for the response
+        if consent_status_info["latest_action"] == "opt_out":
+            consent_status = "opt_out"
+            detail_msg = f"User {user_id} has opted out of data processing"
+        else:
+            consent_status = "not_found"
+            detail_msg = f"User {user_id} has not provided consent for data processing"
+        
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "error": "Consent required",
-                "detail": f"User {user_id} has not provided consent for data processing",
+                "detail": detail_msg,
+                "consent_status": consent_status,
                 "guidance": "POST /consent with action='opt_in' to continue",
             },
         )
@@ -89,14 +102,15 @@ async def get_recommendations(
             detail=f"User '{user_id}' not found",
         )
     
-    # Check if recommendations already exist
+    # Check if recommendations already exist for this user AND window
     if not regenerate:
         existing_recs = db.query(Recommendation).filter(
             Recommendation.user_id == user_id,
+            Recommendation.window_days == window,
         ).all()
         
         if existing_recs:
-            logger.debug("returning_existing_recommendations", user_id=user_id, count=len(existing_recs))
+            logger.debug("returning_existing_recommendations", user_id=user_id, window_days=window, count=len(existing_recs))
             return [RecommendationItem.model_validate(rec) for rec in existing_recs]
     
     # Generate new recommendations

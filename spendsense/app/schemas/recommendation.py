@@ -32,6 +32,10 @@ class RecommendationItem(BaseModel):
         default=None,
         description="Persona that triggered this recommendation"
     )
+    window_days: int = Field(
+        default=30,
+        description="Time window in days (30 or 180) used to generate this recommendation"
+    )
     item_type: Literal["education", "offer"] = Field(
         description="Type of recommendation: education or offer"
     )

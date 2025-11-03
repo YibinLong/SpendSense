@@ -285,6 +285,7 @@ def generate_recommendations(
         rec = Recommendation(
             user_id=user_id,
             persona_id=persona_id,
+            window_days=window_days,  # Store the time window used
             item_type="education",
             title=item["title"],
             rationale=rationale,
@@ -331,6 +332,7 @@ def generate_recommendations(
         rec = Recommendation(
             user_id=user_id,
             persona_id=persona_id,
+            window_days=window_days,  # Store the time window used
             item_type="offer",
             title=item["title"],
             rationale=rationale,
