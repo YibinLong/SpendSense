@@ -193,3 +193,40 @@ def drop_all_tables() -> None:
     
     logger.warning("all_tables_dropped")
 
+
+def get_db() -> Generator[Session, None, None]:
+    """
+    FastAPI dependency for database sessions.
+    
+    This is used in route dependencies to inject a database session.
+    The session is automatically closed after the request completes.
+    
+    Usage in routes:
+        @app.get("/users")
+        async def get_users(db: Session = Depends(get_db)):
+            users = db.query(User).all()
+            return users
+    
+    Why we need this:
+    - Ensures each request gets its own database session
+    - Automatically closes session after request (even on errors)
+    - FastAPI dependency injection pattern
+    
+    Yields:
+        SQLAlchemy Session
+    """
+    # Ensure engine is bound
+    if SessionLocal.kw.get("bind") is None:
+        SessionLocal.configure(bind=get_engine())
+    
+    # Create session
+    session = SessionLocal()
+    
+    try:
+        logger.debug("database_session_created")
+        yield session
+    finally:
+        # Always close session, even if exception occurs
+        session.close()
+        logger.debug("database_session_closed")
+

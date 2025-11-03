@@ -347,3 +347,173 @@ class OperatorReview(Base):
     def __repr__(self) -> str:
         return f"<OperatorReview(id={self.id}, recommendation={self.recommendation_id}, status='{self.status}')>"
 
+
+class SubscriptionSignal(Base):
+    """
+    Subscription signal table - stores computed subscription behavior signals.
+    
+    Why we need this:
+    - Fast API access to subscription metrics without Parquet
+    - Enables quick dashboard queries
+    - Tracks recurring merchant patterns over time windows
+    - Foundation for Subscription-Heavy persona assignment
+    
+    Computed from transactions in Feature Engineering epic.
+    """
+    __tablename__ = "subscription_signals"
+    
+    # Primary key
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    # User and window
+    user_id: Mapped[str] = mapped_column(String(100), ForeignKey("users.user_id"), nullable=False, index=True)
+    window_days: Mapped[int] = mapped_column(Integer, nullable=False)  # 30 or 180
+    
+    # Subscription metrics
+    recurring_merchant_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    monthly_recurring_spend: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False, default=0)
+    subscription_share_pct: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, default=0)
+    
+    # Timestamp
+    computed_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    
+    def __repr__(self) -> str:
+        return f"<SubscriptionSignal(user='{self.user_id}', window={self.window_days}d, merchants={self.recurring_merchant_count})>"
+
+
+# Unique constraint: one signal per user per window
+Index("idx_subscription_user_window", SubscriptionSignal.user_id, SubscriptionSignal.window_days, unique=True)
+
+
+class SavingsSignal(Base):
+    """
+    Savings signal table - stores computed savings behavior signals.
+    
+    Why we need this:
+    - Fast API access to savings metrics
+    - Tracks emergency fund coverage and growth
+    - Foundation for Savings Builder persona assignment
+    
+    Computed from savings accounts and transactions.
+    """
+    __tablename__ = "savings_signals"
+    
+    # Primary key
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    # User and window
+    user_id: Mapped[str] = mapped_column(String(100), ForeignKey("users.user_id"), nullable=False, index=True)
+    window_days: Mapped[int] = mapped_column(Integer, nullable=False)  # 30 or 180
+    
+    # Savings metrics
+    savings_net_inflow: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False, default=0)
+    savings_growth_rate_pct: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, default=0)
+    emergency_fund_months: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, default=0)
+    
+    # Timestamp
+    computed_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    
+    def __repr__(self) -> str:
+        return f"<SavingsSignal(user='{self.user_id}', window={self.window_days}d, emergency_fund={self.emergency_fund_months}mo)>"
+
+
+# Unique constraint: one signal per user per window
+Index("idx_savings_user_window", SavingsSignal.user_id, SavingsSignal.window_days, unique=True)
+
+
+class CreditSignal(Base):
+    """
+    Credit signal table - stores computed credit utilization and behavior signals.
+    
+    Why we need this:
+    - Fast API access to credit metrics
+    - Tracks utilization thresholds and payment patterns
+    - Foundation for High Utilization persona assignment
+    
+    Computed from liabilities and transactions.
+    """
+    __tablename__ = "credit_signals"
+    
+    # Primary key
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    # User and window
+    user_id: Mapped[str] = mapped_column(String(100), ForeignKey("users.user_id"), nullable=False, index=True)
+    window_days: Mapped[int] = mapped_column(Integer, nullable=False)  # 30 or 180
+    
+    # Utilization metrics
+    credit_utilization_max_pct: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, default=0)
+    credit_utilization_avg_pct: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, default=0)
+    
+    # Utilization flags
+    credit_util_flag_30: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    credit_util_flag_50: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    credit_util_flag_80: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    
+    # Behavior flags
+    has_interest_charges: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    has_minimum_payment_only: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    is_overdue: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    
+    # Timestamp
+    computed_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    
+    def __repr__(self) -> str:
+        return f"<CreditSignal(user='{self.user_id}', window={self.window_days}d, max_util={self.credit_utilization_max_pct}%)>"
+
+
+# Unique constraint: one signal per user per window
+Index("idx_credit_user_window", CreditSignal.user_id, CreditSignal.window_days, unique=True)
+
+
+class IncomeSignal(Base):
+    """
+    Income signal table - stores computed income stability signals.
+    
+    Why we need this:
+    - Fast API access to income metrics
+    - Tracks payroll frequency and cash-flow buffer
+    - Foundation for Variable Income Budgeter persona assignment
+    
+    Computed from income transactions and checking accounts.
+    """
+    __tablename__ = "income_signals"
+    
+    # Primary key
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    
+    # User and window
+    user_id: Mapped[str] = mapped_column(String(100), ForeignKey("users.user_id"), nullable=False, index=True)
+    window_days: Mapped[int] = mapped_column(Integer, nullable=False)  # 30 or 180
+    
+    # Payroll metrics
+    payroll_deposit_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    median_pay_gap_days: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, default=0)
+    pay_gap_variability: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False, default=0)
+    avg_payroll_amount: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False, default=0)
+    
+    # Cash-flow metrics
+    cashflow_buffer_months: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, default=0)
+    
+    # Timestamp
+    computed_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Relationships
+    user: Mapped["User"] = relationship("User")
+    
+    def __repr__(self) -> str:
+        return f"<IncomeSignal(user='{self.user_id}', window={self.window_days}d, payrolls={self.payroll_deposit_count}, buffer={self.cashflow_buffer_months}mo)>"
+
+
+# Unique constraint: one signal per user per window
+Index("idx_income_user_window", IncomeSignal.user_id, IncomeSignal.window_days, unique=True)
+
