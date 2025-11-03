@@ -1,0 +1,221 @@
+{
+  "education_items": [
+    {
+      "id": "edu_001",
+      "type": "education",
+      "title": "Credit Utilization 101: Why 30% Matters",
+      "description": "Learn how credit utilization impacts your credit score and why keeping it below 30% is crucial for financial health.",
+      "url": "https://example.com/credit-utilization-guide",
+      "tags": ["high_utilization", "credit_util_flag_30", "credit_util_flag_50"],
+      "eligibility_criteria": {},
+      "content_type": "article"
+    },
+    {
+      "id": "edu_002",
+      "type": "education",
+      "title": "Breaking the Minimum Payment Cycle",
+      "description": "Understand the true cost of minimum payments and strategies to pay down credit card debt faster.",
+      "url": "https://example.com/minimum-payment-guide",
+      "tags": ["high_utilization", "has_minimum_payment_only", "has_interest_charges"],
+      "eligibility_criteria": {},
+      "content_type": "article"
+    },
+    {
+      "id": "edu_003",
+      "type": "education",
+      "title": "Autopay Setup Guide: Never Miss a Payment",
+      "description": "Step-by-step guide to setting up automatic payments and avoiding late fees and credit damage.",
+      "url": "https://example.com/autopay-setup",
+      "tags": ["high_utilization", "is_overdue"],
+      "eligibility_criteria": {},
+      "content_type": "video"
+    },
+    {
+      "id": "edu_004",
+      "type": "education",
+      "title": "Budgeting for Variable Income",
+      "description": "Proven strategies for managing money when your paychecks aren't consistent, including percent-based budgeting.",
+      "url": "https://example.com/variable-income-budgeting",
+      "tags": ["variable_income_budgeter", "median_pay_gap_above_45_days"],
+      "eligibility_criteria": {},
+      "content_type": "article"
+    },
+    {
+      "id": "edu_005",
+      "type": "education",
+      "title": "Emergency Fund Basics: Your First $1,000",
+      "description": "How to build your first emergency fund even with irregular income. Start small, build momentum.",
+      "url": "https://example.com/emergency-fund-basics",
+      "tags": ["variable_income_budgeter", "cashflow_buffer_below_1_month"],
+      "eligibility_criteria": {},
+      "content_type": "article"
+    },
+    {
+      "id": "edu_006",
+      "type": "education",
+      "title": "Income Smoothing Strategies for Freelancers",
+      "description": "Techniques to smooth irregular income and reduce financial stress between paychecks.",
+      "url": "https://example.com/income-smoothing",
+      "tags": ["variable_income_budgeter"],
+      "eligibility_criteria": {},
+      "content_type": "guide"
+    },
+    {
+      "id": "edu_007",
+      "type": "education",
+      "title": "The Subscription Audit Checklist",
+      "description": "Step-by-step process to identify, evaluate, and cancel unused subscriptions. Includes negotiation scripts.",
+      "url": "https://example.com/subscription-audit",
+      "tags": ["subscription_heavy", "recurring_merchants_gte_3"],
+      "eligibility_criteria": {},
+      "content_type": "checklist"
+    },
+    {
+      "id": "edu_008",
+      "type": "education",
+      "title": "Negotiating Lower Bills: Scripts That Work",
+      "description": "Proven negotiation scripts for reducing cable, internet, phone, and subscription costs.",
+      "url": "https://example.com/negotiation-scripts",
+      "tags": ["subscription_heavy", "monthly_recurring_gte_50"],
+      "eligibility_criteria": {},
+      "content_type": "guide"
+    },
+    {
+      "id": "edu_009",
+      "type": "education",
+      "title": "Setting Up Bill Alerts and Reminders",
+      "description": "Use technology to track renewal dates and prevent surprise charges from subscriptions.",
+      "url": "https://example.com/bill-alerts-setup",
+      "tags": ["subscription_heavy"],
+      "eligibility_criteria": {},
+      "content_type": "video"
+    },
+    {
+      "id": "edu_010",
+      "type": "education",
+      "title": "Savings Goals: From Dream to Reality",
+      "description": "How to set achievable savings goals and track progress with visual tools and milestones.",
+      "url": "https://example.com/savings-goals",
+      "tags": ["savings_builder", "savings_growth_gte_2_pct"],
+      "eligibility_criteria": {},
+      "content_type": "article"
+    },
+    {
+      "id": "edu_011",
+      "type": "education",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "description": "Best practices for automatic transfers to maximize savings without thinking about it.",
+      "url": "https://example.com/automate-savings",
+      "tags": ["savings_builder", "net_inflow_gte_200_per_month"],
+      "eligibility_criteria": {},
+      "content_type": "article"
+    },
+    {
+      "id": "edu_012",
+      "type": "education",
+      "title": "High-Yield Savings Accounts Compared",
+      "description": "Compare APYs and features of top online savings accounts to maximize your interest earnings.",
+      "url": "https://example.com/high-yield-comparison",
+      "tags": ["savings_builder"],
+      "eligibility_criteria": {},
+      "content_type": "comparison"
+    },
+    {
+      "id": "edu_013",
+      "type": "education",
+      "title": "Short-Term Budgeting Tactics",
+      "description": "Quick wins for reducing expenses this month without drastic lifestyle changes.",
+      "url": "https://example.com/short-term-budgeting",
+      "tags": ["cash_flow_optimizer", "cashflow_buffer_suggests_slight_overspend"],
+      "eligibility_criteria": {},
+      "content_type": "article"
+    },
+    {
+      "id": "edu_014",
+      "type": "education",
+      "title": "Expense Triage: What to Cut First",
+      "description": "Data-driven approach to identifying and cutting your highest-impact expenses first.",
+      "url": "https://example.com/expense-triage",
+      "tags": ["cash_flow_optimizer"],
+      "eligibility_criteria": {},
+      "content_type": "guide"
+    }
+  ],
+  "partner_offers": [
+    {
+      "id": "offer_001",
+      "type": "offer",
+      "title": "Balance Transfer Credit Card - 0% APR for 18 Months",
+      "description": "Move high-interest balances to a card with 0% intro APR. Save on interest while paying down debt faster.",
+      "url": "https://example.com/partner/balance-transfer-card",
+      "tags": ["high_utilization", "has_interest_charges"],
+      "eligibility_criteria": {
+        "min_credit_score": 670,
+        "max_utilization": 80,
+        "not_overdue": true
+      },
+      "partner_name": "Example Bank",
+      "content_type": "credit_offer"
+    },
+    {
+      "id": "offer_002",
+      "type": "offer",
+      "title": "Free Credit Monitoring and Score Tracking",
+      "description": "Track your credit score weekly and get alerts for changes. No credit card required.",
+      "url": "https://example.com/partner/credit-monitoring",
+      "tags": ["high_utilization", "credit_util_flag_50"],
+      "eligibility_criteria": {},
+      "partner_name": "CreditWise",
+      "content_type": "credit_monitoring"
+    },
+    {
+      "id": "offer_003",
+      "type": "offer",
+      "title": "High-Yield Savings Account - 4.5% APY",
+      "description": "No minimum balance, FDIC insured, easy mobile deposits. Build your emergency fund faster.",
+      "url": "https://example.com/partner/high-yield-savings",
+      "tags": ["savings_builder", "variable_income_budgeter"],
+      "eligibility_criteria": {
+        "min_age": 18
+      },
+      "partner_name": "Example Online Bank",
+      "content_type": "savings_account"
+    },
+    {
+      "id": "offer_004",
+      "type": "offer",
+      "title": "Budgeting App Premium - 3 Months Free",
+      "description": "Track spending, set goals, and get alerts. Perfect for variable income budgeting.",
+      "url": "https://example.com/partner/budgeting-app",
+      "tags": ["variable_income_budgeter", "cash_flow_optimizer", "subscription_heavy"],
+      "eligibility_criteria": {},
+      "partner_name": "BudgetPro",
+      "content_type": "software"
+    },
+    {
+      "id": "offer_005",
+      "type": "offer",
+      "title": "Subscription Manager Tool - Free Tier",
+      "description": "Automatically track and manage all your subscriptions in one place. Cancel unwanted services with one click.",
+      "url": "https://example.com/partner/subscription-manager",
+      "tags": ["subscription_heavy", "recurring_merchants_gte_3"],
+      "eligibility_criteria": {},
+      "partner_name": "SubTracker",
+      "content_type": "software"
+    },
+    {
+      "id": "offer_006",
+      "type": "offer",
+      "title": "Bill Negotiation Service - No Fee Unless We Save You Money",
+      "description": "Professional negotiators handle your cable, internet, and phone bills. Average savings: $300/year.",
+      "url": "https://example.com/partner/bill-negotiation",
+      "tags": ["subscription_heavy", "monthly_recurring_gte_50"],
+      "eligibility_criteria": {
+        "min_monthly_bills": 100
+      },
+      "partner_name": "BillCutter",
+      "content_type": "service"
+    }
+  ]
+}
+
