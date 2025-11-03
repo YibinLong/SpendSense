@@ -1,0 +1,66 @@
+[
+  {
+    "transaction_id": "txn_sample_001",
+    "account_id": "acc_000001_01",
+    "amount": "45.99",
+    "currency": "USD",
+    "transaction_date": "2024-10-15",
+    "merchant_name": "Starbucks",
+    "category": "Food and Drink",
+    "subcategory": "Coffee Shop",
+    "transaction_type": "debit",
+    "pending": false,
+    "payment_channel": "in store"
+  },
+  {
+    "transaction_id": "txn_sample_002",
+    "account_id": "acc_000001_01",
+    "amount": "125.50",
+    "currency": "USD",
+    "transaction_date": "2024-10-16",
+    "merchant_name": "Whole Foods",
+    "category": "Food and Drink",
+    "subcategory": "Groceries",
+    "transaction_type": "debit",
+    "pending": false,
+    "payment_channel": "in store"
+  },
+  {
+    "transaction_id": "txn_sample_003",
+    "account_id": "acc_000001_01",
+    "amount": "-3500.00",
+    "currency": "USD",
+    "transaction_date": "2024-10-17",
+    "merchant_name": "Payroll ACH",
+    "category": "Income",
+    "subcategory": "Paycheck",
+    "transaction_type": "credit",
+    "pending": false
+  },
+  {
+    "transaction_id": "txn_sample_004",
+    "account_id": "acc_000001_01",
+    "amount": "14.99",
+    "currency": "USD",
+    "transaction_date": "2024-10-18",
+    "merchant_name": "Netflix",
+    "category": "Subscription",
+    "subcategory": "Entertainment",
+    "transaction_type": "debit",
+    "pending": false,
+    "payment_channel": "online"
+  },
+  {
+    "transaction_id": "txn_sample_005",
+    "account_id": "acc_000001_01",
+    "amount": "-89.99",
+    "currency": "USD",
+    "transaction_date": "2024-10-19",
+    "merchant_name": "Amazon Refund",
+    "category": "Shopping",
+    "subcategory": "Refund",
+    "transaction_type": "credit",
+    "pending": false
+  }
+]
+

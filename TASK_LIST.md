@@ -37,15 +37,15 @@ Why: Get a clean, predictable local setup so everything runs the same way every 
 Why: You need realistic data to test all features locally without any real PII.
 
 ### Story: Generate synthetic Plaid-like dataset
-- [ ] Define Pydantic schemas in `spendsense/app/schemas/` (user, account, transaction, liability, consent_event)
-- [ ] Implement SQLAlchemy models in `spendsense/app/db/models.py` matching schemas and PRD tables
-- [ ] Create DB engine/session in `spendsense/app/db/session.py` (SQLite from `DATABASE_URL`)
-- [ ] Implement synthetic data generator `spendsense/app/db/seed.py` (50–100 users)
-- [ ] Support CSV/JSON ingestion paths with validation and clear error messages
-- [ ] Persist normalized entities to SQLite
-- [ ] Write denormalized analytics-ready tables to Parquet under `data/parquet/`
-- [ ] Handle edge cases: missing fields, negative amounts, invalid dates, unsupported currencies, business accounts filter
-- [ ] Unit tests for generator + validation
+- [x] Define Pydantic schemas in `spendsense/app/schemas/` (user, account, transaction, liability, consent_event)
+- [x] Implement SQLAlchemy models in `spendsense/app/db/models.py` matching schemas and PRD tables
+- [x] Create DB engine/session in `spendsense/app/db/session.py` (SQLite from `DATABASE_URL`)
+- [x] Implement synthetic data generator `spendsense/app/db/seed.py` (50–100 users)
+- [x] Support CSV/JSON ingestion paths with validation and clear error messages
+- [x] Persist normalized entities to SQLite
+- [x] Write denormalized analytics-ready tables to Parquet under `data/parquet/`
+- [x] Handle edge cases: missing fields, negative amounts, invalid dates, unsupported currencies, business accounts filter
+- [x] Unit tests for generator + validation
 
 ---
 
