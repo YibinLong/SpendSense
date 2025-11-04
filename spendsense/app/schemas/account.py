@@ -11,7 +11,7 @@ Why this exists:
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -22,7 +22,7 @@ class AccountBase(BaseModel):
     
     Matches Plaid-style account structure.
     """
-    
+
     account_id: str = Field(
         ...,
         description="Masked account identifier",
@@ -63,17 +63,17 @@ class AccountBase(BaseModel):
         description="Current account balance",
         decimal_places=2
     )
-    balance_available: Optional[Decimal] = Field(
+    balance_available: Decimal | None = Field(
         default=None,
         description="Available balance (for credit accounts, this is available credit)",
         decimal_places=2
     )
-    credit_limit: Optional[Decimal] = Field(
+    credit_limit: Decimal | None = Field(
         default=None,
         description="Credit limit for credit accounts",
         decimal_places=2
     )
-    
+
     @field_validator('currency')
     @classmethod
     def validate_currency(cls, v: str) -> str:
@@ -81,7 +81,7 @@ class AccountBase(BaseModel):
         if v.upper() != "USD":
             raise ValueError(f"Unsupported currency: {v}. Only USD is supported in MVP.")
         return v.upper()
-    
+
     @field_validator('holder_category')
     @classmethod
     def validate_holder_category(cls, v: str) -> str:
@@ -117,10 +117,10 @@ class Account(AccountBase):
     - Returning account data from database
     - API responses
     """
-    
+
     id: int = Field(..., description="Database primary key")
     created_at: datetime
-    
+
     model_config = {"from_attributes": True}  # Enables ORM mode for SQLAlchemy compatibility
 
 

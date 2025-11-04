@@ -9,9 +9,9 @@ Why this exists:
 
 import json
 from datetime import datetime
-from typing import Optional, Any
+from typing import Any
 
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class PersonaCriteria(BaseModel):
@@ -48,26 +48,29 @@ class PersonaAssignment(BaseModel):
     user_id: str = Field(description="User identifier")
     persona_id: str = Field(description="Assigned persona ID (e.g., 'high_utilization')")
     window_days: int = Field(description="Time window in days (30 or 180)")
-    criteria_met: Optional[dict[str, Any]] = Field(
+    criteria_met: dict[str, Any] | None = Field(
         default=None,
         description="JSON object showing which criteria triggered this persona"
     )
     assigned_at: datetime = Field(description="When this persona was assigned")
-    
+
     model_config = ConfigDict(from_attributes=True)  # Allow creation from SQLAlchemy models
-    
+
     @field_validator("criteria_met", mode="before")
     @classmethod
-    def parse_criteria_met(cls, v: Any) -> Optional[dict[str, Any]]:
+    def parse_criteria_met(cls, v: Any) -> dict[str, Any] | None:
         """Parse criteria_met if it's a JSON string."""
         if v is None:
             return None
         if isinstance(v, str):
             try:
-                return json.loads(v)
+                parsed: dict[str, Any] = json.loads(v)
+                return parsed
             except json.JSONDecodeError:
                 return None
-        return v
+        if isinstance(v, dict):
+            return v
+        return None
 
 
 class PersonaCreate(BaseModel):
@@ -79,5 +82,5 @@ class PersonaCreate(BaseModel):
     user_id: str
     persona_id: str
     window_days: int
-    criteria_met: Optional[dict] = None
+    criteria_met: dict | None = None
 

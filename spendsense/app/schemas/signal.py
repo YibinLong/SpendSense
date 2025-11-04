@@ -8,9 +8,8 @@ Why this exists:
 """
 
 from decimal import Decimal
-from typing import Optional
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SubscriptionSignalData(BaseModel):
@@ -23,7 +22,7 @@ class SubscriptionSignalData(BaseModel):
     recurring_merchant_count: int = Field(description="Number of recurring merchants detected")
     monthly_recurring_spend: Decimal = Field(description="Average monthly recurring spend")
     subscription_share_pct: Decimal = Field(description="Subscription spend as % of total spend")
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -37,7 +36,7 @@ class SavingsSignalData(BaseModel):
     savings_net_inflow: Decimal = Field(description="Net inflow to savings accounts")
     savings_growth_rate_pct: Decimal = Field(description="Savings growth rate percentage")
     emergency_fund_months: Decimal = Field(description="Emergency fund coverage in months")
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -56,7 +55,7 @@ class CreditSignalData(BaseModel):
     has_interest_charges: bool = Field(description="Interest charges detected in transactions")
     has_minimum_payment_only: bool = Field(description="Minimum payment only behavior detected")
     is_overdue: bool = Field(description="Any overdue payments")
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -72,7 +71,7 @@ class IncomeSignalData(BaseModel):
     pay_gap_variability: Decimal = Field(description="Variability in pay frequency")
     avg_payroll_amount: Decimal = Field(description="Average payroll deposit amount")
     cashflow_buffer_months: Decimal = Field(description="Cash-flow buffer in months")
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -90,21 +89,21 @@ class SignalSummary(BaseModel):
     """
     user_id: str = Field(description="User identifier")
     window_days: int = Field(description="Time window in days (30 or 180)")
-    
+
     # All 4 signal types (nullable if not yet computed)
-    subscriptions: Optional[SubscriptionSignalData] = Field(
+    subscriptions: SubscriptionSignalData | None = Field(
         default=None,
         description="Subscription behavior signals"
     )
-    savings: Optional[SavingsSignalData] = Field(
+    savings: SavingsSignalData | None = Field(
         default=None,
         description="Savings behavior signals"
     )
-    credit: Optional[CreditSignalData] = Field(
+    credit: CreditSignalData | None = Field(
         default=None,
         description="Credit utilization signals"
     )
-    income: Optional[IncomeSignalData] = Field(
+    income: IncomeSignalData | None = Field(
         default=None,
         description="Income stability signals"
     )
