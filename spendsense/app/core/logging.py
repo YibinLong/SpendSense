@@ -32,7 +32,7 @@ def add_app_context(
     return event_dict
 
 
-def configure_logging(debug: bool = True, log_level: str = "INFO") -> None:
+def configure_logging(debug: bool = True, log_level: str = "WARNING") -> None:
     """
     Configure structlog based on environment.
     

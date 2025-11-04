@@ -66,7 +66,7 @@ def get_engine() -> Engine:
         # Create engine with SQLite-specific settings
         _engine = create_engine(
             settings.database_url,
-            echo=settings.debug,  # Log SQL in debug mode
+            echo=False,  # Disable SQL logging (set to True only for debugging)
             # SQLite-specific settings for better concurrency
             connect_args={
                 "check_same_thread": False  # Allow multi-threaded access
