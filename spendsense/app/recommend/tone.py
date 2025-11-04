@@ -13,12 +13,10 @@ Hybrid approach:
 2. Positive phrasing rules - ensures supportive language is present
 """
 
-from typing import Tuple, List
 import re
 
-from spendsense.app.core.logging import get_logger
 from spendsense.app.core.config import settings
-
+from spendsense.app.core.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -74,7 +72,7 @@ SUPPORTIVE_WORDS = [
 ]
 
 
-def check_tone(text: str) -> Tuple[bool, List[str]]:
+def check_tone(text: str) -> tuple[bool, list[str]]:
     """
     Check if text uses supportive, non-shaming tone.
     
@@ -106,39 +104,39 @@ def check_tone(text: str) -> Tuple[bool, List[str]]:
         # passed = True
         # issues = []
     """
-    issues: List[str] = []
+    issues: list[str] = []
     text_lower = text.lower()
-    
+
     # Check for shaming keywords
     for keyword in SHAMING_KEYWORDS:
         if keyword.lower() in text_lower:
             issues.append(f"Contains shaming keyword: {keyword}")
-    
+
     # Check for absolute phrases
     for phrase in ABSOLUTE_PHRASES:
         if phrase.lower() in text_lower:
             issues.append(f"Contains absolute/judgmental phrase: {phrase}")
-    
+
     # Check for at least one supportive word
     has_supportive = any(
         word.lower() in text_lower
         for word in SUPPORTIVE_WORDS
     )
-    
+
     if not has_supportive:
         issues.append("Missing supportive language (should contain words like: consider, might, could, opportunity)")
-    
+
     # Check for excessive exclamation marks (can feel aggressive)
     exclamation_count = text.count("!")
     if exclamation_count > 1:
         issues.append(f"Too many exclamation marks ({exclamation_count}), use at most 1")
-    
+
     # Check for all caps (can feel like shouting)
     if re.search(r'\b[A-Z]{4,}\b', text):
         issues.append("Contains all-caps words (avoid shouting)")
-    
+
     passed = len(issues) == 0
-    
+
     # Log rejections in dev mode
     if not passed and settings.is_dev:
         logger.warning(
@@ -146,14 +144,14 @@ def check_tone(text: str) -> Tuple[bool, List[str]]:
             text=text[:100],  # First 100 chars
             issues=issues,
         )
-    
+
     if passed:
         logger.debug("tone_check_passed", text=text[:50])
-    
+
     return passed, issues
 
 
-def suggest_tone_fix(text: str, issues: List[str]) -> str:
+def suggest_tone_fix(text: str, issues: list[str]) -> str:
     """
     Suggest a tone-friendly version of text.
     
@@ -167,8 +165,8 @@ def suggest_tone_fix(text: str, issues: List[str]) -> str:
     Returns:
         Suggested alternative text (or original if no suggestions)
     """
-    suggestions = []
-    
+    suggestions: list[str] = []
+
     # Replace shaming keywords with neutral alternatives
     replacements = {
         "irresponsible": "could be optimized",
@@ -185,7 +183,7 @@ def suggest_tone_fix(text: str, issues: List[str]) -> str:
         "you always": "frequently",
         "you never": "rarely",
     }
-    
+
     suggested_text = text
     for bad_word, good_word in replacements.items():
         suggested_text = re.sub(
@@ -194,10 +192,11 @@ def suggest_tone_fix(text: str, issues: List[str]) -> str:
             suggested_text,
             flags=re.IGNORECASE
         )
-    
+
     # Add supportive opener if missing
     if "Missing supportive language" in str(issues):
         suggested_text = f"Consider this: {suggested_text}"
-    
+
     return suggested_text
+
 

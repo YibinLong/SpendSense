@@ -11,7 +11,6 @@ Why this exists:
 
 from spendsense.app.core.logging import get_logger
 
-
 logger = get_logger(__name__)
 
 
@@ -49,7 +48,7 @@ def add_disclosure(recommendation_data: dict) -> dict:
     """
     # Make a copy to avoid mutating the original
     result = recommendation_data.copy()
-    
+
     # Add disclosure if not already present
     if "disclosure" not in result or not result["disclosure"]:
         result["disclosure"] = EDUCATIONAL_DISCLAIMER
@@ -58,7 +57,7 @@ def add_disclosure(recommendation_data: dict) -> dict:
             item_id=result.get("id"),
             item_type=result.get("type"),
         )
-    
+
     return result
 
 
@@ -70,4 +69,5 @@ def get_disclosure() -> str:
         The mandatory disclosure text
     """
     return EDUCATIONAL_DISCLAIMER
+
 
