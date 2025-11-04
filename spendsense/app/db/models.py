@@ -57,6 +57,8 @@ class User(Base):
     - Central entity linking all user financial data
     - Masked identifiers protect PII
     - Foundation for persona assignment and recommendations
+    - Auth fields enable secure login and role-based access control
+    - Demographic fields enable fairness analysis
     """
     __tablename__ = "users"
 
@@ -67,6 +69,16 @@ class User(Base):
     user_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
     email_masked: Mapped[str | None] = mapped_column(String(255), nullable=True)
     phone_masked: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
+    # Authentication fields
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    role: Mapped[str] = mapped_column(String(20), nullable=False, default="card_user")  # card_user or operator
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    # Demographic fields (optional for privacy)
+    age_range: Mapped[str | None] = mapped_column(String(20), nullable=True)  # e.g., "25-34"
+    gender: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    ethnicity: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Timestamps
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.utcnow)
