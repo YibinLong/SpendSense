@@ -11,8 +11,8 @@ Why this exists:
 - Request IDs and context help trace decisions through the system
 """
 
-import sys
 import logging
+import sys
 from typing import Any
 
 import structlog
@@ -60,7 +60,7 @@ def configure_logging(debug: bool = True, log_level: str = "WARNING") -> None:
         * TimeStamper: Add ISO-formatted timestamp to every log
         * ConsoleRenderer or JSONRenderer: Final output format
     """
-    
+
     # Configure standard library logging first
     # This ensures any libraries using standard logging also work
     logging.basicConfig(
@@ -68,7 +68,7 @@ def configure_logging(debug: bool = True, log_level: str = "WARNING") -> None:
         stream=sys.stderr,
         level=getattr(logging, log_level.upper())
     )
-    
+
     # Shared processors used in both dev and prod
     shared_processors = [
         structlog.contextvars.merge_contextvars,
@@ -78,7 +78,7 @@ def configure_logging(debug: bool = True, log_level: str = "WARNING") -> None:
         structlog.processors.format_exc_info,
         structlog.processors.TimeStamper(fmt="iso", utc=True),
     ]
-    
+
     # Choose renderer based on environment
     if debug or sys.stderr.isatty():
         # Pretty printing for development
@@ -88,7 +88,7 @@ def configure_logging(debug: bool = True, log_level: str = "WARNING") -> None:
             install(show_locals=True)
         except ImportError:
             pass  # rich not installed, use default traceback
-        
+
         processors = shared_processors + [
             structlog.dev.ConsoleRenderer()
         ]
@@ -98,7 +98,7 @@ def configure_logging(debug: bool = True, log_level: str = "WARNING") -> None:
             structlog.processors.dict_tracebacks,
             structlog.processors.JSONRenderer()
         ]
-    
+
     # Configure structlog
     structlog.configure(
         processors=processors,
@@ -138,7 +138,7 @@ def get_logger(name: str | None = None) -> Any:
 # Example usage in other modules:
 #
 # from spendsense.app.core.logging import get_logger
-# 
+#
 # logger = get_logger(__name__)
 # logger.info("processing_transaction", user_id=user_id, amount=100.50)
 # logger.warning("high_utilization_detected", card_id=card_id, utilization=0.85)

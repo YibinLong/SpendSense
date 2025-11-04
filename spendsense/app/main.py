@@ -10,14 +10,14 @@ Why this file exists:
 - Health check endpoint helps verify the app is running
 """
 
-from contextlib import asynccontextmanager
-from typing import AsyncIterator
 import uuid
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
 
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import configure_logging, get_logger
@@ -45,9 +45,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         api_host=settings.api_host,
         api_port=settings.api_port,
     )
-    
+
     yield  # App runs here
-    
+
     # Shutdown
     logger.info("app_shutdown")
 
@@ -134,11 +134,11 @@ async def root() -> dict[str, str]:
 
 # Import route modules
 from spendsense.app.api import (
-    routes_users,
     routes_consent,
+    routes_operator,
     routes_profiles,
     routes_recommendations,
-    routes_operator,
+    routes_users,
 )
 
 # Include all routers
@@ -165,20 +165,20 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     """
     trace_id = str(uuid.uuid4())
     logger = get_logger(__name__)
-    
+
     logger.warning(
         "validation_error",
         trace_id=trace_id,
         path=request.url.path,
         errors=exc.errors(),
     )
-    
+
     # Format field errors
     field_errors = {}
     for error in exc.errors():
         field = ".".join(str(loc) for loc in error["loc"])
         field_errors[field] = error["msg"]
-    
+
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
@@ -204,7 +204,7 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
     """
     trace_id = str(uuid.uuid4())
     logger = get_logger(__name__)
-    
+
     logger.error(
         "unexpected_error",
         trace_id=trace_id,
@@ -212,7 +212,7 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
         error=str(exc),
         exc_info=True,  # Include traceback
     )
-    
+
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
