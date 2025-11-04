@@ -68,7 +68,7 @@ class Settings(BaseSettings):
     
     # Logging Configuration
     log_level: str = Field(
-        default="INFO",
+        default="WARNING",
         description="Logging level (DEBUG, INFO, WARNING, ERROR)"
     )
     

@@ -122,7 +122,9 @@ def compute_pay_frequency_stats(
     # Calculate median and variability using pandas
     if gaps:
         median_gap = float(pd.Series(gaps).median())
-        variability = float(pd.Series(gaps).std())
+        # Handle NaN from std() when there's only 1 gap (2 paychecks)
+        std_value = pd.Series(gaps).std()
+        variability = 0.0 if pd.isna(std_value) else float(std_value)
     else:
         median_gap = 0.0
         variability = 0.0

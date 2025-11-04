@@ -72,12 +72,19 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",  # Additional port
+        "http://127.0.0.1:5174",
+        "http://localhost:3000",  # In case frontend runs on different port
+        "http://127.0.0.1:3000",
         f"http://localhost:{settings.frontend_port}",
         f"http://127.0.0.1:{settings.frontend_port}",
     ],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
+    max_age=3600,  # Cache preflight responses for 1 hour
 )
 
 

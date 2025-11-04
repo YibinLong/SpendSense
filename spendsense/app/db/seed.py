@@ -80,6 +80,23 @@ UTILITY_MERCHANTS = [
 ]
 
 
+# Friendly labels to make demo users easy to recognize in the UI
+# These are stored in the email_masked field purely as a display label
+# so it is obvious what behavior/persona to expect when testing.
+FRIENDLY_USER_LABELS = [
+    "Sam Subscriber — Subscription-heavy",
+    "Sally Saver — Savings builder",
+    "Harry HighUtil — High credit utilization",
+    "Ivy Irregular — Variable income",
+    "Paula PayMin — Minimum payments only",
+    "Owen Overdue — Overdue risk",
+    "Gina Groceries — Grocery spender",
+    "Dina Dining — Eats out often",
+    "Cathy CashBuffer — Strong cash buffer",
+    "Manny Minimalist — Low activity",
+]
+
+
 def generate_user_id(index: int) -> str:
     """Generate masked user ID."""
     return f"usr_{str(index).zfill(6)}"
@@ -124,7 +141,10 @@ def generate_users(n: int = 50) -> List[User]:
         # Create via Pydantic for validation
         user_data = UserCreate(
             user_id=user_id,
-            email_masked=f"u***{i}@example.com",
+            # Use friendly labels for the first handful of users so they are easy to pick
+            email_masked=(
+                FRIENDLY_USER_LABELS[i - 1] if i <= len(FRIENDLY_USER_LABELS) else f"u***{i}@example.com"
+            ),
             phone_masked=f"***-***-{str(i).zfill(4)}",
             created_at=datetime.utcnow() - timedelta(days=random.randint(180, 730))
         )

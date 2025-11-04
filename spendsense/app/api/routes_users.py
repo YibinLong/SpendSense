@@ -4,8 +4,12 @@ User management API routes.
 This module provides endpoints for creating and managing users.
 
 Endpoints:
+- GET /users - List all users
 - POST /users - Create a new user
+- GET /users/{user_id} - Get a specific user
 """
+
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -18,6 +22,40 @@ from spendsense.app.schemas.user import UserCreate, UserResponse
 
 logger = get_logger(__name__)
 router = APIRouter()
+
+
+@router.get("", response_model=List[UserResponse])
+async def list_users(
+    db: Session = Depends(get_db),
+) -> List[UserResponse]:
+    """
+    List all users.
+    
+    This endpoint returns all users in the system.
+    
+    Why this exists:
+    - Frontend needs to populate user selector dropdowns
+    - Operator view needs to show all users for review
+    
+    Response:
+        [
+            {
+                "id": 1,
+                "user_id": "user_123",
+                "email_masked": "user***@example.com",
+                "phone_masked": "***-***-1234",
+                "created_at": "2025-11-03T10:30:00"
+            },
+            ...
+        ]
+    """
+    logger.debug("listing_users")
+    
+    users = db.query(User).order_by(User.created_at.desc()).all()
+    
+    logger.info("users_listed", count=len(users))
+    
+    return [UserResponse.model_validate(user) for user in users]
 
 
 @router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
