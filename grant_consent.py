@@ -26,7 +26,7 @@ def grant_all_consent():
             # Check if user already has consent
             existing_consent = session.query(ConsentEvent).filter(
                 ConsentEvent.user_id == user.user_id,
-                ConsentEvent.action == "grant"
+                ConsentEvent.action == "opt_in"
             ).first()
             
             if existing_consent:
@@ -36,7 +36,7 @@ def grant_all_consent():
             # Create consent event
             consent = ConsentEvent(
                 user_id=user.user_id,
-                action="grant",
+                action="opt_in",
                 reason="Development/testing auto-consent",
                 consent_given_by="system",
                 timestamp=datetime.utcnow()
