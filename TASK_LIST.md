@@ -11,15 +11,6 @@ This is a practical, beginner-friendly task list derived directly from `PRD.md`.
 
 ---
 
-## Milestones (vertical slices)
-- [ ] Vertical Slice 1: Seed data → compute signals (30d) → assign persona → show user dashboard (read-only)
-- [ ] Vertical Slice 2: Recommendations with rationales and disclosures
-- [ ] Vertical Slice 3: Consent guardrails and enforcement
-- [ ] Vertical Slice 4: Operator review (approve/override)
-- [ ] Vertical Slice 5: Evaluation metrics export (JSON/CSV)
-
----
-
 ## Epic: Repo Bootstrap & Developer Experience
 Why: Get a clean, predictable local setup so everything runs the same way every time.
 
@@ -185,69 +176,157 @@ Why: Catch mistakes early and keep behavior deterministic.
 
 ---
 
-## Definitions of Done (DoD)
-Why: Clear finish line for each piece of work.
+## Epic: Authentication & Authorization (Production Readiness)
+Why: Move from dev demo to production app where real card users and operators can securely access the system. Implements local JWT-based auth without external dependencies.
 
-- [ ] Code is typed, validated, and logged (structlog) with useful IDs
-- [ ] Unit tests added/updated and passing; integration path verified locally
-- [ ] APIs documented via FastAPI auto docs; example responses verified
-- [ ] Frontend renders without console errors; copy includes disclosure text
-- [ ] Data artifacts (SQLite + Parquet + metrics) land in `./data/` paths from `.env`
+### Story: User model and authentication backend
+- [ ] Add auth fields to User model: `password_hash`, `role` (card_user | operator), `is_active`
+- [ ] Add `spendsense/app/auth/` module with JWT token generation/validation
+- [ ] Add `spendsense/app/auth/password.py` for secure password hashing (bcrypt/argon2)
+- [ ] Add `spendsense/app/auth/dependencies.py` for FastAPI auth dependencies (get_current_user, require_role)
+- [ ] Store JWT secrets in `.env` (JWT_SECRET_KEY, JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES)
+- [ ] Unit tests for password hashing and JWT token flows
 
----
+### Story: Authentication endpoints
+- [ ] `POST /auth/signup` — create new user with role (card_user or operator)
+- [ ] `POST /auth/login` — return JWT access token on valid credentials
+- [ ] `POST /auth/logout` — invalidate token (client-side deletion, optional backend tracking)
+- [ ] `GET /auth/me` — return current authenticated user info
+- [ ] Update `POST /users` to require operator role (create users as admin)
+- [ ] Add Pydantic schemas: `LoginRequest`, `SignupRequest`, `TokenResponse`, `UserAuth`
+- [ ] Integration tests for signup → login → access protected endpoint
 
-## Vertical Slice 1 – Checklist
-Goal: End-to-end demo from data to persona in UI (read-only).
+### Story: Route guards and authorization
+- [ ] Add `require_auth` dependency to all protected endpoints
+- [ ] Add `require_card_user` and `require_operator` role guards
+- [ ] Card users can only access their own data: `/profile/{user_id}`, `/recommendations/{user_id}` (validate user_id matches token)
+- [ ] Operators can access all users and operator endpoints: `/operator/*`
+- [ ] Update consent endpoints to use authenticated user_id from token
+- [ ] Return 401 Unauthorized for missing/invalid tokens, 403 Forbidden for insufficient permissions
+- [ ] Integration tests for authorization scenarios (card user accessing others' data, operator access, etc.)
 
-- [ ] Seed synthetic data (SQLite + Parquet)
-- [ ] Compute 30d signals (subscriptions, savings, credit, income)
-- [ ] Assign persona with rationale (30d)
-- [ ] Implement `/profile/{user_id}` and `/users`
-- [ ] Render User Dashboard with persona + signals (read-only)
+### Story: Frontend auth integration
+- [ ] Add login/signup pages: `frontend/src/pages/Login.tsx`, `frontend/src/pages/Signup.tsx`
+- [ ] Store JWT in localStorage/sessionStorage with secure practices
+- [ ] Add auth context/provider for token management and user state
+- [ ] Add route guards: redirect to login if not authenticated
+- [ ] Update API client to include `Authorization: Bearer <token>` header
+- [ ] Show role-specific navigation (card users see dashboard, operators see operator view)
+- [ ] Add logout button that clears token and redirects to login
 
----
-
-## Vertical Slice 2 – Checklist
-Goal: Show recommendations with plain-language rationales and disclosure.
-
-- [ ] Content catalog + recommendation engine
-- [ ] Eligibility + tone checks + disclosure enforcement
-- [ ] `/recommendations/{user_id}` endpoint
-- [ ] User Dashboard renders items with rationales and disclosure
-
----
-
-## Vertical Slice 3 – Checklist
-Goal: Enforce explicit consent across API and UI.
-
-- [ ] Consent endpoints and `consent_events` persistence
-- [ ] Middleware to block processing without opt-in (403)
-- [ ] Frontend consent flow and blocked-state UX
-
----
-
-## Vertical Slice 4 – Checklist
-Goal: Operator can approve/override with traceability.
-
-- [ ] Operator queue API + approve/override endpoint
-- [ ] Operator view with actions, notes, and decision traces
+### Story: Seed data with auth
+- [ ] Update `seed.py` to create default operator account (username: operator, role: operator)
+- [ ] Update `seed.py` to create card_user accounts for each synthetic user
+- [ ] Add migration script to add auth fields to existing users
+- [ ] Document default credentials in README for local testing
 
 ---
 
-## Vertical Slice 5 – Checklist
-Goal: Export metrics and traces for evaluation.
+## Epic: Fairness & Demographic Analysis
+Why: Complete PRD requirement for demographic parity checks. Ensures recommendations are fair across demographic groups.
 
-- [ ] Metrics harness exports JSON/CSV
-- [ ] Decision traces per user saved under `./data/decision_traces/`
-- [ ] Basic fairness calc if demographics present
+### Story: Demographic data model
+- [ ] Add demographic fields to User model: `age_range` (18-24, 25-34, etc.), `gender` (optional), `ethnicity` (optional)
+- [ ] Make all demographic fields nullable (opt-in for privacy)
+- [ ] Add Pydantic schemas for demographics in `schemas/user.py`
+- [ ] Migration script to add demographic columns to existing users table
+- [ ] Update seed.py to generate realistic synthetic demographics (weighted distributions)
+- [ ] Unit tests for demographic data validation
+
+### Story: Fairness metrics computation
+- [ ] Add `compute_fairness_metrics()` to `spendsense/app/eval/metrics.py`
+- [ ] Calculate persona distribution across demographics (% of each demographic in each persona)
+- [ ] Calculate recommendation distribution (education vs offers) across demographics
+- [ ] Detect statistical disparity: flag if any demographic group is over/under-represented by >20%
+- [ ] Export fairness metrics to `eval_metrics.json` and `.csv`
+- [ ] Add fairness section to metrics summary output
+- [ ] Unit tests for fairness calculations with known demographic distributions
+
+### Story: Fairness reporting
+- [ ] Add fairness dashboard section to Operator View (show persona/recommendation breakdowns by demographics)
+- [ ] Add warnings/alerts when statistical disparity detected
+- [ ] Export per-demographic decision traces to `./data/decision_traces/fairness/`
+- [ ] Document fairness methodology and thresholds in `docs/fairness_methodology.md`
+- [ ] Integration tests for fairness calculations across full synthetic dataset
 
 ---
 
-## Quick Commands (reference)
-Why: Shortcuts are friendly for beginners.
+## Epic: Summary Report Generation
+Why: Provide human-readable 1-2 page executive summaries of system performance. Makes metrics accessible to non-technical stakeholders.
 
-- Backend (from repo root): `uvicorn app.main:app --reload --host $API_HOST --port $API_PORT`
-- Frontend (from `frontend/`): `npm run dev` → `http://localhost:$FRONTEND_PORT`
-- Tests: `pytest -q`; Types: `mypy app`
+### Story: Report generator module
+- [ ] Add `spendsense/app/eval/reports.py` with report generation logic
+- [ ] Support Markdown output format (simple, version-controllable)
+- [ ] Support PDF output format (requires `reportlab` or `weasyprint`)
+- [ ] Add templates for report sections: coverage, explainability, latency, auditability, fairness
+- [ ] Include visualizations: bar charts for persona distribution, time-series for latency
+- [ ] Add executive summary section with pass/fail indicators per PRD targets
 
+### Story: Report generation CLI
+- [ ] Add `--report` flag to `run_metrics.py` to generate summary report
+- [ ] Export reports to `./data/eval_report.md` and `./data/eval_report.pdf`
+- [ ] Add timestamp and metadata to reports
+- [ ] Include sample recommendations with rationales in report
+- [ ] Add comparison to previous runs (if historical metrics exist)
+- [ ] Integration tests that validate report structure and completeness
 
+### Story: Report viewing in frontend
+- [ ] Add "View Report" link in Operator View to display latest report
+- [ ] Render Markdown reports in browser (use `react-markdown` or similar)
+- [ ] Add download button for PDF version
+- [ ] Show report generation timestamp and metrics version
+- [ ] Add historical reports list (if multiple reports exist)
+
+---
+
+## Epic: Modern UI/UX Redesign
+Why: Transform from basic black-and-white to modern, startup-quality design. Improve user experience and visual appeal.
+
+### Story: Design system and color palette
+- [ ] Define color palette inspired by Tangerine (orange gradients, modern blues, clean whites)
+- [ ] Primary: Orange gradient (#FF6B35 → #F7931E)
+- [ ] Secondary: Deep blue (#1C3F60) and light blue (#4A90E2)
+- [ ] Neutral: Modern grays (#F8F9FA, #E9ECEF, #6C757D, #343A40)
+- [ ] Update Tailwind config with custom colors and gradients
+- [ ] Add custom CSS variables for consistent theming
+- [ ] Create design tokens file `frontend/src/styles/tokens.css`
+
+### Story: Component redesign
+- [ ] Redesign `PersonaBadge` with gradient backgrounds and icons
+- [ ] Redesign `SignalCard` with visual metrics (progress bars, charts)
+- [ ] Redesign `RecommendationCard` with modern card design (shadows, hover effects, gradients)
+- [ ] Add micro-interactions: hover states, smooth transitions, loading animations
+- [ ] Update button styles: gradient backgrounds, rounded corners, shadows
+- [ ] Add icons throughout (use `lucide-react` or similar)
+
+### Story: Dashboard layouts
+- [ ] Redesign User Dashboard with hero section (gradient background, welcome message)
+- [ ] Add data visualization: persona distribution pie chart, signal trend lines
+- [ ] Redesign Operator View with modern table design (striped rows, hover effects)
+- [ ] Add status indicators with color coding (green for approved, yellow for pending, red for rejected)
+- [ ] Implement card grid layouts instead of simple lists
+- [ ] Add empty states with illustrations and helpful messages
+
+### Story: Navigation and layout
+- [ ] Redesign header/navbar with gradient background
+- [ ] Add user avatar/profile dropdown in navbar
+- [ ] Add sidebar navigation for multi-section apps
+- [ ] Implement responsive design (mobile-first approach)
+- [ ] Add loading skeletons instead of plain "Loading..." text
+- [ ] Add toast notifications with modern styling (success green, error red, info blue)
+
+### Story: Login/Auth pages
+- [ ] Design modern login page with split layout (illustration on left, form on right)
+- [ ] Add gradient background to auth pages
+- [ ] Design signup flow with progress indicator
+- [ ] Add welcome/onboarding screens for new users
+- [ ] Implement form validation with inline error messages
+- [ ] Add "Forgot Password" flow (even if basic/local only)
+
+### Story: Charts and data visualization
+- [ ] Add Chart.js or Recharts for data visualization
+- [ ] Create persona distribution donut chart
+- [ ] Create signal trend line charts (30d vs 180d comparison)
+- [ ] Add spending breakdown pie chart (categories from transactions)
+- [ ] Visualize credit utilization with gauge charts
+- [ ] Add sparklines for at-a-glance trends in cards
