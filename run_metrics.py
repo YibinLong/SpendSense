@@ -10,17 +10,20 @@ What it does:
 2. Computes explainability metrics (% recommendations with rationales)
 3. Computes latency metrics (recommendation generation time)
 4. Computes auditability metrics (% recommendations with decision traces)
-5. Exports metrics to ./data/eval_metrics.json and ./data/eval_metrics.csv
-6. Exports per-user decision traces to ./data/decision_traces/
+5. Computes fairness metrics (demographic analysis)
+6. Exports metrics to ./data/eval_metrics.json and ./data/eval_metrics.csv
+7. Exports per-user decision traces to ./data/decision_traces/
+8. (Optional) Generates markdown and PDF reports with --report flag
 
 PRD Targets:
 - Coverage: 100% of users with sufficient data
 - Explainability: 100% of recommendations with rationales
 - Latency: <5 seconds per user
 - Auditability: 100% of recommendations with decision traces
+- Fairness: No disparities >threshold% across demographics
 
 Usage:
-    python run_metrics.py [--latency-sample-size N] [--window 30|180]
+    python run_metrics.py [--latency-sample-size N] [--window 30|180] [--report]
 """
 
 import argparse
@@ -36,13 +39,14 @@ from spendsense.app.eval.traces import export_all_decision_traces
 logger = get_logger(__name__)
 
 
-def main(latency_sample_size: int = 10, window_days: int = 30):
+def main(latency_sample_size: int = 10, window_days: int = 30, generate_report: bool = False):
     """
     Main entry point for metrics computation.
     
     Args:
         latency_sample_size: Number of users to sample for latency testing
         window_days: Time window for decision traces (30 or 180)
+        generate_report: Whether to generate markdown and PDF reports
     """
     logger.info("=" * 60)
     logger.info("SpendSense Evaluation Metrics Computation")
@@ -52,18 +56,54 @@ def main(latency_sample_size: int = 10, window_days: int = 30):
     with next(get_session()) as session:
         try:
             # 1. Compute all metrics
-            logger.info("Step 1/3: Computing evaluation metrics...")
+            logger.info("Step 1/5: Computing evaluation metrics...")
             metrics = compute_all_metrics(session, latency_sample_size=latency_sample_size)
             
             # 2. Export metrics to JSON and CSV
-            logger.info("Step 2/3: Exporting metrics...")
+            logger.info("Step 2/5: Exporting metrics...")
             output_dir = Path(settings.data_dir)
             export_metrics(metrics, output_dir)
             
             # 3. Export decision traces
-            logger.info(f"Step 3/3: Exporting decision traces (window={window_days}d)...")
+            logger.info(f"Step 3/5: Exporting decision traces (window={window_days}d)...")
             traces_dir = output_dir / "decision_traces"
             exported_traces = export_all_decision_traces(session, traces_dir, window_days=window_days)
+            
+            # 4. Export fairness traces
+            logger.info("Step 4/5: Exporting fairness traces...")
+            from spendsense.app.eval.fairness_traces import export_fairness_traces
+            export_fairness_traces(session, traces_dir)
+            
+            # 5. Generate reports if requested
+            if generate_report:
+                logger.info("Step 5/5: Generating reports...")
+                
+                from spendsense.app.eval.reports import (
+                    generate_report_markdown,
+                    generate_report_pdf,
+                )
+                from spendsense.app.eval.report_history import save_report_with_timestamp
+                
+                # Generate markdown report
+                markdown = generate_report_markdown(metrics, session)
+                md_path = output_dir / "eval_report.md"
+                md_path.write_text(markdown)
+                logger.info(f"Markdown report: {md_path}")
+                
+                # Generate PDF report
+                try:
+                    pdf_path = output_dir / "eval_report.pdf"
+                    generate_report_pdf(markdown, pdf_path, metrics, session)
+                    logger.info(f"PDF report: {pdf_path}")
+                    
+                    # Archive reports with timestamp
+                    save_report_with_timestamp(md_path)
+                    save_report_with_timestamp(pdf_path)
+                    
+                except Exception as e:
+                    logger.warning(f"PDF generation failed (optional dependency): {e}")
+            else:
+                logger.info("Step 5/5: Skipping report generation (use --report to enable)")
             
             # Print summary
             logger.info("=" * 60)
@@ -100,6 +140,17 @@ def main(latency_sample_size: int = 10, window_days: int = 30):
             logger.info(f"  - Total recommendations: {aud['total_recommendations']}")
             logger.info(f"  - Recommendations with traces: {aud['recommendations_with_traces']} ({aud['auditability_pct']:.1f}%)")
             
+            # Fairness
+            fair = metrics["fairness"]
+            logger.info(f"\nFairness:")
+            logger.info(f"  - Total users analyzed: {fair['total_users_analyzed']}")
+            logger.info(f"  - Fairness threshold: {fair['threshold_pct']}%")
+            logger.info(f"  - Disparities detected: {len(fair.get('disparities', []))}")
+            logger.info(f"  - Warnings: {len(fair.get('warnings', []))}")
+            if fair.get('warnings'):
+                for warning in fair['warnings'][:3]:  # Show first 3
+                    logger.info(f"    • {warning}")
+            
             # Outputs
             logger.info("\n" + "=" * 60)
             logger.info("OUTPUTS")
@@ -107,6 +158,11 @@ def main(latency_sample_size: int = 10, window_days: int = 30):
             logger.info(f"Metrics JSON: {output_dir / 'eval_metrics.json'}")
             logger.info(f"Metrics CSV: {output_dir / 'eval_metrics.csv'}")
             logger.info(f"Decision traces: {traces_dir}/ ({len(exported_traces)} files)")
+            logger.info(f"Fairness traces: {traces_dir}/fairness/")
+            if generate_report:
+                logger.info(f"Markdown report: {output_dir / 'eval_report.md'}")
+                if (output_dir / 'eval_report.pdf').exists():
+                    logger.info(f"PDF report: {output_dir / 'eval_report.pdf'}")
             
             # PRD targets check
             logger.info("\n" + "=" * 60)
@@ -153,11 +209,17 @@ if __name__ == "__main__":
         choices=[30, 180],
         help="Time window for decision traces in days (default: 30)",
     )
+    parser.add_argument(
+        "--report",
+        action="store_true",
+        help="Generate markdown and PDF reports (requires matplotlib and reportlab)",
+    )
     
     args = parser.parse_args()
     
     main(
         latency_sample_size=args.latency_sample_size,
         window_days=args.window,
+        generate_report=args.report,
     )
 
