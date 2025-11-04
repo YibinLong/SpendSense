@@ -16,21 +16,19 @@ Signals computed:
 
 from datetime import date, timedelta
 from decimal import Decimal
-from typing import List, Dict, Any
 
 from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
-from spendsense.app.db.models import Account, Transaction, SubscriptionSignal
-
+from spendsense.app.db.models import Account, SubscriptionSignal, Transaction
 
 logger = get_logger(__name__)
 
 
 def detect_recurring_merchants(
-    transactions: List[Transaction],
+    transactions: list[Transaction],
     window_days: int
-) -> List[str]:
+) -> list[str]:
     """
     Detect merchants with ≥3 occurrences in the window.
     
@@ -53,30 +51,30 @@ def detect_recurring_merchants(
     """
     # Filter for subscription category only
     subscription_txs = [
-        tx for tx in transactions 
+        tx for tx in transactions
         if tx.category == "Subscription" and tx.merchant_name
     ]
-    
+
     # Count occurrences per merchant
-    merchant_counts: Dict[str, int] = {}
+    merchant_counts: dict[str, int] = {}
     for tx in subscription_txs:
         merchant_name = tx.merchant_name
         if merchant_name:  # Skip None values
             merchant_counts[merchant_name] = merchant_counts.get(merchant_name, 0) + 1
-    
+
     # Filter for ≥3 occurrences
     recurring_merchants = [
-        merchant for merchant, count in merchant_counts.items() 
+        merchant for merchant, count in merchant_counts.items()
         if count >= 3
     ]
-    
+
     logger.debug(
         "recurring_merchants_detected",
         window_days=window_days,
         total_merchants=len(merchant_counts),
         recurring_count=len(recurring_merchants)
     )
-    
+
     return recurring_merchants
 
 
@@ -113,16 +111,16 @@ def compute_subscription_signals(
     - Zero total spend: subscription_share_pct = 0
     """
     logger.info("computing_subscription_signals", user_id=user_id, window_days=window_days)
-    
+
     # Calculate cutoff date
     cutoff_date = date.today() - timedelta(days=window_days)
-    
+
     # Get user's accounts (individual only per PRD)
     accounts = session.query(Account).filter(
         Account.user_id == user_id,
         Account.holder_category == "individual"
     ).all()
-    
+
     if not accounts:
         logger.warning("no_accounts_for_user", user_id=user_id)
         # Return zeros
@@ -133,16 +131,16 @@ def compute_subscription_signals(
             monthly_recurring_spend=Decimal("0.00"),
             subscription_share_pct=Decimal("0.00")
         )
-    
+
     account_ids = [acc.account_id for acc in accounts]
-    
+
     # Get transactions in window (exclude pending per PRD edge case handling)
     transactions = session.query(Transaction).filter(
         Transaction.account_id.in_(account_ids),
         Transaction.transaction_date >= cutoff_date,
         Transaction.pending == False
     ).all()
-    
+
     if not transactions:
         logger.info("no_transactions_in_window", user_id=user_id, window_days=window_days)
         return SubscriptionSignal(
@@ -152,30 +150,30 @@ def compute_subscription_signals(
             monthly_recurring_spend=Decimal("0.00"),
             subscription_share_pct=Decimal("0.00")
         )
-    
+
     # Detect recurring merchants
     recurring_merchants = detect_recurring_merchants(transactions, window_days)
-    
+
     # Calculate subscription spend (positive amounts = debits/expenses)
     subscription_txs = [
-        tx for tx in transactions 
+        tx for tx in transactions
         if tx.category == "Subscription" and tx.amount > 0
     ]
     subscription_total = sum(tx.amount for tx in subscription_txs)
-    
+
     # Calculate monthly recurring spend
     months_in_window = Decimal(str(window_days)) / Decimal("30.0")
     monthly_recurring_spend = subscription_total / months_in_window if months_in_window > 0 else Decimal("0.00")
-    
+
     # Calculate total debit spend (for subscription share calculation)
     total_debit = sum(abs(tx.amount) for tx in transactions if tx.amount > 0)
-    
+
     # Calculate subscription share percentage
     if total_debit > 0:
         subscription_share_pct = (Decimal(str(subscription_total)) / Decimal(str(total_debit))) * Decimal("100.0")
     else:
         subscription_share_pct = Decimal("0.00")
-    
+
     # Create signal model
     signal = SubscriptionSignal(
         user_id=user_id,
@@ -184,7 +182,7 @@ def compute_subscription_signals(
         monthly_recurring_spend=monthly_recurring_spend,
         subscription_share_pct=subscription_share_pct
     )
-    
+
     logger.info(
         "subscription_signals_computed",
         user_id=user_id,
@@ -193,6 +191,10 @@ def compute_subscription_signals(
         monthly_spend=float(monthly_recurring_spend),
         share_pct=float(subscription_share_pct)
     )
-    
+
+    # Persist to database
+    session.add(signal)
+    session.commit()
+
     return signal
 
