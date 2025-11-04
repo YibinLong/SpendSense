@@ -3,10 +3,16 @@
  * 
  * Why this exists:
  * - Allows operators to review recommendations for all users
+ * - View fairness metrics and demographic analysis
+ * - Access evaluation reports (markdown and PDF)
  * - Drill into user details (signals, persona, recommendations)
  * - Approve/reject/flag recommendations with notes
  * - Client-side pagination for ~100 users
- * - Dev-only decision traces
+ * 
+ * Tabs:
+ * 1. Review - User review queue and approval workflow
+ * 2. Fairness - Demographic analysis and disparity detection
+ * 3. Reports - System performance reports and metrics
  */
 
 import { useState } from 'react'
@@ -14,6 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Dialog,
   DialogContent,
@@ -39,8 +46,10 @@ import {
   useRecommendations, 
   useApproveRecommendation,
   type User,
-  type RecommendationItem
+  type RecommendationItem,
+  apiClient
 } from '@/lib/api'
+import { useQuery } from '@tanstack/react-query'
 
 const ITEMS_PER_PAGE = 10
 
@@ -165,14 +174,45 @@ export function OperatorView() {
     },
   ]
 
+  // Fetch fairness metrics
+  const { data: fairnessMetrics, isLoading: fairnessLoading } = useQuery({
+    queryKey: ['fairness'],
+    queryFn: async () => {
+      const response = await apiClient['fetch']<any>('/operator/fairness')
+      return response
+    },
+    staleTime: 5 * 60 * 1000,
+  })
+
+  // Fetch latest report
+  const { data: reportData, isLoading: reportLoading } = useQuery({
+    queryKey: ['report'],
+    queryFn: async () => {
+      const response = await apiClient['fetch']<any>('/operator/reports/latest')
+      return response
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false, // Don't retry if report doesn't exist
+  })
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Operator View</h1>
         <p className="text-muted-foreground">
-          Review user profiles and approve recommendations
+          Review users, analyze fairness, and view system reports
         </p>
       </div>
+
+      <Tabs defaultValue="review" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="review">Review Queue</TabsTrigger>
+          <TabsTrigger value="fairness">Fairness Analysis</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
+        </TabsList>
+
+        {/* TAB 1: Review Queue */}
+        <TabsContent value="review" className="space-y-6">
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Panel: User List */}
@@ -356,13 +396,183 @@ export function OperatorView() {
         </div>
       )}
 
-      {/* Dev Debug Panel */}
-      {selectedUser && (
-        <DevDebugPanel
-          title="Operator Debug Data"
-          data={{ user: selectedUser, profile, recommendations }}
-        />
-      )}
+          {/* Dev Debug Panel */}
+          {selectedUser && (
+            <DevDebugPanel
+              title="Operator Debug Data"
+              data={{ user: selectedUser, profile, recommendations }}
+            />
+          )}
+        </TabsContent>
+
+        {/* TAB 2: Fairness Analysis */}
+        <TabsContent value="fairness" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Fairness Metrics</CardTitle>
+              <CardDescription>
+                Demographic analysis to detect potential bias in persona assignment and recommendations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {fairnessLoading ? (
+                <p className="text-muted-foreground">Loading fairness metrics...</p>
+              ) : !fairnessMetrics ? (
+                <p className="text-muted-foreground">No fairness metrics available</p>
+              ) : (
+                <div className="space-y-6">
+                  {/* Summary */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Total Users</p>
+                      <p className="text-2xl font-bold">{fairnessMetrics.total_users_analyzed}</p>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Disparities</p>
+                      <p className="text-2xl font-bold">{fairnessMetrics.disparities?.length || 0}</p>
+                    </div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground">Threshold</p>
+                      <p className="text-2xl font-bold">{fairnessMetrics.threshold_pct}%</p>
+                    </div>
+                  </div>
+
+                  {/* Warnings */}
+                  {fairnessMetrics.warnings && fairnessMetrics.warnings.length > 0 && (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                      <h3 className="font-semibold text-amber-900 mb-2">⚠️ Fairness Warnings</h3>
+                      <ul className="space-y-1">
+                        {fairnessMetrics.warnings.map((warning: string, i: number) => (
+                          <li key={i} className="text-sm text-amber-800">• {warning}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Demographics Tables */}
+                  {fairnessMetrics.demographics && (
+                    <div className="space-y-4">
+                      {/* Age Range */}
+                      {fairnessMetrics.demographics.age_range && (
+                        <div>
+                          <h3 className="font-semibold mb-2">Age Range Distribution</h3>
+                          <div className="border rounded-lg overflow-hidden">
+                            <table className="w-full text-sm">
+                              <thead className="bg-muted">
+                                <tr>
+                                  <th className="text-left p-2">Age Range</th>
+                                  <th className="text-right p-2">Count</th>
+                                  <th className="text-right p-2">% of Total</th>
+                                  <th className="text-right p-2">Education Recs</th>
+                                  <th className="text-right p-2">Offer Recs</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {Object.entries(fairnessMetrics.demographics.age_range).map(([age, data]: [string, any]) => (
+                                  <tr key={age} className="border-t">
+                                    <td className="p-2">{age}</td>
+                                    <td className="text-right p-2">{data.count}</td>
+                                    <td className="text-right p-2">{data.pct_of_total}%</td>
+                                    <td className="text-right p-2">{data.education_recs}</td>
+                                    <td className="text-right p-2">{data.offer_recs}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Gender */}
+                      {fairnessMetrics.demographics.gender && (
+                        <div>
+                          <h3 className="font-semibold mb-2">Gender Distribution</h3>
+                          <div className="border rounded-lg overflow-hidden">
+                            <table className="w-full text-sm">
+                              <thead className="bg-muted">
+                                <tr>
+                                  <th className="text-left p-2">Gender</th>
+                                  <th className="text-right p-2">Count</th>
+                                  <th className="text-right p-2">% of Total</th>
+                                  <th className="text-right p-2">Education Recs</th>
+                                  <th className="text-right p-2">Offer Recs</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {Object.entries(fairnessMetrics.demographics.gender).map(([gender, data]: [string, any]) => (
+                                  <tr key={gender} className="border-t">
+                                    <td className="p-2">{gender}</td>
+                                    <td className="text-right p-2">{data.count}</td>
+                                    <td className="text-right p-2">{data.pct_of_total}%</td>
+                                    <td className="text-right p-2">{data.education_recs}</td>
+                                    <td className="text-right p-2">{data.offer_recs}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* TAB 3: Reports */}
+        <TabsContent value="reports" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Evaluation Reports</CardTitle>
+              <CardDescription>
+                System performance metrics and executive summaries
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reportLoading ? (
+                <p className="text-muted-foreground">Loading report...</p>
+              ) : !reportData ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground mb-4">
+                    No report available. Generate one by running:
+                  </p>
+                  <code className="bg-muted px-3 py-1 rounded text-sm">
+                    python run_metrics.py --report
+                  </code>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Report metadata */}
+                  <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                    <div>
+                      <p className="font-medium">Latest Report</p>
+                      <p className="text-sm text-muted-foreground">
+                        Generated: {new Date(reportData.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        window.open(`${import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'}/operator/reports/latest/pdf`, '_blank')
+                      }}
+                    >
+                      Download PDF
+                    </Button>
+                  </div>
+
+                  {/* Markdown content (simplified rendering) */}
+                  <div className="border rounded-lg p-6 prose prose-sm max-w-none">
+                    <pre className="whitespace-pre-wrap font-sans text-sm">
+                      {reportData.content}
+                    </pre>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Review Dialog */}
       <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
