@@ -7,13 +7,14 @@ Tests cover:
 - Foreign key constraints
 """
 
-import pytest
 from datetime import date, datetime
 from decimal import Decimal
+
+import pytest
 from sqlalchemy.exc import IntegrityError
 
-from spendsense.app.db.models import User, Account, Transaction, Liability, ConsentEvent
-from spendsense.app.db.session import get_session, init_db, drop_all_tables
+from spendsense.app.db.models import Account, ConsentEvent, Liability, Transaction, User
+from spendsense.app.db.session import drop_all_tables, get_session, init_db
 
 
 @pytest.fixture(scope="function")
@@ -27,7 +28,7 @@ def test_db():
 
 class TestUserModel:
     """Test User ORM model."""
-    
+
     def test_create_user(self, test_db):
         """Test creating a user in the database."""
         with next(get_session()) as session:
@@ -39,21 +40,21 @@ class TestUserModel:
             )
             session.add(user)
             session.commit()
-            
+
             # Verify user was created
             fetched = session.query(User).filter(User.user_id == "usr_test_001").first()
             assert fetched is not None
             assert fetched.email_masked == "u***test@example.com"
-    
+
     def test_unique_user_id(self, test_db):
         """Test that user_id must be unique."""
         with next(get_session()) as session:
             user1 = User(user_id="usr_duplicate", email_masked="u1@example.com", created_at=datetime.utcnow())
             user2 = User(user_id="usr_duplicate", email_masked="u2@example.com", created_at=datetime.utcnow())
-            
+
             session.add(user1)
             session.commit()
-            
+
             session.add(user2)
             with pytest.raises(IntegrityError):
                 session.commit()
@@ -61,7 +62,7 @@ class TestUserModel:
 
 class TestAccountModel:
     """Test Account ORM model."""
-    
+
     def test_create_account_with_user(self, test_db):
         """Test creating an account linked to a user."""
         with next(get_session()) as session:
@@ -69,7 +70,7 @@ class TestAccountModel:
             user = User(user_id="usr_001", email_masked="u@example.com", created_at=datetime.utcnow())
             session.add(user)
             session.commit()
-            
+
             # Create account
             account = Account(
                 account_id="acc_001",
@@ -84,7 +85,7 @@ class TestAccountModel:
             )
             session.add(account)
             session.commit()
-            
+
             # Verify relationship
             fetched_user = session.query(User).filter(User.user_id == "usr_001").first()
             assert len(fetched_user.accounts) == 1
@@ -93,7 +94,7 @@ class TestAccountModel:
 
 class TestTransactionModel:
     """Test Transaction ORM model."""
-    
+
     def test_create_transaction_with_account(self, test_db):
         """Test creating a transaction linked to an account."""
         with next(get_session()) as session:
@@ -112,7 +113,7 @@ class TestTransactionModel:
             )
             session.add_all([user, account])
             session.commit()
-            
+
             # Create transaction
             tx = Transaction(
                 transaction_id="txn_001",
@@ -128,7 +129,7 @@ class TestTransactionModel:
             )
             session.add(tx)
             session.commit()
-            
+
             # Verify relationship
             fetched_account = session.query(Account).filter(Account.account_id == "acc_001").first()
             assert len(fetched_account.transactions) == 1
@@ -137,7 +138,7 @@ class TestTransactionModel:
 
 class TestLiabilityModel:
     """Test Liability ORM model."""
-    
+
     def test_create_liability_with_user(self, test_db):
         """Test creating a liability linked to a user."""
         with next(get_session()) as session:
@@ -145,7 +146,7 @@ class TestLiabilityModel:
             user = User(user_id="usr_001", email_masked="u@example.com", created_at=datetime.utcnow())
             session.add(user)
             session.commit()
-            
+
             # Create liability
             liability = Liability(
                 liability_id="liab_001",
@@ -161,7 +162,7 @@ class TestLiabilityModel:
             )
             session.add(liability)
             session.commit()
-            
+
             # Verify relationship
             fetched_user = session.query(User).filter(User.user_id == "usr_001").first()
             assert len(fetched_user.liabilities) == 1
@@ -170,7 +171,7 @@ class TestLiabilityModel:
 
 class TestConsentEventModel:
     """Test ConsentEvent ORM model."""
-    
+
     def test_create_consent_event(self, test_db):
         """Test creating a consent event."""
         with next(get_session()) as session:
@@ -178,7 +179,7 @@ class TestConsentEventModel:
             user = User(user_id="usr_001", email_masked="u@example.com", created_at=datetime.utcnow())
             session.add(user)
             session.commit()
-            
+
             # Create consent event
             consent = ConsentEvent(
                 user_id="usr_001",
@@ -189,9 +190,10 @@ class TestConsentEventModel:
             )
             session.add(consent)
             session.commit()
-            
+
             # Verify
             fetched = session.query(ConsentEvent).filter(ConsentEvent.user_id == "usr_001").first()
             assert fetched is not None
             assert fetched.action == "opt_in"
+
 

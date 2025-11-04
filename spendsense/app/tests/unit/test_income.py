@@ -16,11 +16,11 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from spendsense.app.db.models import Base, User, Account, Transaction
+from spendsense.app.db.models import Account, Base, Transaction, User
 from spendsense.app.features.income import (
-    detect_payroll_transactions,
+    compute_income_signals,
     compute_pay_frequency_stats,
-    compute_income_signals
+    detect_payroll_transactions,
 )
 
 
@@ -31,9 +31,9 @@ def in_memory_db():
     Base.metadata.create_all(engine)
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
-    
+
     yield session
-    
+
     session.close()
 
 
@@ -48,7 +48,7 @@ def user_with_checking(in_memory_db):
     """
     user = User(user_id="user_income_001", email_masked="test@example.com")
     in_memory_db.add(user)
-    
+
     checking = Account(
         account_id="acc_checking_001",
         user_id="user_income_001",
@@ -59,9 +59,9 @@ def user_with_checking(in_memory_db):
         balance_current=Decimal("1500.00")
     )
     in_memory_db.add(checking)
-    
+
     in_memory_db.commit()
-    
+
     return user, checking
 
 
@@ -75,7 +75,7 @@ def test_detect_payroll_transactions(in_memory_db, user_with_checking):
     - Payroll is negative (credits in Plaid convention)
     """
     user, checking = user_with_checking
-    
+
     # Create payroll transaction (should be detected)
     tx_payroll = Transaction(
         transaction_id="tx_payroll_001",
@@ -88,7 +88,7 @@ def test_detect_payroll_transactions(in_memory_db, user_with_checking):
         transaction_type="credit"
     )
     in_memory_db.add(tx_payroll)
-    
+
     # Create non-payroll income (should NOT be detected)
     tx_refund = Transaction(
         transaction_id="tx_refund_001",
@@ -101,7 +101,7 @@ def test_detect_payroll_transactions(in_memory_db, user_with_checking):
         transaction_type="credit"
     )
     in_memory_db.add(tx_refund)
-    
+
     # Create non-income transaction (should NOT be detected)
     tx_expense = Transaction(
         transaction_id="tx_expense_001",
@@ -113,12 +113,12 @@ def test_detect_payroll_transactions(in_memory_db, user_with_checking):
         transaction_type="debit"
     )
     in_memory_db.add(tx_expense)
-    
+
     in_memory_db.commit()
-    
+
     transactions = in_memory_db.query(Transaction).all()
     payroll_txs = detect_payroll_transactions(transactions)
-    
+
     # Should only detect the payroll transaction
     assert len(payroll_txs) == 1
     assert payroll_txs[0].transaction_id == "tx_payroll_001"
@@ -134,7 +134,7 @@ def test_compute_pay_frequency_biweekly(in_memory_db, user_with_checking):
     - Variability should be low (consistent schedule)
     """
     user, checking = user_with_checking
-    
+
     # Create 4 bi-weekly paychecks (14 days apart)
     for i in range(4):
         tx = Transaction(
@@ -148,13 +148,13 @@ def test_compute_pay_frequency_biweekly(in_memory_db, user_with_checking):
             transaction_type="credit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     transactions = in_memory_db.query(Transaction).all()
     payroll_txs = detect_payroll_transactions(transactions)
     stats = compute_pay_frequency_stats(payroll_txs)
-    
+
     # Median gap should be 14 days
     assert abs(stats["median_pay_gap_days"] - 14.0) < 0.1
     # Variability should be very low (consistent schedule)
@@ -172,7 +172,7 @@ def test_compute_pay_frequency_monthly(in_memory_db, user_with_checking):
     - Median should be approximately 30 days
     """
     user, checking = user_with_checking
-    
+
     # Create 3 monthly paychecks (30 days apart)
     for i in range(3):
         tx = Transaction(
@@ -186,13 +186,13 @@ def test_compute_pay_frequency_monthly(in_memory_db, user_with_checking):
             transaction_type="credit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     transactions = in_memory_db.query(Transaction).all()
     payroll_txs = detect_payroll_transactions(transactions)
     stats = compute_pay_frequency_stats(payroll_txs)
-    
+
     # Median gap should be approximately 30 days
     assert abs(stats["median_pay_gap_days"] - 30.0) < 0.1
 
@@ -207,7 +207,7 @@ def test_compute_pay_frequency_irregular(in_memory_db, user_with_checking):
     - PRD criteria: median pay gap > 45 days
     """
     user, checking = user_with_checking
-    
+
     # Create irregular paycheck schedule: 20, 45, 60 day gaps
     paycheck_dates = [
         date.today(),
@@ -215,7 +215,7 @@ def test_compute_pay_frequency_irregular(in_memory_db, user_with_checking):
         date.today() - timedelta(days=65),  # 45 days before previous
         date.today() - timedelta(days=125)  # 60 days before previous
     ]
-    
+
     for i, paycheck_date in enumerate(paycheck_dates):
         tx = Transaction(
             transaction_id=f"tx_payroll_{i}",
@@ -228,13 +228,13 @@ def test_compute_pay_frequency_irregular(in_memory_db, user_with_checking):
             transaction_type="credit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     transactions = in_memory_db.query(Transaction).all()
     payroll_txs = detect_payroll_transactions(transactions)
     stats = compute_pay_frequency_stats(payroll_txs)
-    
+
     # Median gap (middle of 20, 45, 60) should be 45 days
     assert abs(stats["median_pay_gap_days"] - 45.0) < 0.1
     # Variability should be high (inconsistent schedule)
@@ -250,7 +250,7 @@ def test_compute_pay_frequency_single_paycheck(in_memory_db, user_with_checking)
     - Should return zeros, not crash
     """
     user, checking = user_with_checking
-    
+
     # Create only 1 paycheck
     tx = Transaction(
         transaction_id="tx_payroll_001",
@@ -264,11 +264,11 @@ def test_compute_pay_frequency_single_paycheck(in_memory_db, user_with_checking)
     )
     in_memory_db.add(tx)
     in_memory_db.commit()
-    
+
     transactions = in_memory_db.query(Transaction).all()
     payroll_txs = detect_payroll_transactions(transactions)
     stats = compute_pay_frequency_stats(payroll_txs)
-    
+
     # Should return zeros (can't calculate gaps with 1 paycheck)
     assert stats["median_pay_gap_days"] == 0.0
     assert stats["pay_gap_variability"] == 0.0
@@ -284,7 +284,7 @@ def test_compute_cashflow_buffer(in_memory_db, user_with_checking):
     - Shows financial runway without income
     """
     user, checking = user_with_checking
-    
+
     # Checking balance is $1500
     # Create $1000/month in expenses
     for i in range(10):
@@ -298,11 +298,11 @@ def test_compute_cashflow_buffer(in_memory_db, user_with_checking):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_income_signals("user_income_001", 30, in_memory_db)
-    
+
     # Cash-flow buffer = $1500 / $1000 = 1.5 months
     assert abs(float(signal.cashflow_buffer_months) - 1.5) < 0.1
 
@@ -316,7 +316,7 @@ def test_compute_cashflow_buffer_zero_expenses(in_memory_db, user_with_checking)
     - Should return 0, not crash with ZeroDivisionError
     """
     signal = compute_income_signals("user_income_001", 30, in_memory_db)
-    
+
     # No expenses created, so buffer should be 0
     assert signal.cashflow_buffer_months == Decimal("0.00")
 
@@ -332,9 +332,9 @@ def test_compute_income_signals_no_accounts(in_memory_db):
     user = User(user_id="user_no_accounts", email_masked="test@example.com")
     in_memory_db.add(user)
     in_memory_db.commit()
-    
+
     signal = compute_income_signals("user_no_accounts", 30, in_memory_db)
-    
+
     assert signal.payroll_deposit_count == 0
     assert signal.median_pay_gap_days == Decimal("0.00")
     assert signal.pay_gap_variability == Decimal("0.00")
@@ -351,17 +351,17 @@ def test_compute_income_signals_meets_persona_criteria(in_memory_db, user_with_c
     - PRD Persona 2: median pay gap > 45 days AND buffer < 1 month
     """
     user, checking = user_with_checking
-    
-    # Update checking balance to $500 (low buffer)
-    checking.balance_current = Decimal("500.00")
-    
+
+    # Update checking balance to $200 (low buffer for Variable Income persona)
+    checking.balance_current = Decimal("200.00")
+
     # Create irregular payroll: 60-day gaps
     paycheck_dates = [
         date.today(),
         date.today() - timedelta(days=60),
         date.today() - timedelta(days=120)
     ]
-    
+
     for i, paycheck_date in enumerate(paycheck_dates):
         tx = Transaction(
             transaction_id=f"tx_payroll_{i}",
@@ -374,8 +374,8 @@ def test_compute_income_signals_meets_persona_criteria(in_memory_db, user_with_c
             transaction_type="credit"
         )
         in_memory_db.add(tx)
-    
-    # Create $1000/month in expenses
+
+    # Create $1000 total expenses over 120 days (~$250/month)
     for i in range(10):
         tx = Transaction(
             transaction_id=f"tx_expense_{i}",
@@ -387,14 +387,14 @@ def test_compute_income_signals_meets_persona_criteria(in_memory_db, user_with_c
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_income_signals("user_income_001", 120, in_memory_db)
-    
+
     # Should meet Variable Income Budgeter criteria
     assert signal.median_pay_gap_days > Decimal("45.00")  # Criterion 1
-    # Buffer = $500 / ($1000/month * 4) = 0.5 months < 1
+    # Buffer = $200 / $250/month = 0.8 months < 1
     assert signal.cashflow_buffer_months < Decimal("1.00")  # Criterion 2
 
 
@@ -407,10 +407,10 @@ def test_compute_income_signals_stable_income(in_memory_db, user_with_checking):
     - Regular paychecks + good buffer = NOT Variable Income Budgeter
     """
     user, checking = user_with_checking
-    
+
     # Good checking balance ($3000)
     checking.balance_current = Decimal("3000.00")
-    
+
     # Create regular bi-weekly paychecks (14 days apart)
     for i in range(5):
         tx = Transaction(
@@ -424,7 +424,7 @@ def test_compute_income_signals_stable_income(in_memory_db, user_with_checking):
             transaction_type="credit"
         )
         in_memory_db.add(tx)
-    
+
     # Create $1000/month in expenses
     for i in range(10):
         tx = Transaction(
@@ -437,14 +437,15 @@ def test_compute_income_signals_stable_income(in_memory_db, user_with_checking):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_income_signals("user_income_001", 60, in_memory_db)
-    
+
     # Should NOT meet Variable Income Budgeter criteria
     assert signal.median_pay_gap_days < Decimal("45.00")  # Regular income
     assert signal.cashflow_buffer_months > Decimal("1.00")  # Good buffer
     # Low variability indicates stable income
     assert signal.pay_gap_variability < Decimal("5.00")
+
 

@@ -15,7 +15,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from spendsense.app.db.models import Base, User, Account, Transaction
+from spendsense.app.db.models import Account, Base, Transaction, User
 from spendsense.app.features.savings import compute_savings_signals
 
 
@@ -26,9 +26,9 @@ def in_memory_db():
     Base.metadata.create_all(engine)
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
-    
+
     yield session
-    
+
     session.close()
 
 
@@ -43,7 +43,7 @@ def user_with_savings(in_memory_db):
     """
     user = User(user_id="user_savings_001", email_masked="test@example.com")
     in_memory_db.add(user)
-    
+
     # Checking account
     checking = Account(
         account_id="acc_checking_001",
@@ -55,7 +55,7 @@ def user_with_savings(in_memory_db):
         balance_current=Decimal("2000.00")
     )
     in_memory_db.add(checking)
-    
+
     # Savings account
     savings = Account(
         account_id="acc_savings_001",
@@ -67,9 +67,9 @@ def user_with_savings(in_memory_db):
         balance_current=Decimal("3000.00")
     )
     in_memory_db.add(savings)
-    
+
     in_memory_db.commit()
-    
+
     return user, checking, savings
 
 
@@ -82,7 +82,7 @@ def test_compute_net_inflow_positive(in_memory_db, user_with_savings):
     - Positive inflow means user is building emergency fund
     """
     user, checking, savings = user_with_savings
-    
+
     # Create deposits to savings (credits are negative in Plaid convention)
     for i in range(3):
         tx = Transaction(
@@ -95,7 +95,7 @@ def test_compute_net_inflow_positive(in_memory_db, user_with_savings):
             transaction_type="credit"
         )
         in_memory_db.add(tx)
-    
+
     # Create one withdrawal from savings (debit is positive)
     tx_withdraw = Transaction(
         transaction_id="tx_withdraw_001",
@@ -107,11 +107,11 @@ def test_compute_net_inflow_positive(in_memory_db, user_with_savings):
         transaction_type="debit"
     )
     in_memory_db.add(tx_withdraw)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # Net inflow = 3*$200 (deposits) - $100 (withdrawal) = $500
     assert signal.savings_net_inflow == Decimal("500.00")
     assert signal.savings_net_inflow > 0  # Positive = saving
@@ -127,7 +127,7 @@ def test_compute_net_inflow_negative(in_memory_db, user_with_savings):
     - Indicates financial stress
     """
     user, checking, savings = user_with_savings
-    
+
     # Create large withdrawal
     tx = Transaction(
         transaction_id="tx_large_withdraw",
@@ -140,9 +140,9 @@ def test_compute_net_inflow_negative(in_memory_db, user_with_savings):
     )
     in_memory_db.add(tx)
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # Net inflow should be negative (user depleting savings)
     assert signal.savings_net_inflow < 0
 
@@ -156,7 +156,7 @@ def test_compute_growth_rate(in_memory_db, user_with_savings):
     - Growth rate = (net inflow / starting balance) * 100
     """
     user, checking, savings = user_with_savings
-    
+
     # Current balance is $3000
     # Add $150 in deposits (5% growth if starting balance was $3000 - $150 = $2850)
     tx = Transaction(
@@ -170,9 +170,9 @@ def test_compute_growth_rate(in_memory_db, user_with_savings):
     )
     in_memory_db.add(tx)
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # Growth rate should be approximately 5% ($150 / $2850 * 100)
     assert signal.savings_growth_rate_pct > Decimal("2.00")  # Meets persona criteria
     assert signal.savings_growth_rate_pct < Decimal("10.00")  # Reasonable range
@@ -188,7 +188,7 @@ def test_emergency_fund_coverage(in_memory_db, user_with_savings):
     - Key indicator of financial health
     """
     user, checking, savings = user_with_savings
-    
+
     # Create monthly expenses totaling $1000/month
     # Over 30 days, create $1000 in expenses
     for i in range(10):
@@ -202,11 +202,11 @@ def test_emergency_fund_coverage(in_memory_db, user_with_savings):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # Emergency fund = $3000 / $1000 per month = 3 months
     assert abs(float(signal.emergency_fund_months) - 3.0) < 0.1  # Allow small floating point error
 
@@ -221,7 +221,7 @@ def test_no_savings_account(in_memory_db):
     """
     user = User(user_id="user_no_savings", email_masked="test@example.com")
     in_memory_db.add(user)
-    
+
     # Only checking account, no savings
     checking = Account(
         account_id="acc_checking_002",
@@ -234,9 +234,9 @@ def test_no_savings_account(in_memory_db):
     )
     in_memory_db.add(checking)
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_no_savings", 30, in_memory_db)
-    
+
     assert signal.savings_net_inflow == Decimal("0.00")
     assert signal.savings_growth_rate_pct == Decimal("0.00")
     assert signal.emergency_fund_months == Decimal("0.00")
@@ -252,7 +252,7 @@ def test_no_expenses_division_by_zero(in_memory_db, user_with_savings):
     - Should handle gracefully without ZeroDivisionError
     """
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # No transactions created, so no expenses
     # Emergency fund should be 0 (can't calculate without expenses)
     assert signal.emergency_fund_months == Decimal("0.00")
@@ -268,7 +268,7 @@ def test_negative_growth_rate(in_memory_db, user_with_savings):
     - Indicates financial difficulty
     """
     user, checking, savings = user_with_savings
-    
+
     # Large withdrawal that exceeds deposits
     tx = Transaction(
         transaction_id="tx_withdraw",
@@ -281,9 +281,9 @@ def test_negative_growth_rate(in_memory_db, user_with_savings):
     )
     in_memory_db.add(tx)
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # Growth rate should be negative
     assert signal.savings_growth_rate_pct < Decimal("0.00")
 
@@ -299,9 +299,9 @@ def test_savings_with_no_accounts(in_memory_db):
     user = User(user_id="user_no_accounts", email_masked="test@example.com")
     in_memory_db.add(user)
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_no_accounts", 30, in_memory_db)
-    
+
     assert signal.user_id == "user_no_accounts"
     assert signal.savings_net_inflow == Decimal("0.00")
     assert signal.savings_growth_rate_pct == Decimal("0.00")
@@ -317,7 +317,7 @@ def test_savings_meets_persona_criteria(in_memory_db, user_with_savings):
     - PRD Persona 4 criteria: growth ≥2% OR net inflow ≥$200/month
     """
     user, checking, savings = user_with_savings
-    
+
     # Create $250 in monthly savings (meets ≥$200/month criteria)
     for i in range(3):
         tx = Transaction(
@@ -330,15 +330,15 @@ def test_savings_meets_persona_criteria(in_memory_db, user_with_savings):
             transaction_type="credit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # Net inflow should be $750 total = $750/month in 30-day window
     # Monthly inflow = $750 / 1 month = $750
     assert signal.savings_net_inflow >= Decimal("200.00")  # Meets criteria
-    
+
     # Growth rate should also be positive
     assert signal.savings_growth_rate_pct > Decimal("0.00")
 
@@ -352,11 +352,11 @@ def test_high_emergency_fund_coverage(in_memory_db, user_with_savings):
     - 6 months is upper end of recommended emergency fund
     """
     user, checking, savings = user_with_savings
-    
+
     # Update savings balance to $6000
     savings.balance_current = Decimal("6000.00")
     in_memory_db.commit()
-    
+
     # Create $1000/month in expenses
     for i in range(10):
         tx = Transaction(
@@ -369,11 +369,12 @@ def test_high_emergency_fund_coverage(in_memory_db, user_with_savings):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_savings_signals("user_savings_001", 30, in_memory_db)
-    
+
     # Emergency fund = $6000 / $1000 = 6 months
     assert signal.emergency_fund_months >= Decimal("6.00")
+
 
