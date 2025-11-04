@@ -13,7 +13,7 @@ SpendSense analyzes synthetic Plaid-style transaction data to assign users to fi
 ### Prerequisites
 - Python 3.11+
 - Node.js 18+
-- Make (optional, for shortcuts)
+- Make
 
 ### Get Running in 5 Minutes
 
@@ -21,13 +21,11 @@ SpendSense analyzes synthetic Plaid-style transaction data to assign users to fi
 # 1. Clone and navigate
 cd SpendSense
 
-# 2. Set up Python backend
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+# 2. Run automated setup (creates venv, installs all dependencies)
+make setup
 
-# 3. Set up frontend
-cd frontend && npm install && cd ..
+# 3. Activate Python virtual environment
+source .venv/bin/activate  # On Windows: .venv\Scripts\Activate.ps1
 
 # 4. Create environment files
 cat > .env << 'EOF'
@@ -52,10 +50,10 @@ python reset_and_populate.py
 # This creates 50+ users with transactions, computes signals, assigns personas, generates recommendations
 
 # 6. Start backend (Terminal 1)
-uvicorn spendsense.app.main:app --reload --host 127.0.0.1 --port 8000
+make backend
 
-# 7. Start frontend (Terminal 2)
-cd frontend && npm run dev
+# 7. Start frontend (Terminal 2 - open a new terminal window)
+make frontend
 ```
 
 **Now open:**
@@ -256,16 +254,22 @@ make typecheck         # Run mypy
 make clean             # Remove build artifacts
 ```
 
-### Manual Commands
+### Manual Commands (Without Make)
+
+If you don't have Make installed, you can run commands manually:
 
 ```bash
-# Backend
-source .venv/bin/activate
-uvicorn spendsense.app.main:app --reload
+# Initial setup
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+cd frontend && npm install && cd ..
 
-# Frontend
-cd frontend
-npm run dev
+# Backend
+uvicorn spendsense.app.main:app --reload --host 127.0.0.1 --port 8000
+
+# Frontend (new terminal)
+cd frontend && npm run dev
 
 # Reset database and repopulate
 python reset_and_populate.py
