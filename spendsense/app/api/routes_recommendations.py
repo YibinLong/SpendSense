@@ -8,30 +8,28 @@ Endpoints:
 - POST /feedback - Record user feedback on recommendations
 """
 
-from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
+from spendsense.app.db.models import Recommendation, User
 from spendsense.app.db.session import get_db
-from spendsense.app.db.models import User, Recommendation
-from spendsense.app.schemas.recommendation import RecommendationItem, FeedbackRequest, FeedbackResponse
 from spendsense.app.guardrails.consent import check_consent, get_consent_status
 from spendsense.app.recommend.engine import generate_recommendations
-
+from spendsense.app.schemas.recommendation import FeedbackRequest, FeedbackResponse, RecommendationItem
 
 logger = get_logger(__name__)
 router = APIRouter()
 
 
-@router.get("/{user_id}", response_model=List[RecommendationItem])
+@router.get("/{user_id}", response_model=list[RecommendationItem])
 async def get_recommendations(
     user_id: str,
-    window: Optional[int] = Query(default=30, description="Time window in days (30 or 180)"),
-    regenerate: Optional[bool] = Query(default=False, description="Force regenerate recommendations"),
+    window: int | None = Query(default=30, description="Time window in days (30 or 180)"),
+    regenerate: bool | None = Query(default=False, description="Force regenerate recommendations"),
     db: Session = Depends(get_db),
-) -> List[RecommendationItem]:
+) -> list[RecommendationItem]:
     """
     Get personalized recommendations for a user.
     
@@ -67,14 +65,14 @@ async def get_recommendations(
     Returns 404 if user or persona not found.
     """
     logger.info("getting_recommendations", user_id=user_id, window_days=window)
-    
+
     # Check consent
     if not check_consent(user_id, db):
         logger.warning("recommendations_access_denied_no_consent", user_id=user_id)
-        
+
         # Get detailed consent status to distinguish between opt-out and never consented
         consent_status_info = get_consent_status(user_id, db)
-        
+
         # Determine consent_status for the response
         if consent_status_info["latest_action"] == "opt_out":
             consent_status = "opt_out"
@@ -82,7 +80,7 @@ async def get_recommendations(
         else:
             consent_status = "not_found"
             detail_msg = f"User {user_id} has not provided consent for data processing"
-        
+
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -92,7 +90,7 @@ async def get_recommendations(
                 "guidance": "POST /consent with action='opt_in' to continue",
             },
         )
-    
+
     # Verify user exists
     user = db.query(User).filter(User.user_id == user_id).first()
     if not user:
@@ -101,29 +99,31 @@ async def get_recommendations(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User '{user_id}' not found",
         )
-    
+
     # Check if recommendations already exist for this user AND window
     if not regenerate:
         existing_recs = db.query(Recommendation).filter(
             Recommendation.user_id == user_id,
             Recommendation.window_days == window,
         ).all()
-        
+
         if existing_recs:
             logger.debug("returning_existing_recommendations", user_id=user_id, window_days=window, count=len(existing_recs))
             return [RecommendationItem.model_validate(rec) for rec in existing_recs]
-    
+
     # Generate new recommendations
     try:
-        recommendations = generate_recommendations(user_id, window, db)
+        # Ensure window is int (should always be set by Query default, but satisfy mypy)
+        window_days = window if window is not None else 30
+        recommendations = generate_recommendations(user_id, window_days, db)
         logger.info(
             "recommendations_returned",
             user_id=user_id,
-            window_days=window,
+            window_days=window_days,
             count=len(recommendations),
         )
         return recommendations
-    
+
     except Exception as e:
         logger.error(
             "recommendation_generation_failed",
@@ -167,7 +167,7 @@ async def record_feedback(
         user_id=feedback.user_id,
         action=feedback.action,
     )
-    
+
     # Verify recommendation exists
     rec = db.query(Recommendation).filter(Recommendation.id == feedback.recommendation_id).first()
     if not rec:
@@ -175,7 +175,7 @@ async def record_feedback(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Recommendation {feedback.recommendation_id} not found",
         )
-    
+
     # Stub: In production, would store feedback in a feedback table
     # For now, just log it
     logger.info(
@@ -184,7 +184,7 @@ async def record_feedback(
         action=feedback.action,
         notes=feedback.notes,
     )
-    
+
     return FeedbackResponse(
         success=True,
         message="Feedback recorded successfully (stub implementation)",

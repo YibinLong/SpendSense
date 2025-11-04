@@ -8,29 +8,27 @@ Endpoints:
 - POST /operator/recommendations/{id}/approve - Approve/reject recommendation
 """
 
-from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
+from spendsense.app.db.models import OperatorReview, Recommendation
 from spendsense.app.db.session import get_db
-from spendsense.app.db.models import Recommendation, OperatorReview
-from spendsense.app.schemas.recommendation import RecommendationItem
 from spendsense.app.schemas.operator import ApprovalRequest, ApprovalResponse, OperatorReviewResponse
-
+from spendsense.app.schemas.recommendation import RecommendationItem
 
 logger = get_logger(__name__)
 router = APIRouter()
 
 
-@router.get("/review", response_model=List[RecommendationItem])
+@router.get("/review", response_model=list[RecommendationItem])
 async def get_review_queue(
-    status_filter: Optional[str] = Query(default="pending", description="Filter by status"),
-    limit: Optional[int] = Query(default=20, ge=1, le=100, description="Max items to return"),
-    offset: Optional[int] = Query(default=0, ge=0, description="Offset for pagination"),
+    status_filter: str | None = Query(default="pending", description="Filter by status"),
+    limit: int | None = Query(default=20, ge=1, le=100, description="Max items to return"),
+    offset: int | None = Query(default=0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db),
-) -> List[RecommendationItem]:
+) -> list[RecommendationItem]:
     """
     Get operator review queue.
     
@@ -66,25 +64,25 @@ async def get_review_queue(
         limit=limit,
         offset=offset,
     )
-    
+
     # Build query
     query = db.query(Recommendation)
-    
+
     if status_filter:
         query = query.filter(Recommendation.status == status_filter)
-    
+
     # Apply pagination
     query = query.order_by(Recommendation.created_at.desc())
     query = query.offset(offset).limit(limit)
-    
+
     recommendations = query.all()
-    
+
     logger.debug(
         "review_queue_returned",
         count=len(recommendations),
         status_filter=status_filter,
     )
-    
+
     return [RecommendationItem.model_validate(rec) for rec in recommendations]
 
 
@@ -129,7 +127,7 @@ async def approve_recommendation(
         status=approval.status,
         reviewer=approval.reviewer,
     )
-    
+
     # Get recommendation
     rec = db.query(Recommendation).filter(Recommendation.id == recommendation_id).first()
     if not rec:
@@ -138,7 +136,7 @@ async def approve_recommendation(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Recommendation {recommendation_id} not found",
         )
-    
+
     # Create operator review record
     review = OperatorReview(
         recommendation_id=recommendation_id,
@@ -146,15 +144,15 @@ async def approve_recommendation(
         reviewer=approval.reviewer,
         notes=approval.notes,
     )
-    
+
     db.add(review)
-    
+
     # Update recommendation status
     rec.status = approval.status
-    
+
     db.commit()
     db.refresh(review)
-    
+
     logger.info(
         "recommendation_reviewed",
         recommendation_id=recommendation_id,
@@ -162,7 +160,7 @@ async def approve_recommendation(
         status=approval.status,
         reviewer=approval.reviewer,
     )
-    
+
     return ApprovalResponse(
         success=True,
         message=f"Recommendation {approval.status} successfully",
@@ -170,11 +168,11 @@ async def approve_recommendation(
     )
 
 
-@router.get("/recommendations/{recommendation_id}/reviews", response_model=List[OperatorReviewResponse])
+@router.get("/recommendations/{recommendation_id}/reviews", response_model=list[OperatorReviewResponse])
 async def get_recommendation_reviews(
     recommendation_id: int,
     db: Session = Depends(get_db),
-) -> List[OperatorReviewResponse]:
+) -> list[OperatorReviewResponse]:
     """
     Get all reviews for a specific recommendation.
     
@@ -193,10 +191,11 @@ async def get_recommendation_reviews(
         ]
     """
     logger.debug("getting_recommendation_reviews", recommendation_id=recommendation_id)
-    
+
     reviews = db.query(OperatorReview).filter(
         OperatorReview.recommendation_id == recommendation_id
     ).order_by(OperatorReview.decided_at.desc()).all()
-    
+
     return [OperatorReviewResponse.model_validate(review) for review in reviews]
+
 
