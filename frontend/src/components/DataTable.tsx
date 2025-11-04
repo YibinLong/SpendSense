@@ -70,3 +70,4 @@ export function DataTable<T>({ data, columns, onRowClick, emptyMessage = 'No dat
   )
 }
 
+
