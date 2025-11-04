@@ -4,99 +4,98 @@
   "persona": {
     "persona_id": "high_utilization",
     "window_days": 30,
-    "assigned_at": "2025-11-04T15:31:06.301767",
+    "assigned_at": "2025-11-04T17:23:00.711649",
     "criteria_met": {
       "persona": "high_utilization",
       "credit_utilization_max_pct": 25.0,
       "credit_util_flag_50": false,
       "has_interest_charges": true,
       "has_minimum_payment_only": false,
-      "is_overdue": true,
+      "is_overdue": false,
       "matched_on": [
-        "has_interest_charges",
-        "is_overdue"
+        "has_interest_charges"
       ]
     }
   },
   "signals": {
     "subscription": {
       "recurring_merchant_count": 0,
-      "monthly_recurring_spend": 57.97,
-      "subscription_share_pct": 1.61,
-      "computed_at": "2025-11-04T15:31:06.294826"
+      "monthly_recurring_spend": 0.0,
+      "subscription_share_pct": 0.0,
+      "computed_at": "2025-11-04T17:23:00.705137"
     },
     "savings": {
-      "savings_net_inflow": 753.0,
-      "savings_growth_rate_pct": 2.84,
-      "emergency_fund_months": 13.36,
-      "computed_at": "2025-11-04T15:31:06.296643"
+      "savings_net_inflow": 253.0,
+      "savings_growth_rate_pct": 2.33,
+      "emergency_fund_months": 5.05,
+      "computed_at": "2025-11-04T17:23:00.706671"
     },
     "credit": {
       "credit_utilization_max_pct": 25.0,
-      "credit_utilization_avg_pct": 25.0,
+      "credit_utilization_avg_pct": 15.0,
       "credit_util_flag_30": false,
       "credit_util_flag_50": false,
       "credit_util_flag_80": false,
       "has_interest_charges": true,
       "has_minimum_payment_only": false,
-      "is_overdue": true,
-      "computed_at": "2025-11-04T15:31:06.298348"
+      "is_overdue": false,
+      "computed_at": "2025-11-04T17:23:00.708336"
     },
     "income": {
       "payroll_deposit_count": 3,
       "median_pay_gap_days": 14.0,
       "pay_gap_variability": 0.0,
-      "avg_payroll_amount": 6073.0,
-      "cashflow_buffer_months": 4.73,
-      "computed_at": "2025-11-04T15:31:06.300049"
+      "avg_payroll_amount": 5776.0,
+      "cashflow_buffer_months": 4.44,
+      "computed_at": "2025-11-04T17:23:00.710061"
     }
   },
   "signal_count": 4,
   "recommendations": [
     {
-      "id": 244,
+      "id": 229,
       "item_type": "education",
       "title": "Credit Utilization 101: Why 30% Matters",
-      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
       "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.304577"
+      "created_at": "2025-11-04T17:23:00.713717"
     },
     {
-      "id": 245,
+      "id": 230,
       "item_type": "education",
       "title": "Breaking the Minimum Payment Cycle",
-      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
       "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.304578"
+      "created_at": "2025-11-04T17:23:00.713717"
     },
     {
-      "id": 246,
+      "id": 231,
       "item_type": "education",
       "title": "Autopay Setup Guide: Never Miss a Payment",
-      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
       "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.304579"
+      "created_at": "2025-11-04T17:23:00.713718"
     },
     {
-      "id": 247,
+      "id": 232,
       "item_type": "offer",
       "title": "Free Credit Monitoring and Score Tracking",
-      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
       "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
@@ -105,9 +104,9 @@
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.304579"
+      "created_at": "2025-11-04T17:23:00.713718"
     }
   ],
   "recommendation_count": 4,
-  "trace_generated_at": "2025-11-04T15:31:13.350784"
+  "trace_generated_at": "2025-11-04T17:24:19.484244"
 }

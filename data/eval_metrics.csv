@@ -6,16 +6,19 @@ coverage,users_with_full_coverage,50
 coverage,coverage_persona_pct,100.0
 coverage,coverage_signals_pct,100.0
 coverage,full_coverage_pct,100.0
-explainability,total_recommendations,427
-explainability,recommendations_with_rationale,427
+explainability,total_recommendations,406
+explainability,recommendations_with_rationale,406
 explainability,explainability_pct,100.0
 latency,sample_size,10
 latency,min_latency_s,0.001
 latency,max_latency_s,0.005
-latency,avg_latency_s,0.002
-latency,median_latency_s,0.002
+latency,avg_latency_s,0.003
+latency,median_latency_s,0.003
 latency,users_under_5s,10
 latency,users_under_5s_pct,100.0
-auditability,total_recommendations,454
-auditability,recommendations_with_traces,454
+auditability,total_recommendations,435
+auditability,recommendations_with_traces,435
 auditability,auditability_pct,100.0
+fairness,demographics,"{'age_range': {'35-44': {'count': 12, 'pct_of_total': 24.0, 'personas': {'insufficient_data': 3, 'savings_builder': 4, 'high_utilization': 5}, 'education_recs': 87, 'offer_recs': 20}, '18-24': {'count': 6, 'pct_of_total': 12.0, 'personas': {'savings_builder': 2, 'high_utilization': 4}, 'education_recs': 57, 'offer_recs': 14}, '25-34': {'count': 15, 'pct_of_total': 30.0, 'personas': {'high_utilization': 12, 'insufficient_data': 2, 'savings_builder': 1}, 'education_recs': 111, 'offer_recs': 35}, '45-54': {'count': 13, 'pct_of_total': 26.0, 'personas': {'high_utilization': 6, 'insufficient_data': 5, 'savings_builder': 2}, 'education_recs': 69, 'offer_recs': 20}, '65+': {'count': 1, 'pct_of_total': 2.0, 'personas': {'high_utilization': 1}, 'education_recs': 6, 'offer_recs': 2}, '55-64': {'count': 3, 'pct_of_total': 6.0, 'personas': {'savings_builder': 1, 'insufficient_data': 1, 'high_utilization': 1}, 'education_recs': 12, 'offer_recs': 2}}, 'gender': {'Male': {'count': 21, 'pct_of_total': 42.0, 'personas': {'insufficient_data': 5, 'savings_builder': 4, 'high_utilization': 12}, 'education_recs': 165, 'offer_recs': 42}, 'Female': {'count': 12, 'pct_of_total': 24.0, 'personas': {'high_utilization': 8, 'savings_builder': 2, 'insufficient_data': 2}, 'education_recs': 81, 'offer_recs': 22}, 'unknown': {'count': 15, 'pct_of_total': 30.0, 'personas': {'high_utilization': 8, 'insufficient_data': 4, 'savings_builder': 3}, 'education_recs': 84, 'offer_recs': 25}, 'Prefer not to say': {'count': 1, 'pct_of_total': 2.0, 'personas': {'savings_builder': 1}, 'education_recs': 6, 'offer_recs': 2}, 'Non-binary': {'count': 1, 'pct_of_total': 2.0, 'personas': {'high_utilization': 1}, 'education_recs': 6, 'offer_recs': 2}}, 'ethnicity': {'White': {'count': 13, 'pct_of_total': 26.0, 'personas': {'insufficient_data': 5, 'savings_builder': 3, 'high_utilization': 5}, 'education_recs': 84, 'offer_recs': 22}, 'unknown': {'count': 19, 'pct_of_total': 38.0, 'personas': {'savings_builder': 3, 'high_utilization': 12, 'insufficient_data': 4}, 'education_recs': 129, 'offer_recs': 35}, 'Black or African American': {'count': 6, 'pct_of_total': 12.0, 'personas': {'high_utilization': 5, 'insufficient_data': 1}, 'education_recs': 42, 'offer_recs': 13}, 'Hispanic or Latino': {'count': 4, 'pct_of_total': 8.0, 'personas': {'high_utilization': 4}, 'education_recs': 42, 'offer_recs': 14}, 'Asian': {'count': 6, 'pct_of_total': 12.0, 'personas': {'insufficient_data': 1, 'high_utilization': 2, 'savings_builder': 3}, 'education_recs': 33, 'offer_recs': 7}, 'Other': {'count': 1, 'pct_of_total': 2.0, 'personas': {'savings_builder': 1}, 'education_recs': 6, 'offer_recs': 0}, 'Two or More Races': {'count': 1, 'pct_of_total': 2.0, 'personas': {'high_utilization': 1}, 'education_recs': 6, 'offer_recs': 2}}}"
+fairness,threshold_pct,20
+fairness,total_users_analyzed,50

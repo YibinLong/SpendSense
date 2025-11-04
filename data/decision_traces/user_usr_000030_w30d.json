@@ -2,97 +2,113 @@
   "user_id": "usr_000030",
   "window_days": 30,
   "persona": {
-    "persona_id": "savings_builder",
+    "persona_id": "high_utilization",
     "window_days": 30,
-    "assigned_at": "2025-11-04T15:31:06.112175",
+    "assigned_at": "2025-11-04T17:23:00.548984",
     "criteria_met": {
-      "persona": "savings_builder",
-      "savings_growth_rate_pct": 3.15,
-      "savings_net_inflow": 264.0,
+      "persona": "high_utilization",
+      "credit_utilization_max_pct": 70.0,
+      "credit_util_flag_50": true,
+      "has_interest_charges": true,
+      "has_minimum_payment_only": true,
+      "is_overdue": false,
       "matched_on": [
-        "savings_growth_gte_2_pct",
-        "net_inflow_gte_200_per_month",
-        "all_cards_below_30_pct"
-      ],
-      "credit_utilization_max_pct": 0.0,
-      "credit_util_flag_30": false
+        "credit_util_flag_50",
+        "has_interest_charges",
+        "has_minimum_payment_only"
+      ]
     }
   },
   "signals": {
     "subscription": {
       "recurring_merchant_count": 0,
-      "monthly_recurring_spend": 29.98,
-      "subscription_share_pct": 1.45,
-      "computed_at": "2025-11-04T15:31:06.106031"
+      "monthly_recurring_spend": 79.98,
+      "subscription_share_pct": 2.58,
+      "computed_at": "2025-11-04T17:23:00.542775"
     },
     "savings": {
-      "savings_net_inflow": 264.0,
-      "savings_growth_rate_pct": 3.15,
-      "emergency_fund_months": 4.18,
-      "computed_at": "2025-11-04T15:31:06.107816"
+      "savings_net_inflow": 514.0,
+      "savings_growth_rate_pct": 1.9,
+      "emergency_fund_months": 13.28,
+      "computed_at": "2025-11-04T17:23:00.544182"
     },
     "credit": {
-      "credit_utilization_max_pct": 0.0,
-      "credit_utilization_avg_pct": 0.0,
-      "credit_util_flag_30": false,
-      "credit_util_flag_50": false,
+      "credit_utilization_max_pct": 70.0,
+      "credit_utilization_avg_pct": 65.0,
+      "credit_util_flag_30": true,
+      "credit_util_flag_50": true,
       "credit_util_flag_80": false,
-      "has_interest_charges": false,
-      "has_minimum_payment_only": false,
+      "has_interest_charges": true,
+      "has_minimum_payment_only": true,
       "is_overdue": false,
-      "computed_at": "2025-11-04T15:31:06.109894"
+      "computed_at": "2025-11-04T17:23:00.545676"
     },
     "income": {
       "payroll_deposit_count": 2,
       "median_pay_gap_days": 30.0,
       "pay_gap_variability": 0.0,
-      "avg_payroll_amount": 13995.0,
-      "cashflow_buffer_months": 0.68,
-      "computed_at": "2025-11-04T15:31:06.110136"
+      "avg_payroll_amount": 14263.0,
+      "cashflow_buffer_months": 1.42,
+      "computed_at": "2025-11-04T17:23:00.547255"
     }
   },
   "signal_count": 4,
   "recommendations": [
     {
-      "id": 200,
+      "id": 198,
       "item_type": "education",
-      "title": "Savings Goals: From Dream to Reality",
-      "rationale": "Your savings grew 3.15% this period. with $264.00/month in new deposits. This resource could help you optimize your savings strategy.",
-      "persona_id": "savings_builder",
+      "title": "Credit Utilization 101: Why 30% Matters",
+      "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.114550"
+      "created_at": "2025-11-04T17:23:00.551138"
+    },
+    {
+      "id": 199,
+      "item_type": "education",
+      "title": "Breaking the Minimum Payment Cycle",
+      "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T17:23:00.551139"
+    },
+    {
+      "id": 200,
+      "item_type": "education",
+      "title": "Autopay Setup Guide: Never Miss a Payment",
+      "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T17:23:00.551140"
     },
     {
       "id": 201,
-      "item_type": "education",
-      "title": "Automating Your Savings: Set It and Forget It",
-      "rationale": "Your savings grew 3.15% this period. with $264.00/month in new deposits. This resource could help you optimize your savings strategy.",
-      "persona_id": "savings_builder",
+      "item_type": "offer",
+      "title": "Free Credit Monitoring and Score Tracking",
+      "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.114551"
-    },
-    {
-      "id": 202,
-      "item_type": "education",
-      "title": "High-Yield Savings Accounts Compared",
-      "rationale": "Your savings grew 3.15% this period. with $264.00/month in new deposits. This resource could help you optimize your savings strategy.",
-      "persona_id": "savings_builder",
-      "status": "pending",
-      "eligibility_flags": {
-        "tone_check": "passed"
-      },
-      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.114551"
+      "created_at": "2025-11-04T17:23:00.551140"
     }
   ],
-  "recommendation_count": 3,
-  "trace_generated_at": "2025-11-04T15:31:13.343958"
+  "recommendation_count": 4,
+  "trace_generated_at": "2025-11-04T17:24:19.468887"
 }

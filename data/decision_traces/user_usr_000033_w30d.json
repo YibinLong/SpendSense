@@ -2,112 +2,96 @@
   "user_id": "usr_000033",
   "window_days": 30,
   "persona": {
-    "persona_id": "high_utilization",
+    "persona_id": "savings_builder",
     "window_days": 30,
-    "assigned_at": "2025-11-04T15:31:06.206737",
+    "assigned_at": "2025-11-04T17:23:00.628817",
     "criteria_met": {
-      "persona": "high_utilization",
-      "credit_utilization_max_pct": 55.0,
-      "credit_util_flag_50": true,
-      "has_interest_charges": true,
-      "has_minimum_payment_only": false,
-      "is_overdue": false,
+      "persona": "savings_builder",
+      "savings_growth_rate_pct": 0.67,
+      "savings_net_inflow": 251.0,
       "matched_on": [
-        "credit_util_flag_50",
-        "has_interest_charges"
-      ]
+        "net_inflow_gte_200_per_month",
+        "all_cards_below_30_pct"
+      ],
+      "credit_utilization_max_pct": 0.0,
+      "credit_util_flag_30": false
     }
   },
   "signals": {
     "subscription": {
       "recurring_merchant_count": 0,
-      "monthly_recurring_spend": 42.97,
-      "subscription_share_pct": 0.72,
-      "computed_at": "2025-11-04T15:31:06.199726"
+      "monthly_recurring_spend": 79.98,
+      "subscription_share_pct": 3.21,
+      "computed_at": "2025-11-04T17:23:00.621098"
     },
     "savings": {
-      "savings_net_inflow": 751.0,
-      "savings_growth_rate_pct": 2.01,
-      "emergency_fund_months": 11.41,
-      "computed_at": "2025-11-04T15:31:06.201403"
+      "savings_net_inflow": 251.0,
+      "savings_growth_rate_pct": 0.67,
+      "emergency_fund_months": 15.24,
+      "computed_at": "2025-11-04T17:23:00.623063"
     },
     "credit": {
-      "credit_utilization_max_pct": 55.0,
-      "credit_utilization_avg_pct": 47.5,
-      "credit_util_flag_30": true,
-      "credit_util_flag_50": true,
+      "credit_utilization_max_pct": 0.0,
+      "credit_utilization_avg_pct": 0.0,
+      "credit_util_flag_30": false,
+      "credit_util_flag_50": false,
       "credit_util_flag_80": false,
-      "has_interest_charges": true,
+      "has_interest_charges": false,
       "has_minimum_payment_only": false,
       "is_overdue": false,
-      "computed_at": "2025-11-04T15:31:06.203114"
+      "computed_at": "2025-11-04T17:23:00.626606"
     },
     "income": {
-      "payroll_deposit_count": 2,
-      "median_pay_gap_days": 30.0,
+      "payroll_deposit_count": 3,
+      "median_pay_gap_days": 14.0,
       "pay_gap_variability": 0.0,
-      "avg_payroll_amount": 15599.5,
-      "cashflow_buffer_months": 3.27,
-      "computed_at": "2025-11-04T15:31:06.204944"
+      "avg_payroll_amount": 5438.33,
+      "cashflow_buffer_months": 2.71,
+      "computed_at": "2025-11-04T17:23:00.626968"
     }
   },
   "signal_count": 4,
   "recommendations": [
     {
-      "id": 222,
+      "id": 215,
       "item_type": "education",
-      "title": "Credit Utilization 101: Why 30% Matters",
-      "rationale": "Your credit utilization is 55.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Savings Goals: From Dream to Reality",
+      "rationale": "Your savings grew 0.67% this period. with $251.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.208766"
+      "created_at": "2025-11-04T17:23:00.630941"
     },
     {
-      "id": 223,
+      "id": 216,
       "item_type": "education",
-      "title": "Breaking the Minimum Payment Cycle",
-      "rationale": "Your credit utilization is 55.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "rationale": "Your savings grew 0.67% this period. with $251.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.208767"
+      "created_at": "2025-11-04T17:23:00.630942"
     },
     {
-      "id": 224,
+      "id": 217,
       "item_type": "education",
-      "title": "Autopay Setup Guide: Never Miss a Payment",
-      "rationale": "Your credit utilization is 55.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "High-Yield Savings Accounts Compared",
+      "rationale": "Your savings grew 0.67% this period. with $251.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.208767"
-    },
-    {
-      "id": 225,
-      "item_type": "offer",
-      "title": "Free Credit Monitoring and Score Tracking",
-      "rationale": "Your credit utilization is 55.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
-      "status": "pending",
-      "eligibility_flags": {
-        "eligible": true,
-        "reason": "No eligibility restrictions",
-        "tone_check": "passed"
-      },
-      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:06.208767"
+      "created_at": "2025-11-04T17:23:00.630943"
     }
   ],
-  "recommendation_count": 4,
-  "trace_generated_at": "2025-11-04T15:31:13.347299"
+  "recommendation_count": 3,
+  "trace_generated_at": "2025-11-04T17:24:19.479741"
 }

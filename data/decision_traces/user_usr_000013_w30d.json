@@ -2,89 +2,101 @@
   "user_id": "usr_000013",
   "window_days": 30,
   "persona": {
-    "persona_id": "cash_flow_optimizer",
+    "persona_id": "high_utilization",
     "window_days": 30,
-    "assigned_at": "2025-11-04T15:31:05.617623",
+    "assigned_at": "2025-11-04T17:23:00.033256",
     "criteria_met": {
-      "persona": "cash_flow_optimizer",
-      "avg_payroll_amount": 3799.33,
-      "payroll_deposit_count": 3,
+      "persona": "high_utilization",
+      "credit_utilization_max_pct": 35.0,
+      "credit_util_flag_50": false,
+      "has_interest_charges": false,
+      "has_minimum_payment_only": false,
+      "is_overdue": true,
       "matched_on": [
-        "stable_income_gte_2_deposits",
-        "credit_util_below_50_pct",
-        "cashflow_buffer_suggests_slight_overspend"
-      ],
-      "credit_utilization_max_pct": 40.0,
-      "cashflow_buffer_months": 0.63
+        "is_overdue"
+      ]
     }
   },
   "signals": {
     "subscription": {
       "recurring_merchant_count": 0,
-      "monthly_recurring_spend": 140.95,
-      "subscription_share_pct": 2.99,
-      "computed_at": "2025-11-04T15:31:05.611260"
+      "monthly_recurring_spend": 12.99,
+      "subscription_share_pct": 0.42,
+      "computed_at": "2025-11-04T17:23:00.026047"
     },
     "savings": {
-      "savings_net_inflow": 1007.0,
-      "savings_growth_rate_pct": 2.65,
-      "emergency_fund_months": 21.06,
-      "computed_at": "2025-11-04T15:31:05.612676"
+      "savings_net_inflow": 13.0,
+      "savings_growth_rate_pct": 0.03,
+      "emergency_fund_months": 27.9,
+      "computed_at": "2025-11-04T17:23:00.027721"
     },
     "credit": {
-      "credit_utilization_max_pct": 40.0,
-      "credit_utilization_avg_pct": 37.5,
+      "credit_utilization_max_pct": 35.0,
+      "credit_utilization_avg_pct": 35.0,
       "credit_util_flag_30": true,
       "credit_util_flag_50": false,
       "credit_util_flag_80": false,
       "has_interest_charges": false,
       "has_minimum_payment_only": false,
-      "is_overdue": false,
-      "computed_at": "2025-11-04T15:31:05.614185"
+      "is_overdue": true,
+      "computed_at": "2025-11-04T17:23:00.029635"
     },
     "income": {
       "payroll_deposit_count": 3,
       "median_pay_gap_days": 14.0,
       "pay_gap_variability": 0.0,
-      "avg_payroll_amount": 3799.33,
-      "cashflow_buffer_months": 0.63,
-      "computed_at": "2025-11-04T15:31:05.615890"
+      "avg_payroll_amount": 7360.0,
+      "cashflow_buffer_months": 8.54,
+      "computed_at": "2025-11-04T17:23:00.031341"
     }
   },
   "signal_count": 4,
   "recommendations": [
     {
-      "id": 86,
+      "id": 85,
       "item_type": "education",
-      "title": "Short-Term Budgeting Tactics",
-      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
-      "persona_id": "cash_flow_optimizer",
+      "title": "Credit Utilization 101: Why 30% Matters",
+      "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:05.619851"
+      "created_at": "2025-11-04T17:23:00.036012"
+    },
+    {
+      "id": 86,
+      "item_type": "education",
+      "title": "Breaking the Minimum Payment Cycle",
+      "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T17:23:00.036013"
     },
     {
       "id": 87,
       "item_type": "education",
-      "title": "Expense Triage: What to Cut First",
-      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
-      "persona_id": "cash_flow_optimizer",
+      "title": "Autopay Setup Guide: Never Miss a Payment",
+      "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:05.619852"
+      "created_at": "2025-11-04T17:23:00.036014"
     },
     {
       "id": 88,
       "item_type": "offer",
-      "title": "Budgeting App Premium - 3 Months Free",
-      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
-      "persona_id": "cash_flow_optimizer",
+      "title": "Free Credit Monitoring and Score Tracking",
+      "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
       "status": "pending",
       "eligibility_flags": {
         "eligible": true,
@@ -92,50 +104,9 @@
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:05.619852"
-    },
-    {
-      "id": 403,
-      "item_type": "education",
-      "title": "Short-Term Budgeting Tactics",
-      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
-      "persona_id": "cash_flow_optimizer",
-      "status": "pending",
-      "eligibility_flags": {
-        "tone_check": "passed"
-      },
-      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:13.288710"
-    },
-    {
-      "id": 404,
-      "item_type": "education",
-      "title": "Expense Triage: What to Cut First",
-      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
-      "persona_id": "cash_flow_optimizer",
-      "status": "pending",
-      "eligibility_flags": {
-        "tone_check": "passed"
-      },
-      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:13.288711"
-    },
-    {
-      "id": 405,
-      "item_type": "offer",
-      "title": "Budgeting App Premium - 3 Months Free",
-      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
-      "persona_id": "cash_flow_optimizer",
-      "status": "pending",
-      "eligibility_flags": {
-        "eligible": true,
-        "reason": "No eligibility restrictions",
-        "tone_check": "passed"
-      },
-      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:13.288712"
+      "created_at": "2025-11-04T17:23:00.036014"
     }
   ],
-  "recommendation_count": 6,
-  "trace_generated_at": "2025-11-04T15:31:13.323078"
+  "recommendation_count": 4,
+  "trace_generated_at": "2025-11-04T17:24:19.390093"
 }
