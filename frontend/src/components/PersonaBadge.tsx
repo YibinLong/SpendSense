@@ -2,17 +2,22 @@
  * PersonaBadge Component
  * 
  * Why this exists:
- * - Displays assigned persona with color coding
+ * - Displays assigned persona with gradient backgrounds and icons
  * - Shows time window (30d/180d)
  * - Visual indicator of user's financial behavior category
+ * - Modern design with hover effects for interactive feel
  */
 
-import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { getPersonaIcon } from '@/lib/iconMap'
+import { getPersonaGradient, getGradientClasses } from '@/lib/gradients'
 import type { PersonaAssignment } from '@/lib/api'
 
 interface PersonaBadgeProps {
   persona: PersonaAssignment | null | undefined
   className?: string
+  /** Whether to show in compact mode (smaller, no window days) */
+  compact?: boolean
 }
 
 /**
@@ -34,36 +39,42 @@ function getPersonaLabel(personaId: string): string {
   return labels[personaId] || personaId
 }
 
-/**
- * Get color variant for persona.
- * 
- * Why this exists:
- * - Visual differentiation of personas
- * - High Utilization = red (highest priority/concern)
- * - Savings Builder = green (positive behavior)
- * - Others = neutral/blue tones
- */
-function getPersonaVariant(personaId: string): 'default' | 'secondary' | 'destructive' | 'outline' {
-  if (personaId === 'high_utilization') return 'destructive'
-  if (personaId === 'savings_builder') return 'default'
-  if (personaId === 'insufficient_data') return 'outline'
-  return 'secondary'
-}
-
-export function PersonaBadge({ persona, className }: PersonaBadgeProps) {
+export function PersonaBadge({ persona, className, compact = false }: PersonaBadgeProps) {
   if (!persona) {
     return (
-      <Badge variant="outline" className={className}>
-        No Persona Assigned
-      </Badge>
+      <div className={cn(
+        "inline-flex items-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/30 px-4 py-2 text-sm text-muted-foreground",
+        className
+      )}>
+        <span>No Persona Assigned</span>
+      </div>
     )
   }
 
+  const Icon = getPersonaIcon(persona.persona_id)
+  const gradientVariant = getPersonaGradient(persona.persona_id)
+  const gradientClass = getGradientClasses(gradientVariant, 'background')
+
   return (
-    <div className={className}>
-      <Badge variant={getPersonaVariant(persona.persona_id)} className="text-sm">
-        {getPersonaLabel(persona.persona_id)} ({persona.window_days}d)
-      </Badge>
+    <div className={cn(
+      "inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105",
+      gradientClass,
+      className
+    )}>
+      {/* Icon */}
+      <Icon className="h-5 w-5" strokeWidth={2} />
+      
+      {/* Label */}
+      <span className="font-semibold text-sm">
+        {getPersonaLabel(persona.persona_id)}
+      </span>
+      
+      {/* Window days (if not compact) */}
+      {!compact && (
+        <span className="text-xs opacity-90 ml-1">
+          ({persona.window_days}d)
+        </span>
+      )}
     </div>
   )
 }
