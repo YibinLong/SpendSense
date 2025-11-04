@@ -8,9 +8,11 @@ Why this exists:
 - Provides clear error messages for invalid data
 - Uses masked identifiers (no real PII)
 - Ensures data consistency across the application
+- Includes auth and demographic fields for production-ready app
 """
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -41,6 +43,34 @@ class UserBase(BaseModel):
         description="Masked phone like '***-***-1234'",
         max_length=20
     )
+    
+    # Role and status
+    role: Literal["card_user", "operator"] = Field(
+        default="card_user",
+        description="User role: card_user or operator"
+    )
+    is_active: bool = Field(
+        default=True,
+        description="Whether the account is active"
+    )
+    
+    # Demographic fields (optional for privacy)
+    age_range: str | None = Field(
+        default=None,
+        description="Age range: 18-24, 25-34, 35-44, 45-54, 55-64, 65+",
+        max_length=20
+    )
+    gender: str | None = Field(
+        default=None,
+        description="Gender (optional for privacy)",
+        max_length=20
+    )
+    ethnicity: str | None = Field(
+        default=None,
+        description="Ethnicity (optional for privacy)",
+        max_length=50
+    )
+    
     created_at: datetime = Field(
         default_factory=datetime.utcnow,
         description="When this user record was created"
@@ -62,9 +92,13 @@ class UserCreate(UserBase):
     Used when:
     - Generating synthetic users
     - Ingesting users from CSV/JSON
-    - POST /users endpoint
+    - POST /users endpoint (admin/operator only)
     """
-    pass
+    password: str | None = Field(
+        default=None,
+        description="Plain-text password (will be hashed before storage)",
+        min_length=6
+    )
 
 
 class User(UserBase):
@@ -95,4 +129,119 @@ class UserInDB(User):
 
 # Alias for API responses
 UserResponse = User
+
+
+# ============================================================================
+# Authentication Schemas
+# ============================================================================
+
+class LoginRequest(BaseModel):
+    """
+    Schema for login requests.
+    
+    Why this exists:
+    - Validates login credentials
+    - Accepts either user_id or email_masked as username
+    - Used by POST /auth/login endpoint
+    """
+    username: str = Field(
+        ...,
+        description="Username (user_id or email_masked)",
+        min_length=1
+    )
+    password: str = Field(
+        ...,
+        description="Plain-text password",
+        min_length=1
+    )
+
+
+class SignupRequest(BaseModel):
+    """
+    Schema for signup/registration requests.
+    
+    Why this exists:
+    - Creates new user accounts with authentication
+    - Validates password and confirms match
+    - Used by POST /auth/signup endpoint
+    """
+    user_id: str = Field(
+        ...,
+        description="Unique user identifier",
+        min_length=1,
+        max_length=100
+    )
+    email_masked: str | None = Field(
+        default=None,
+        description="Masked email (optional)",
+        max_length=255
+    )
+    password: str = Field(
+        ...,
+        description="Password (min 6 characters)",
+        min_length=6
+    )
+    password_confirm: str = Field(
+        ...,
+        description="Password confirmation (must match password)",
+        min_length=6
+    )
+    
+    @field_validator('password_confirm')
+    @classmethod
+    def passwords_match(cls, v: str, info) -> str:
+        """Ensure password and password_confirm match."""
+        if 'password' in info.data and v != info.data['password']:
+            raise ValueError('Passwords do not match')
+        return v
+
+
+class TokenResponse(BaseModel):
+    """
+    Schema for JWT token responses.
+    
+    Why this exists:
+    - Returns access token after successful login/signup
+    - Includes token type and user info
+    - Standardized response format
+    """
+    access_token: str = Field(
+        ...,
+        description="JWT access token"
+    )
+    token_type: str = Field(
+        default="bearer",
+        description="Token type (always 'bearer')"
+    )
+    user_id: str = Field(
+        ...,
+        description="Authenticated user ID"
+    )
+    role: str = Field(
+        ...,
+        description="User role (card_user or operator)"
+    )
+
+
+class UserAuth(BaseModel):
+    """
+    Schema for authenticated user info from token.
+    
+    Why this exists:
+    - Represents decoded JWT token data
+    - Used internally by auth dependencies
+    - Contains minimal user info for authorization checks
+    """
+    user_id: str = Field(
+        ...,
+        description="User ID from token"
+    )
+    role: str = Field(
+        ...,
+        description="User role from token"
+    )
+    exp: int = Field(
+        ...,
+        description="Token expiration timestamp"
+    )
 

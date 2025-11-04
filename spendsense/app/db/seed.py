@@ -27,6 +27,7 @@ from typing import Any
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
+from spendsense.app.auth.password import hash_password
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import (
@@ -115,14 +116,56 @@ def generate_liability_id(user_index: int, liability_index: int) -> str:
     return f"liab_{str(user_index).zfill(6)}_{str(liability_index).zfill(2)}"
 
 
+def generate_demographics() -> dict[str, str | None]:
+    """
+    Generate realistic demographic data with weighted distributions.
+    
+    Why we do this:
+    - Enables fairness analysis across demographics
+    - Uses realistic age/gender/ethnicity distributions
+    - Respects privacy by making fields nullable (some users opt out)
+    
+    Returns:
+        Dict with age_range, gender, ethnicity (some may be None)
+    """
+    # Age distribution (weighted to match general population)
+    age_ranges = ["18-24", "25-34", "35-44", "45-54", "55-64", "65+"]
+    age_weights = [15, 30, 25, 20, 7, 3]  # Percentages
+    age_range = random.choices(age_ranges, weights=age_weights, k=1)[0]
+    
+    # Gender (some users don't provide - 30% null for privacy)
+    genders = ["Male", "Female", "Non-binary", "Prefer not to say", None]
+    gender_weights = [35, 35, 5, 5, 30]  # 30% don't provide
+    gender = random.choices(genders, weights=gender_weights, k=1)[0]
+    
+    # Ethnicity (40% don't provide for privacy)
+    ethnicities = [
+        "White", "Hispanic or Latino", "Black or African American",
+        "Asian", "Two or More Races", "Other", None
+    ]
+    ethnicity_weights = [30, 10, 8, 8, 4, 3, 40]  # 40% don't provide
+    ethnicity = random.choices(ethnicities, weights=ethnicity_weights, k=1)[0]
+    
+    return {
+        "age_range": age_range,
+        "gender": gender,
+        "ethnicity": ethnicity
+    }
+
+
 def generate_users(n: int = 50) -> list[User]:
     """
-    Generate synthetic users.
+    Generate synthetic users with demographics and auth credentials.
     
     Why 50 users:
     - Per plan requirements
     - Enough to test all personas
     - Small enough for quick local development
+    
+    New features:
+    - Passwords for authentication (pattern: user{id}123)
+    - Demographic data for fairness analysis
+    - All users are card_user role by default
     
     Args:
         n: Number of users to generate (default 50)
@@ -135,6 +178,14 @@ def generate_users(n: int = 50) -> list[User]:
 
     for i in range(1, n + 1):
         user_id = generate_user_id(i)
+        
+        # Generate demographics (weighted distributions)
+        demographics = generate_demographics()
+        
+        # Generate password for authentication
+        # Pattern: user001123, user002123, etc. (easy to remember for testing)
+        password = f"{user_id.replace('_', '')}123"  # usr_000001 -> usr000001123
+        password_hash = hash_password(password)
 
         # Create via Pydantic for validation
         user_data = UserCreate(
@@ -144,14 +195,25 @@ def generate_users(n: int = 50) -> list[User]:
                 FRIENDLY_USER_LABELS[i - 1] if i <= len(FRIENDLY_USER_LABELS) else f"u***{i}@example.com"
             ),
             phone_masked=f"***-***-{str(i).zfill(4)}",
+            password=password,  # Will be hashed in model creation
+            role="card_user",
+            is_active=True,
+            age_range=demographics["age_range"],
+            gender=demographics["gender"],
+            ethnicity=demographics["ethnicity"],
             created_at=datetime.utcnow() - timedelta(days=random.randint(180, 730))
         )
 
         # Convert to ORM model
-        user = User(**user_data.model_dump())
+        # Override password with already-hashed version
+        user_dict = user_data.model_dump()
+        user_dict['password_hash'] = password_hash
+        del user_dict['password']  # Remove plain password field
+        
+        user = User(**user_dict)
         users.append(user)
 
-    logger.info("users_generated", count=len(users))
+    logger.info("users_generated", count=len(users), demographics_included=True)
     return users
 
 

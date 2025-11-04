@@ -29,3 +29,12 @@ ruff>=0.8.0
 # Environment Variables
 python-dotenv>=1.0.0
 
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib==1.7.4
+bcrypt==4.1.2
+
+# Visualization & Reporting
+matplotlib>=3.8.0
+reportlab>=4.0.0
+

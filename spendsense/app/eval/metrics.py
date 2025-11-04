@@ -6,23 +6,27 @@ This module computes objective metrics to measure system performance:
 - Explainability: % of recommendations with rationales
 - Latency: recommendation generation time per user (target <5s)
 - Auditability: % of recommendations with decision traces
+- Fairness: Demographic analysis to detect disparities in persona/recommendations
 
 Why this exists:
 - PRD requires objective evaluation metrics
 - Enables measurement against targets (100% coverage, <5s latency, etc.)
 - Provides exportable JSON/CSV for analysis
 - Demonstrates system quality and transparency
+- Detects potential bias in persona assignment and recommendations
 """
 
 import csv
 import json
 import time
+from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from spendsense.app.core.config import settings
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import (
     CreditSignal,
@@ -342,6 +346,198 @@ def compute_auditability_metrics(session: Session) -> dict[str, Any]:
     return metrics
 
 
+def compute_fairness_metrics(session: Session) -> dict[str, Any]:
+    """
+    Compute fairness metrics: demographic analysis of persona and recommendation distribution.
+    
+    PRD Requirement: Detect disparities in persona assignment and recommendations across demographics.
+    
+    How it works:
+    1. Group users by age_range, gender, ethnicity
+    2. For each demographic group:
+       - Count users in each persona
+       - Count education vs offer recommendations
+       - Calculate distribution percentages
+    3. Detect disparities: flag if any group is >FAIRNESS_THRESHOLD% over/under-represented
+    
+    Returns:
+        Dict with:
+        - demographics: breakdown by demographic attribute
+        - disparities: list of detected fairness issues
+        - warnings: actionable alerts for operators
+    """
+    logger.info("Computing fairness metrics")
+    
+    # Get fairness threshold from config (default 20%)
+    threshold = settings.fairness_threshold
+    
+    # Initialize result structure
+    demographics_analysis: dict[str, dict[str, Any]] = {}
+    disparities: list[dict[str, Any]] = []
+    warnings: list[str] = []
+    
+    # Get all users with demographics
+    all_users = session.query(User).filter(User.is_active == True).all()
+    total_users = len(all_users)
+    
+    if total_users == 0:
+        logger.warning("No active users found for fairness analysis")
+        return {
+            "demographics": {},
+            "disparities": [],
+            "warnings": ["No active users found"],
+            "threshold_pct": threshold,
+        }
+    
+    # Analyze by age_range
+    age_groups = defaultdict(lambda: {
+        "count": 0,
+        "personas": defaultdict(int),
+        "education_recs": 0,
+        "offer_recs": 0,
+    })
+    
+    for user in all_users:
+        age = user.age_range or "unknown"
+        age_groups[age]["count"] += 1
+        
+        # Count persona assignments
+        persona = session.query(Persona).filter(
+            Persona.user_id == user.user_id
+        ).first()
+        if persona:
+            age_groups[age]["personas"][persona.persona_id] += 1
+        
+        # Count recommendations by type
+        recommendations = session.query(Recommendation).filter(
+            Recommendation.user_id == user.user_id
+        ).all()
+        for rec in recommendations:
+            if rec.item_type == "education":
+                age_groups[age]["education_recs"] += 1
+            elif rec.item_type == "offer":
+                age_groups[age]["offer_recs"] += 1
+    
+    # Calculate percentages and detect disparities for age
+    age_analysis = {}
+    for age, data in age_groups.items():
+        pct_of_total = (data["count"] / total_users * 100) if total_users > 0 else 0
+        
+        age_analysis[age] = {
+            "count": data["count"],
+            "pct_of_total": round(pct_of_total, 2),
+            "personas": dict(data["personas"]),
+            "education_recs": data["education_recs"],
+            "offer_recs": data["offer_recs"],
+        }
+        
+        # Check for under-representation (less than threshold% of expected)
+        expected_pct = 100.0 / len(age_groups) if len(age_groups) > 0 else 0
+        if abs(pct_of_total - expected_pct) > threshold:
+            disparities.append({
+                "demographic": "age_range",
+                "group": age,
+                "issue": f"Representation {pct_of_total:.1f}% vs expected ~{expected_pct:.1f}%",
+                "severity": "warning",
+            })
+            warnings.append(f"Age group '{age}' is {pct_of_total:.1f}% of users (expected ~{expected_pct:.1f}%)")
+    
+    demographics_analysis["age_range"] = age_analysis
+    
+    # Analyze by gender
+    gender_groups = defaultdict(lambda: {
+        "count": 0,
+        "personas": defaultdict(int),
+        "education_recs": 0,
+        "offer_recs": 0,
+    })
+    
+    for user in all_users:
+        gender = user.gender or "unknown"
+        gender_groups[gender]["count"] += 1
+        
+        persona = session.query(Persona).filter(
+            Persona.user_id == user.user_id
+        ).first()
+        if persona:
+            gender_groups[gender]["personas"][persona.persona_id] += 1
+        
+        recommendations = session.query(Recommendation).filter(
+            Recommendation.user_id == user.user_id
+        ).all()
+        for rec in recommendations:
+            if rec.item_type == "education":
+                gender_groups[gender]["education_recs"] += 1
+            elif rec.item_type == "offer":
+                gender_groups[gender]["offer_recs"] += 1
+    
+    gender_analysis = {}
+    for gender, data in gender_groups.items():
+        pct_of_total = (data["count"] / total_users * 100) if total_users > 0 else 0
+        
+        gender_analysis[gender] = {
+            "count": data["count"],
+            "pct_of_total": round(pct_of_total, 2),
+            "personas": dict(data["personas"]),
+            "education_recs": data["education_recs"],
+            "offer_recs": data["offer_recs"],
+        }
+    
+    demographics_analysis["gender"] = gender_analysis
+    
+    # Analyze by ethnicity
+    ethnicity_groups = defaultdict(lambda: {
+        "count": 0,
+        "personas": defaultdict(int),
+        "education_recs": 0,
+        "offer_recs": 0,
+    })
+    
+    for user in all_users:
+        ethnicity = user.ethnicity or "unknown"
+        ethnicity_groups[ethnicity]["count"] += 1
+        
+        persona = session.query(Persona).filter(
+            Persona.user_id == user.user_id
+        ).first()
+        if persona:
+            ethnicity_groups[ethnicity]["personas"][persona.persona_id] += 1
+        
+        recommendations = session.query(Recommendation).filter(
+            Recommendation.user_id == user.user_id
+        ).all()
+        for rec in recommendations:
+            if rec.item_type == "education":
+                ethnicity_groups[ethnicity]["education_recs"] += 1
+            elif rec.item_type == "offer":
+                ethnicity_groups[ethnicity]["offer_recs"] += 1
+    
+    ethnicity_analysis = {}
+    for ethnicity, data in ethnicity_groups.items():
+        pct_of_total = (data["count"] / total_users * 100) if total_users > 0 else 0
+        
+        ethnicity_analysis[ethnicity] = {
+            "count": data["count"],
+            "pct_of_total": round(pct_of_total, 2),
+            "personas": dict(data["personas"]),
+            "education_recs": data["education_recs"],
+            "offer_recs": data["offer_recs"],
+        }
+    
+    demographics_analysis["ethnicity"] = ethnicity_analysis
+    
+    metrics = {
+        "demographics": demographics_analysis,
+        "disparities": disparities,
+        "warnings": warnings,
+        "threshold_pct": threshold,
+        "total_users_analyzed": total_users,
+    }
+    
+    logger.info(f"Fairness metrics: {len(disparities)} disparities detected, {len(warnings)} warnings")
+    return metrics
+
+
 def compute_all_metrics(session: Session, latency_sample_size: int = 10) -> dict[str, Any]:
     """
     Compute all evaluation metrics.
@@ -362,6 +558,7 @@ def compute_all_metrics(session: Session, latency_sample_size: int = 10) -> dict
         "explainability": compute_explainability_metrics(session),
         "latency": compute_latency_metrics(session, sample_size=latency_sample_size),
         "auditability": compute_auditability_metrics(session),
+        "fairness": compute_fairness_metrics(session),
         "metadata": {
             "computed_at": time.strftime("%Y-%m-%d %H:%M:%S"),
             "latency_sample_size": latency_sample_size,

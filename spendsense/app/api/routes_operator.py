@@ -4,16 +4,22 @@ Operator review API routes.
 This module provides endpoints for operator review workflow.
 
 Endpoints:
-- GET /operator/review - List recommendations pending review
-- POST /operator/recommendations/{id}/approve - Approve/reject recommendation
+- GET /operator/review - List recommendations pending review (operator only)
+- POST /operator/recommendations/{id}/approve - Approve/reject recommendation (operator only)
+- GET /operator/recommendations/{id}/reviews - Get review history (operator only)
+
+Auth: All endpoints require operator role
 """
 
+
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from spendsense.app.auth.dependencies import require_operator
 from spendsense.app.core.logging import get_logger
-from spendsense.app.db.models import OperatorReview, Recommendation
+from spendsense.app.db.models import OperatorReview, Recommendation, User
 from spendsense.app.db.session import get_db
 from spendsense.app.schemas.operator import ApprovalRequest, ApprovalResponse, OperatorReviewResponse
 from spendsense.app.schemas.recommendation import RecommendationItem
@@ -24,10 +30,11 @@ router = APIRouter()
 
 @router.get("/review", response_model=list[RecommendationItem])
 async def get_review_queue(
+    current_user: Annotated[User, Depends(require_operator)],
+    db: Annotated[Session, Depends(get_db)],
     status_filter: str | None = Query(default="pending", description="Filter by status"),
     limit: int | None = Query(default=20, ge=1, le=100, description="Max items to return"),
     offset: int | None = Query(default=0, ge=0, description="Offset for pagination"),
-    db: Session = Depends(get_db),
 ) -> list[RecommendationItem]:
     """
     Get operator review queue.
@@ -60,6 +67,7 @@ async def get_review_queue(
     """
     logger.info(
         "getting_review_queue",
+        operator=current_user.user_id,
         status_filter=status_filter,
         limit=limit,
         offset=offset,
@@ -90,7 +98,8 @@ async def get_review_queue(
 async def approve_recommendation(
     recommendation_id: int,
     approval: ApprovalRequest,
-    db: Session = Depends(get_db),
+    current_user: Annotated[User, Depends(require_operator)],
+    db: Annotated[Session, Depends(get_db)],
 ) -> ApprovalResponse:
     """
     Approve or reject a recommendation.
@@ -138,10 +147,11 @@ async def approve_recommendation(
         )
 
     # Create operator review record
+    # Use authenticated user as reviewer (overrides any value in request body)
     review = OperatorReview(
         recommendation_id=recommendation_id,
         status=approval.status,
-        reviewer=approval.reviewer,
+        reviewer=current_user.user_id,
         notes=approval.notes,
     )
 
@@ -171,7 +181,8 @@ async def approve_recommendation(
 @router.get("/recommendations/{recommendation_id}/reviews", response_model=list[OperatorReviewResponse])
 async def get_recommendation_reviews(
     recommendation_id: int,
-    db: Session = Depends(get_db),
+    current_user: Annotated[User, Depends(require_operator)],
+    db: Annotated[Session, Depends(get_db)],
 ) -> list[OperatorReviewResponse]:
     """
     Get all reviews for a specific recommendation.
@@ -197,5 +208,157 @@ async def get_recommendation_reviews(
     ).order_by(OperatorReview.decided_at.desc()).all()
 
     return [OperatorReviewResponse.model_validate(review) for review in reviews]
+
+
+@router.get("/fairness")
+async def get_fairness_metrics(
+    current_user: Annotated[User, Depends(require_operator)],
+    db: Annotated[Session, Depends(get_db)],
+):
+    """
+    Get fairness metrics: demographic analysis of personas and recommendations.
+    
+    Why this exists:
+    - PRD requires fairness analysis to detect potential bias
+    - Operators need visibility into demographic distribution
+    - Helps identify disparate impact in persona assignment
+    - Supports compliance and ethical AI practices
+    
+    Returns:
+        {
+            "demographics": {
+                "age_range": {
+                    "25-34": {
+                        "count": 15,
+                        "pct_of_total": 30.0,
+                        "personas": {"saver": 8, "spender": 7},
+                        "education_recs": 12,
+                        "offer_recs": 8
+                    },
+                    ...
+                },
+                "gender": {...},
+                "ethnicity": {...}
+            },
+            "disparities": [
+                {
+                    "demographic": "age_range",
+                    "group": "55+",
+                    "issue": "Representation 5.0% vs expected ~20.0%",
+                    "severity": "warning"
+                }
+            ],
+            "warnings": ["Age group '55+' is under-represented"],
+            "threshold_pct": 20,
+            "total_users_analyzed": 50
+        }
+    """
+    logger.info("getting_fairness_metrics", operator=current_user.user_id)
+    
+    from spendsense.app.eval.metrics import compute_fairness_metrics
+    
+    metrics = compute_fairness_metrics(db)
+    
+    logger.debug(
+        "fairness_metrics_computed",
+        total_users=metrics.get("total_users_analyzed", 0),
+        disparities_count=len(metrics.get("disparities", [])),
+    )
+    
+    return metrics
+
+
+@router.get("/reports/latest")
+async def get_latest_report(
+    current_user: Annotated[User, Depends(require_operator)],
+):
+    """
+    Get latest evaluation report (markdown).
+    
+    Why this exists:
+    - Operators need access to system performance reports
+    - Provides human-readable summary of all metrics
+    - Includes pass/fail assessment vs PRD targets
+    
+    Returns:
+        {
+            "content": "# SpendSense Evaluation Report\n\n...",
+            "timestamp": "2025-11-04T14:30:22",
+            "exists": true
+        }
+    
+    Returns 404 if no report exists (run `python run_metrics.py --report` first)
+    """
+    logger.info("getting_latest_report", operator=current_user.user_id)
+    
+    from pathlib import Path
+    from spendsense.app.core.config import settings
+    
+    report_path = Path(settings.data_dir) / "eval_report.md"
+    
+    if not report_path.exists():
+        logger.warning("report_not_found", path=str(report_path))
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No report found. Run 'python run_metrics.py --report' to generate one.",
+        )
+    
+    # Get file metadata
+    import os
+    import datetime
+    
+    stat = os.stat(report_path)
+    timestamp = datetime.datetime.fromtimestamp(stat.st_mtime).isoformat()
+    
+    # Read report content
+    content = report_path.read_text()
+    
+    logger.debug("report_loaded", size=len(content), timestamp=timestamp)
+    
+    return {
+        "content": content,
+        "timestamp": timestamp,
+        "exists": True,
+    }
+
+
+@router.get("/reports/latest/pdf")
+async def get_latest_report_pdf(
+    current_user: Annotated[User, Depends(require_operator)],
+):
+    """
+    Download latest evaluation report as PDF.
+    
+    Why this exists:
+    - Provides downloadable PDF for stakeholder distribution
+    - Includes charts and visualizations
+    - Professional format for reporting
+    
+    Returns: PDF file download
+    
+    Returns 404 if no PDF exists (run `python run_metrics.py --report` first)
+    """
+    logger.info("getting_latest_report_pdf", operator=current_user.user_id)
+    
+    from pathlib import Path
+    from fastapi.responses import FileResponse
+    from spendsense.app.core.config import settings
+    
+    pdf_path = Path(settings.data_dir) / "eval_report.pdf"
+    
+    if not pdf_path.exists():
+        logger.warning("pdf_not_found", path=str(pdf_path))
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No PDF report found. Run 'python run_metrics.py --report' to generate one.",
+        )
+    
+    logger.debug("pdf_download", path=str(pdf_path))
+    
+    return FileResponse(
+        path=str(pdf_path),
+        media_type="application/pdf",
+        filename="spendsense_eval_report.pdf",
+    )
 
 
