@@ -33,6 +33,16 @@ typecheck:
 	@echo "Running mypy type checks..."
 	mypy spendsense/app
 
+.PHONY: lint
+lint:
+	@echo "Running ruff linter..."
+	ruff check spendsense/
+
+.PHONY: lint-fix
+lint-fix:
+	@echo "Running ruff linter with auto-fix..."
+	ruff check --fix spendsense/
+
 # Frontend commands
 .PHONY: frontend-install
 frontend-install:
@@ -94,6 +104,8 @@ help:
 	@echo "Testing & Quality:"
 	@echo "  make test             - Run pytest"
 	@echo "  make typecheck        - Run mypy type checking"
+	@echo "  make lint             - Run ruff linter"
+	@echo "  make lint-fix         - Run ruff linter with auto-fix"
 	@echo ""
 	@echo "Build:"
 	@echo "  make frontend-build   - Build frontend for production"
@@ -104,4 +116,5 @@ help:
 
 # Default target
 .DEFAULT_GOAL := help
+
 
