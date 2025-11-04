@@ -1,94 +1,110 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
 
 /* 
  * Theme CSS Variables for shadcn/ui
  * These define the color palette used throughout the application
+ * Updated with modern blue/purple gradient palette for fintech feel
  */
 @layer base {
   :root {
-    /* Background colors */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    /* Background colors - Light gray for subtle depth */
+    --background: 220 15% 98%;
+    --foreground: 220 15% 10%;
     
-    /* Card colors */
+    /* Card colors - Pure white cards on light gray background */
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 220 15% 10%;
     
     /* Popover colors (used by dropdown menus) */
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover-foreground: 220 15% 10%;
     
-    /* Primary colors */
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    /* Primary colors - Blue from gradient palette */
+    --primary: 217 91% 60%;        /* #3B82F6 - Vibrant blue */
+    --primary-foreground: 0 0% 100%;
     
-    /* Secondary colors */
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    /* Secondary colors - Light purple tint */
+    --secondary: 250 100% 95%;
+    --secondary-foreground: 220 15% 10%;
     
     /* Muted colors */
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 46%;
     
-    /* Accent colors */
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    /* Accent colors - Purple from gradient */
+    --accent: 258 90% 66%;         /* #8B5CF6 - Rich purple */
+    --accent-foreground: 0 0% 100%;
     
-    /* Destructive colors */
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    /* Destructive colors - Red for high priority */
+    --destructive: 0 84% 60%;      /* #EF4444 */
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Success colors - Green for positive signals */
+    --success: 158 64% 52%;        /* #10B981 */
+    --success-foreground: 0 0% 100%;
+    
+    /* Warning colors - Amber for caution */
+    --warning: 38 92% 50%;         /* #F59E0B */
+    --warning-foreground: 0 0% 100%;
     
     /* Border and input */
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 217 91% 60%;           /* Match primary */
     
-    /* Chart colors */
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    /* Chart colors - Updated to match new palette */
+    --chart-1: 217 91% 60%;        /* Blue */
+    --chart-2: 158 64% 52%;        /* Green */
+    --chart-3: 258 90% 66%;        /* Purple */
+    --chart-4: 38 92% 50%;         /* Amber */
+    --chart-5: 0 84% 60%;          /* Red */
     
     /* Border radius */
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Dark mode colors */
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Dark mode colors - Adjusted for modern look */
+    --background: 220 15% 8%;
+    --foreground: 220 15% 95%;
     
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 220 15% 10%;
+    --card-foreground: 220 15% 95%;
     
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 220 15% 95%;
     
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
+    --primary: 217 91% 60%;        /* Keep blue vibrant in dark mode */
+    --primary-foreground: 0 0% 100%;
     
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 220 15% 95%;
     
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
     
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 258 90% 66%;         /* Keep purple vibrant */
+    --accent-foreground: 0 0% 100%;
     
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
     
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --success: 158 64% 52%;
+    --success-foreground: 0 0% 100%;
     
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 217 91% 60%;
+    
+    --chart-1: 217 91% 60%;
+    --chart-2: 158 64% 52%;
+    --chart-3: 258 90% 66%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 0 84% 60%;
   }
 }
 
@@ -103,5 +119,30 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* 
+ * Custom scrollbar styling for modern look
+ */
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: var(--radius-full);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--gradient-blue-start) 0%, var(--gradient-purple-end) 100%);
+    border-radius: var(--radius-full);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
   }
 }

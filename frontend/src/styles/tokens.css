@@ -1,0 +1,208 @@
+/**
+ * Design Tokens for SpendSense
+ * 
+ * Why this file exists:
+ * - Centralizes all design values (colors, gradients, shadows, spacing)
+ * - Ensures consistency across the entire app
+ * - Makes it easy to update the design system in one place
+ * 
+ * Color Palette:
+ * - Blue/Purple gradients for primary branding (fintech feel like Stripe/Plaid)
+ * - Cyan/Teal for positive financial signals
+ * - Green for success states (savings, approvals)
+ * - Amber for warnings
+ * - Red for errors and high-priority alerts
+ */
+
+@layer base {
+  :root {
+    /* === PRIMARY GRADIENT COLORS === */
+    /* These create the signature blue-to-purple gradient */
+    --gradient-blue-start: #3B82F6;     /* Vibrant blue */
+    --gradient-purple-end: #8B5CF6;     /* Rich purple */
+    
+    /* === ACCENT COLORS === */
+    --color-cyan: #06B6D4;              /* Cyan/teal for positive signals */
+    --color-success: #10B981;           /* Green for savings/success */
+    --color-warning: #F59E0B;           /* Amber for warnings */
+    --color-danger: #EF4444;            /* Red for errors/high priority */
+    
+    /* === PERSONA-SPECIFIC GRADIENTS === */
+    /* High Utilization - Red gradient (urgent) */
+    --persona-high-util-start: #DC2626;
+    --persona-high-util-end: #EF4444;
+    
+    /* Variable Income - Orange gradient (caution) */
+    --persona-var-income-start: #EA580C;
+    --persona-var-income-end: #F59E0B;
+    
+    /* Subscription Heavy - Blue gradient (informative) */
+    --persona-subscription-start: #2563EB;
+    --persona-subscription-end: #3B82F6;
+    
+    /* Savings Builder - Green gradient (positive) */
+    --persona-savings-start: #059669;
+    --persona-savings-end: #10B981;
+    
+    /* Cash Flow Optimizer - Purple gradient (strategic) */
+    --persona-cashflow-start: #7C3AED;
+    --persona-cashflow-end: #8B5CF6;
+    
+    /* Insufficient Data - Gray gradient (neutral) */
+    --persona-insufficient-start: #6B7280;
+    --persona-insufficient-end: #9CA3AF;
+    
+    /* === SHADOWS === */
+    /* Elevation levels for depth and hierarchy */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Colored shadows for gradients */
+    --shadow-primary: 0 10px 30px -5px rgba(59, 130, 246, 0.3);
+    --shadow-success: 0 10px 30px -5px rgba(16, 185, 129, 0.3);
+    --shadow-danger: 0 10px 30px -5px rgba(239, 68, 68, 0.3);
+    
+    /* === BORDER RADIUS === */
+    --radius-sm: 0.375rem;   /* 6px - Small elements like badges */
+    --radius-md: 0.5rem;     /* 8px - Cards, buttons */
+    --radius-lg: 0.75rem;    /* 12px - Large cards, modals */
+    --radius-xl: 1rem;       /* 16px - Hero sections */
+    --radius-full: 9999px;   /* Full rounded (pills, avatars) */
+    
+    /* === SPACING === */
+    --space-xs: 0.25rem;     /* 4px */
+    --space-sm: 0.5rem;      /* 8px */
+    --space-md: 1rem;        /* 16px */
+    --space-lg: 1.5rem;      /* 24px */
+    --space-xl: 2rem;        /* 32px */
+    --space-2xl: 3rem;       /* 48px */
+    
+    /* === TRANSITIONS === */
+    --transition-fast: 150ms ease-in-out;
+    --transition-normal: 250ms ease-in-out;
+    --transition-slow: 350ms ease-in-out;
+    
+    /* === Z-INDEX === */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+  }
+  
+  /* Dark mode overrides (if needed in the future) */
+  .dark {
+    /* Adjust gradient colors for dark mode */
+    --gradient-blue-start: #60A5FA;     /* Lighter blue for dark bg */
+    --gradient-purple-end: #A78BFA;     /* Lighter purple for dark bg */
+  }
+}
+
+/* === UTILITY CLASSES === */
+/* These can be used directly in components */
+
+/* Background Gradients */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--gradient-blue-start) 0%, var(--gradient-purple-end) 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, var(--persona-savings-start) 0%, var(--persona-savings-end) 100%);
+}
+
+.bg-gradient-danger {
+  background: linear-gradient(135deg, var(--persona-high-util-start) 0%, var(--persona-high-util-end) 100%);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, var(--persona-var-income-start) 0%, var(--persona-var-income-end) 100%);
+}
+
+.bg-gradient-info {
+  background: linear-gradient(135deg, var(--persona-subscription-start) 0%, var(--persona-subscription-end) 100%);
+}
+
+/* Text Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--gradient-blue-start) 0%, var(--gradient-purple-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-success {
+  background: linear-gradient(135deg, var(--persona-savings-start) 0%, var(--persona-savings-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hover-scale {
+  transition: transform var(--transition-fast);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Card Styles with Gradient Borders */
+.card-gradient-border {
+  position: relative;
+  background: hsl(var(--card));
+  border-radius: var(--radius-lg);
+}
+
+.card-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  padding: 2px;
+  background: linear-gradient(135deg, var(--gradient-blue-start) 0%, var(--gradient-purple-end) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 8px;
+  background: hsl(var(--muted));
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gradient-blue-start) 0%, var(--gradient-purple-end) 100%);
+  transition: width var(--transition-normal);
+  border-radius: var(--radius-full);
+}
+
+.progress-fill.success {
+  background: linear-gradient(90deg, var(--persona-savings-start) 0%, var(--persona-savings-end) 100%);
+}
+
+.progress-fill.warning {
+  background: linear-gradient(90deg, var(--persona-var-income-start) 0%, var(--persona-var-income-end) 100%);
+}
+
+.progress-fill.danger {
+  background: linear-gradient(90deg, var(--persona-high-util-start) 0%, var(--persona-high-util-end) 100%);
+}
+

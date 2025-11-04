@@ -3,25 +3,35 @@
  * 
  * Why this exists:
  * - Provides consistent navigation between User Dashboard and Operator View
- * - Shows current user info and role
+ * - Shows current user info and role with modern avatar dropdown
  * - Provides logout functionality
  * - Wraps all pages with a responsive container
- * - Shows app branding (SpendSense title)
+ * - Modern gradient header design
  * 
  * Features:
- * - Role-based navigation (shows only appropriate links)
- * - User info display (user_id and role badge)
- * - Logout button
+ * - Role-based navigation with gradient active states
+ * - User avatar/profile dropdown
+ * - Icons for better visual navigation
+ * - Gradient header background
  */
 
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from './ui/button'
+import { getNavIcon } from '@/lib/iconMap'
 import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import { ChevronDown, User } from 'lucide-react'
 
 export function Layout() {
   const location = useLocation()
   const { user, logout } = useAuth()
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  
+  const HomeIcon = getNavIcon('home')
+  const DashboardIcon = getNavIcon('dashboard')
+  const OperatorIcon = getNavIcon('operator')
+  const LogoutIcon = getNavIcon('logout')
   
   /**
    * Handle logout.
@@ -35,26 +45,35 @@ export function Layout() {
   
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Navigation */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
+      {/* Header with Navigation - Gradient background */}
+      <header className="sticky top-0 z-50 border-b shadow-md bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
+        <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold">SpendSense</h1>
+            {/* Logo/Brand */}
+            <Link to="/dashboard" className="flex items-center gap-2 group">
+              <div className="rounded-lg bg-white/10 p-2 backdrop-blur-sm group-hover:bg-white/20 transition-colors">
+                <HomeIcon className="h-6 w-6 text-white" strokeWidth={2} />
+              </div>
+              <h1 className="text-2xl font-bold text-white tracking-tight">
+                SpendSense
+              </h1>
+            </Link>
             
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               {/* Navigation Links */}
-              <nav className="flex gap-4">
+              <nav className="flex gap-2">
                 {/* User Dashboard - show for all authenticated users */}
                 <Link
                   to="/dashboard"
                   className={cn(
-                    "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                    "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
                     location.pathname.startsWith('/dashboard')
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-secondary"
+                      ? "bg-white text-blue-600 shadow-lg"
+                      : "text-white/90 hover:bg-white/10 hover:text-white"
                   )}
                 >
-                  User Dashboard
+                  <DashboardIcon className="h-4 w-4" strokeWidth={2} />
+                  Dashboard
                 </Link>
                 
                 {/* Operator View - show only for operators */}
@@ -62,42 +81,77 @@ export function Layout() {
                   <Link
                     to="/operator"
                     className={cn(
-                      "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                      "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all",
                       location.pathname.startsWith('/operator')
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-secondary"
+                        ? "bg-white text-purple-600 shadow-lg"
+                        : "text-white/90 hover:bg-white/10 hover:text-white"
                     )}
                   >
-                    Operator View
+                    <OperatorIcon className="h-4 w-4" strokeWidth={2} />
+                    Operator
                   </Link>
                 )}
               </nav>
               
-              {/* User Info and Logout */}
+              {/* User Info and Dropdown */}
               {user && (
-                <div className="flex items-center gap-4 border-l pl-6">
-                  <div className="text-sm">
-                    <div className="font-medium">{user.user_id}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {user.role === 'operator' ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                          Operator
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                          Card User
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleLogout}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center gap-3 pl-4 border-l border-white/20 hover:bg-white/10 rounded-lg py-2 pr-3 transition-colors"
                   >
-                    Logout
-                  </Button>
+                    {/* User Avatar */}
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-full bg-white/20 p-2 backdrop-blur-sm">
+                        <User className="h-4 w-4 text-white" strokeWidth={2} />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-sm font-medium text-white">{user.user_id}</div>
+                        <div className="text-xs text-white/70">
+                          {user.role === 'operator' ? 'Operator' : 'Card User'}
+                        </div>
+                      </div>
+                      <ChevronDown className={cn(
+                        "h-4 w-4 text-white/70 transition-transform",
+                        showUserMenu && "rotate-180"
+                      )} />
+                    </div>
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {showUserMenu && (
+                    <>
+                      {/* Backdrop */}
+                      <div 
+                        className="fixed inset-0 z-10" 
+                        onClick={() => setShowUserMenu(false)}
+                      />
+                      
+                      {/* Menu */}
+                      <div className="absolute right-0 mt-2 w-56 rounded-lg bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 z-20">
+                        <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+                          <p className="text-sm font-medium text-foreground">{user.user_id}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {user.role === 'operator' ? 'Operator Account' : 'Card User Account'}
+                          </p>
+                        </div>
+                        <div className="p-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              handleLogout()
+                              setShowUserMenu(false)
+                            }}
+                            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <LogoutIcon className="h-4 w-4 mr-2" strokeWidth={2} />
+                            Logout
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>

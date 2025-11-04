@@ -1,18 +1,20 @@
 /**
- * Operator View Page
+ * Operator View Page - Modern UI Redesign
  * 
  * Why this exists:
- * - Allows operators to review recommendations for all users
- * - View fairness metrics and demographic analysis
- * - Access evaluation reports (markdown and PDF)
+ * - Allows operators to review recommendations for all users with modern interface
+ * - View fairness metrics and demographic analysis with charts
+ * - Access evaluation reports
  * - Drill into user details (signals, persona, recommendations)
- * - Approve/reject/flag recommendations with notes
- * - Client-side pagination for ~100 users
+ * - Approve/reject/flag recommendations with intuitive workflow
+ * - Client-side pagination with modern controls
  * 
- * Tabs:
- * 1. Review - User review queue and approval workflow
- * 2. Fairness - Demographic analysis and disparity detection
- * 3. Reports - System performance reports and metrics
+ * Modern Features:
+ * - Enhanced table design with striped rows and hover effects
+ * - Color-coded status indicators (green, yellow, red)
+ * - Icons for all actions
+ * - Charts for fairness metrics
+ * - Better pagination controls
  */
 
 import { useState } from 'react'
@@ -40,6 +42,11 @@ import { DataTable } from '@/components/DataTable'
 import { PersonaBadge } from '@/components/PersonaBadge'
 import { SignalCard } from '@/components/SignalCard'
 import { DevDebugPanel } from '@/components/DevDebugPanel'
+import { TableSkeleton } from '@/components/ui/skeleton'
+import { EmptyState } from '@/components/EmptyState'
+import { PersonaDistributionChart } from '@/components/charts/PersonaDistributionChart'
+import { getStatusIcon } from '@/lib/iconMap'
+import { CommonIcons } from '@/lib/iconMap'
 import { 
   useUsers, 
   useUserProfile, 
@@ -50,6 +57,8 @@ import {
   apiClient
 } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
+import { cn } from '@/lib/utils'
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 
 const ITEMS_PER_PAGE = 10
 
@@ -137,24 +146,40 @@ export function OperatorView() {
     },
   ]
 
-  // Recommendation columns
+  // Recommendation columns with status colors
   const recommendationColumns = [
     {
       header: 'Title',
       accessor: (rec: RecommendationItem) => (
         <div>
           <div className="font-medium">{rec.title}</div>
-          <div className="text-xs text-muted-foreground">{rec.item_type}</div>
+          <div className="text-xs text-muted-foreground capitalize">{rec.item_type}</div>
         </div>
       ),
     },
     {
       header: 'Status',
-      accessor: (rec: RecommendationItem) => (
-        <Badge variant={rec.status === 'approved' ? 'default' : 'secondary'}>
-          {rec.status}
-        </Badge>
-      ),
+      accessor: (rec: RecommendationItem) => {
+        const StatusIcon = getStatusIcon(rec.status || 'pending')
+        const statusColors = {
+          approved: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+          pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+          rejected: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
+          flagged: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400',
+        }
+        return (
+          <Badge 
+            variant="secondary" 
+            className={cn(
+              'flex items-center gap-1 w-fit',
+              statusColors[rec.status as keyof typeof statusColors] || statusColors.pending
+            )}
+          >
+            <StatusIcon className="h-3 w-3" />
+            {rec.status || 'pending'}
+          </Badge>
+        )
+      },
     },
     {
       header: 'Actions',
@@ -167,7 +192,9 @@ export function OperatorView() {
             handleReviewClick(rec)
           }}
           disabled={rec.status !== 'pending'}
+          className="flex items-center gap-1"
         >
+          <CommonIcons.Eye className="h-3 w-3" />
           Review
         </Button>
       ),
@@ -192,462 +219,442 @@ export function OperatorView() {
       return response
     },
     staleTime: 5 * 60 * 1000,
-    retry: false, // Don't retry if report doesn't exist
+    retry: false,
   })
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Operator View</h1>
-        <p className="text-muted-foreground">
-          Review users, analyze fairness, and view system reports
-        </p>
-      </div>
-
-      <Tabs defaultValue="review" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="review">Review Queue</TabsTrigger>
-          <TabsTrigger value="fairness">Fairness Analysis</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-        </TabsList>
-
-        {/* TAB 1: Review Queue */}
-        <TabsContent value="review" className="space-y-6">
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Panel: User List */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Users ({filteredUsers.length})</CardTitle>
-            <CardDescription>Select a user to view details</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Search */}
-            <Input
-              placeholder="Search by user ID or email..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
-                setCurrentPage(1)
-              }}
-            />
-
-            {/* User Table */}
-            {usersLoading ? (
-              <p className="text-muted-foreground">Loading users...</p>
-            ) : (
-              <>
-                <DataTable
-                  data={paginatedUsers}
-                  columns={userColumns}
-                  onRowClick={handleUserClick}
-                  emptyMessage="No users found"
-                />
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-between pt-4">
-                    <p className="text-sm text-muted-foreground">
-                      Page {currentPage} of {totalPages}
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                      >
-                        Previous
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                      >
-                        Next
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Right Panel: User Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle>User Details</CardTitle>
-            <CardDescription>
-              {selectedUser ? `Viewing ${selectedUser.user_id}` : 'Select a user to view details'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!selectedUser ? (
-              <p className="text-center text-muted-foreground py-8">
-                Click on a user from the list to view their profile
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {/* Persona */}
-                <div>
-                  <h3 className="font-semibold mb-2">Persona (30d)</h3>
-                  <PersonaBadge persona={profile?.persona} />
-                </div>
-
-                {/* Quick Signals Overview */}
-                <div>
-                  <h3 className="font-semibold mb-2">Key Signals</h3>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    {profile?.signals?.credit && (
-                      <div className="p-2 bg-muted rounded">
-                        <span className="text-muted-foreground">Max Util:</span>{' '}
-                        <span className="font-medium">
-                          {Number(profile.signals.credit.credit_utilization_max_pct).toFixed(1)}%
-                        </span>
-                      </div>
-                    )}
-                    {profile?.signals?.savings && (
-                      <div className="p-2 bg-muted rounded">
-                        <span className="text-muted-foreground">Emergency:</span>{' '}
-                        <span className="font-medium">
-                          {Number(profile.signals.savings.emergency_fund_months).toFixed(1)}mo
-                        </span>
-                      </div>
-                    )}
-                    {profile?.signals?.subscriptions && (
-                      <div className="p-2 bg-muted rounded">
-                        <span className="text-muted-foreground">Subscriptions:</span>{' '}
-                        <span className="font-medium">
-                          {profile.signals.subscriptions.recurring_merchant_count}
-                        </span>
-                      </div>
-                    )}
-                    {profile?.signals?.income && (
-                      <div className="p-2 bg-muted rounded">
-                        <span className="text-muted-foreground">Cash Buffer:</span>{' '}
-                        <span className="font-medium">
-                          {Number(profile.signals.income.cashflow_buffer_months).toFixed(1)}mo
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recommendations Section */}
-      {selectedUser && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recommendations for {selectedUser.user_id}</CardTitle>
-            <CardDescription>Review and approve/reject recommendations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!recommendations || recommendations.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">
-                No recommendations available for this user
-              </p>
-            ) : (
-              <DataTable
-                data={recommendations}
-                columns={recommendationColumns}
-                emptyMessage="No recommendations"
-              />
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Full Signal Details (collapsible) */}
-      {selectedUser && profile && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">Detailed Signals</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SignalCard
-              title="Subscriptions"
-              description="Recurring payment patterns"
-              data={profile.signals?.subscriptions}
-              type="subscriptions"
-            />
-            <SignalCard
-              title="Savings"
-              description="Savings growth and emergency fund"
-              data={profile.signals?.savings}
-              type="savings"
-            />
-            <SignalCard
-              title="Credit"
-              description="Credit utilization and behavior"
-              data={profile.signals?.credit}
-              type="credit"
-            />
-            <SignalCard
-              title="Income Stability"
-              description="Payroll frequency and cash buffer"
-              data={profile.signals?.income}
-              type="income"
-            />
-          </div>
+      {/* Header with gradient */}
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 p-8 shadow-lg">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+            <CommonIcons.Users className="h-8 w-8" />
+            Operator View
+          </h1>
+          <p className="text-white/90">
+            Review user profiles, approve recommendations, and monitor system fairness
+          </p>
         </div>
-      )}
+      </div>
 
-          {/* Dev Debug Panel */}
-          {selectedUser && (
-            <DevDebugPanel
-              title="Operator Debug Data"
-              data={{ user: selectedUser, profile, recommendations }}
-            />
-          )}
-        </TabsContent>
-
-        {/* TAB 2: Fairness Analysis */}
-        <TabsContent value="fairness" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Fairness Metrics</CardTitle>
-              <CardDescription>
-                Demographic analysis to detect potential bias in persona assignment and recommendations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {fairnessLoading ? (
-                <p className="text-muted-foreground">Loading fairness metrics...</p>
-              ) : !fairnessMetrics ? (
-                <p className="text-muted-foreground">No fairness metrics available</p>
-              ) : (
-                <div className="space-y-6">
-                  {/* Summary */}
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="p-4 bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">Total Users</p>
-                      <p className="text-2xl font-bold">{fairnessMetrics.total_users_analyzed}</p>
-                    </div>
-                    <div className="p-4 bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">Disparities</p>
-                      <p className="text-2xl font-bold">{fairnessMetrics.disparities?.length || 0}</p>
-                    </div>
-                    <div className="p-4 bg-muted rounded-lg">
-                      <p className="text-sm text-muted-foreground">Threshold</p>
-                      <p className="text-2xl font-bold">{fairnessMetrics.threshold_pct}%</p>
-                    </div>
-                  </div>
-
-                  {/* Warnings */}
-                  {fairnessMetrics.warnings && fairnessMetrics.warnings.length > 0 && (
-                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                      <h3 className="font-semibold text-amber-900 mb-2">⚠️ Fairness Warnings</h3>
-                      <ul className="space-y-1">
-                        {fairnessMetrics.warnings.map((warning: string, i: number) => (
-                          <li key={i} className="text-sm text-amber-800">• {warning}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Demographics Tables */}
-                  {fairnessMetrics.demographics && (
-                    <div className="space-y-4">
-                      {/* Age Range */}
-                      {fairnessMetrics.demographics.age_range && (
-                        <div>
-                          <h3 className="font-semibold mb-2">Age Range Distribution</h3>
-                          <div className="border rounded-lg overflow-hidden">
-                            <table className="w-full text-sm">
-                              <thead className="bg-muted">
-                                <tr>
-                                  <th className="text-left p-2">Age Range</th>
-                                  <th className="text-right p-2">Count</th>
-                                  <th className="text-right p-2">% of Total</th>
-                                  <th className="text-right p-2">Education Recs</th>
-                                  <th className="text-right p-2">Offer Recs</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {Object.entries(fairnessMetrics.demographics.age_range).map(([age, data]: [string, any]) => (
-                                  <tr key={age} className="border-t">
-                                    <td className="p-2">{age}</td>
-                                    <td className="text-right p-2">{data.count}</td>
-                                    <td className="text-right p-2">{data.pct_of_total}%</td>
-                                    <td className="text-right p-2">{data.education_recs}</td>
-                                    <td className="text-right p-2">{data.offer_recs}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Gender */}
-                      {fairnessMetrics.demographics.gender && (
-                        <div>
-                          <h3 className="font-semibold mb-2">Gender Distribution</h3>
-                          <div className="border rounded-lg overflow-hidden">
-                            <table className="w-full text-sm">
-                              <thead className="bg-muted">
-                                <tr>
-                                  <th className="text-left p-2">Gender</th>
-                                  <th className="text-right p-2">Count</th>
-                                  <th className="text-right p-2">% of Total</th>
-                                  <th className="text-right p-2">Education Recs</th>
-                                  <th className="text-right p-2">Offer Recs</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {Object.entries(fairnessMetrics.demographics.gender).map(([gender, data]: [string, any]) => (
-                                  <tr key={gender} className="border-t">
-                                    <td className="p-2">{gender}</td>
-                                    <td className="text-right p-2">{data.count}</td>
-                                    <td className="text-right p-2">{data.pct_of_total}%</td>
-                                    <td className="text-right p-2">{data.education_recs}</td>
-                                    <td className="text-right p-2">{data.offer_recs}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* TAB 3: Reports */}
-        <TabsContent value="reports" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Evaluation Reports</CardTitle>
-              <CardDescription>
-                System performance metrics and executive summaries
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {reportLoading ? (
-                <p className="text-muted-foreground">Loading report...</p>
-              ) : !reportData ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground mb-4">
-                    No report available. Generate one by running:
-                  </p>
-                  <code className="bg-muted px-3 py-1 rounded text-sm">
-                    python run_metrics.py --report
-                  </code>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Report metadata */}
-                  <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-                    <div>
-                      <p className="font-medium">Latest Report</p>
-                      <p className="text-sm text-muted-foreground">
-                        Generated: {new Date(reportData.timestamp).toLocaleString()}
-                      </p>
-                    </div>
-                    <Button
-                      onClick={() => {
-                        window.open(`${import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'}/operator/reports/latest/pdf`, '_blank')
-                      }}
-                    >
-                      Download PDF
-                    </Button>
-                  </div>
-
-                  {/* Markdown content (simplified rendering) */}
-                  <div className="border rounded-lg p-6 prose prose-sm max-w-none">
-                    <pre className="whitespace-pre-wrap font-sans text-sm">
-                      {reportData.content}
-                    </pre>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Review Dialog */}
+      {/* Review dialog with modern styling */}
       <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Review Recommendation</DialogTitle>
             <DialogDescription>
-              {selectedRecommendation?.title}
+              Approve, reject, or flag this recommendation for the user
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            {/* Reviewer Name */}
-            <div>
-              <label className="text-sm font-medium">Reviewer</label>
-              <Input
-                value={reviewerName}
-                onChange={(e) => setReviewerName(e.target.value)}
-                placeholder="Enter your operator ID"
-              />
-            </div>
-
-            {/* Status Selection */}
-            <div>
-              <label className="text-sm font-medium">Decision</label>
-              <Select
-                value={reviewStatus}
-                onValueChange={(v) => setReviewStatus(v as 'approved' | 'rejected' | 'flagged')}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="approved">Approve</SelectItem>
-                  <SelectItem value="rejected">Reject</SelectItem>
-                  <SelectItem value="flagged">Flag for Follow-up</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Notes */}
-            <div>
-              <label className="text-sm font-medium">Notes (optional)</label>
-              <Input
-                value={reviewNotes}
-                onChange={(e) => setReviewNotes(e.target.value)}
-                placeholder="Add notes about your decision..."
-              />
-            </div>
-
-            {/* Rationale Preview */}
-            {selectedRecommendation?.rationale && (
-              <div className="p-3 bg-muted rounded">
-                <p className="text-sm font-medium mb-1">Rationale:</p>
-                <p className="text-sm text-muted-foreground">
-                  {selectedRecommendation.rationale}
-                </p>
+          {selectedRecommendation && (
+            <div className="space-y-4 py-4">
+              <div className="rounded-lg border bg-muted/50 p-4">
+                <h4 className="font-semibold mb-1">{selectedRecommendation.title}</h4>
+                <p className="text-sm text-muted-foreground">{selectedRecommendation.description}</p>
               </div>
-            )}
-          </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Decision</label>
+                <Select value={reviewStatus} onValueChange={(v: any) => setReviewStatus(v)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="approved">
+                      <span className="flex items-center gap-2">
+                        <CommonIcons.CheckCircle className="h-4 w-4 text-green-600" />
+                        Approve
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="rejected">
+                      <span className="flex items-center gap-2">
+                        <CommonIcons.XCircle className="h-4 w-4 text-red-600" />
+                        Reject
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="flagged">
+                      <span className="flex items-center gap-2">
+                        <CommonIcons.Flag className="h-4 w-4 text-orange-600" />
+                        Flag for Review
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Notes (optional)</label>
+                <textarea
+                  className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  placeholder="Add any notes or reasoning..."
+                  value={reviewNotes}
+                  onChange={(e) => setReviewNotes(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setReviewDialogOpen(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={handleSubmitReview}
-              disabled={!reviewerName || approveRecommendation.isPending}
-            >
-              {approveRecommendation.isPending ? 'Submitting...' : 'Submit Review'}
+            <Button variant="gradient" onClick={handleSubmitReview}>
+              Submit Review
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Main tabs */}
+      <Tabs defaultValue="review">
+        <TabsList className="grid w-full max-w-md grid-cols-3 h-11">
+          <TabsTrigger value="review" className="flex items-center gap-2">
+            <CommonIcons.CheckCircle className="h-4 w-4" />
+            Review
+          </TabsTrigger>
+          <TabsTrigger value="fairness" className="flex items-center gap-2">
+            <CommonIcons.BarChart3 className="h-4 w-4" />
+            Fairness
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="flex items-center gap-2">
+            <CommonIcons.Activity className="h-4 w-4" />
+            Reports
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Review Tab */}
+        <TabsContent value="review" className="space-y-6 mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* User list */}
+            <div className="lg:col-span-1">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CommonIcons.Users className="h-5 w-5 text-primary" />
+                    Users
+                  </CardTitle>
+                  <CardDescription>
+                    {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Search */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search users..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value)
+                        setCurrentPage(1)
+                      }}
+                      className="pl-9"
+                    />
+                  </div>
+
+                  {/* User list with modern styling */}
+                  {usersLoading ? (
+                    <TableSkeleton rows={5} />
+                  ) : paginatedUsers.length > 0 ? (
+                    <div className="space-y-2">
+                      {paginatedUsers.map((user) => (
+                        <button
+                          key={user.user_id}
+                          onClick={() => handleUserClick(user)}
+                          className={cn(
+                            "w-full text-left p-3 rounded-lg border transition-all hover:shadow-md",
+                            selectedUser?.user_id === user.user_id
+                              ? "border-primary bg-primary/5 shadow-sm"
+                              : "border-border hover:border-primary/50"
+                          )}
+                        >
+                          <div className="font-medium text-sm">{user.user_id}</div>
+                          {user.email_masked && (
+                            <div className="text-xs text-muted-foreground">{user.email_masked}</div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <EmptyState
+                      icon={CommonIcons.Search}
+                      title="No users found"
+                      description="Try adjusting your search query"
+                    />
+                  )}
+
+                  {/* Pagination controls */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* User details */}
+            <div className="lg:col-span-2">
+              {selectedUser ? (
+                <div className="space-y-6">
+                  <Card>
+                    <div className="h-2 bg-gradient-primary rounded-t-lg" />
+                    <CardHeader>
+                      <CardTitle>Profile: {selectedUser.user_id}</CardTitle>
+                      <CardDescription>
+                        Behavioral signals and assigned persona
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <PersonaBadge persona={profile?.persona} />
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        {profile?.signals && (
+                          <>
+                            <SignalCard
+                              title="Credit"
+                              description="Utilization & behavior"
+                              data={profile.signals.credit}
+                              type="credit"
+                            />
+                            <SignalCard
+                              title="Savings"
+                              description="Growth & emergency fund"
+                              data={profile.signals.savings}
+                              type="savings"
+                            />
+                          </>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Recommendations table */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <CommonIcons.Gift className="h-5 w-5 text-primary" />
+                        Recommendations
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {recommendations && recommendations.length > 0 ? (
+                        <DataTable
+                          data={recommendations}
+                          columns={recommendationColumns}
+                          onRowClick={(rec) => handleReviewClick(rec)}
+                        />
+                      ) : (
+                        <EmptyState
+                          icon={CommonIcons.Inbox}
+                          title="No recommendations"
+                          description="This user has no recommendations yet"
+                        />
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <EmptyState
+                  icon={CommonIcons.Users}
+                  title="Select a user"
+                  description="Choose a user from the list to view their profile and recommendations"
+                />
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Fairness Tab with Charts */}
+        <TabsContent value="fairness" className="space-y-6 mt-6">
+          {fairnessLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading fairness metrics...</p>
+            </div>
+          ) : fairnessMetrics ? (
+            <div className="space-y-6">
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-primary">
+                      {fairnessMetrics.total_users || 'N/A'}
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Demographics Tracked</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-primary">
+                      {fairnessMetrics.demographics ? Object.keys(fairnessMetrics.demographics).length : 0}
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Personas Assigned</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-3xl font-bold text-primary">
+                      {fairnessMetrics.total_personas || 'N/A'}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Demographics Breakdown */}
+              {fairnessMetrics.demographics && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {Object.entries(fairnessMetrics.demographics).map(([key, value]: [string, any]) => (
+                    <Card key={key}>
+                      <CardHeader>
+                        <CardTitle className="capitalize">{key.replace('_', ' ')}</CardTitle>
+                        <CardDescription>Distribution and persona breakdown</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {Object.entries(value).map(([subKey, subValue]: [string, any]) => (
+                          <div key={subKey} className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm font-medium capitalize">{subKey.replace('_', ' ')}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {subValue.count} users ({subValue.pct_of_total?.toFixed(1)}%)
+                              </span>
+                            </div>
+                            
+                            {subValue.personas && (
+                              <div className="pl-4 space-y-1">
+                                {Object.entries(subValue.personas).map(([persona, count]: [string, any]) => (
+                                  <div key={persona} className="flex justify-between text-xs">
+                                    <span className="text-muted-foreground capitalize">
+                                      {persona.replace('_', ' ')}
+                                    </span>
+                                    <span className="font-medium">{count}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            
+                            {subValue.education_recs !== undefined && (
+                              <div className="flex justify-between text-xs pt-1 border-t">
+                                <span className="text-muted-foreground">Education recommendations</span>
+                                <span className="font-medium">{subValue.education_recs}</span>
+                              </div>
+                            )}
+                            
+                            {subValue.offer_recs !== undefined && (
+                              <div className="flex justify-between text-xs">
+                                <span className="text-muted-foreground">Offer recommendations</span>
+                                <span className="font-medium">{subValue.offer_recs}</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <EmptyState
+              icon={CommonIcons.BarChart3}
+              title="No fairness data"
+              description="Fairness metrics are not yet available"
+            />
+          )}
+        </TabsContent>
+
+        {/* Reports Tab */}
+        <TabsContent value="reports" className="space-y-6 mt-6">
+          {reportLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading latest report...</p>
+            </div>
+          ) : reportData ? (
+            <div className="space-y-6">
+              {/* Report Header */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Latest Evaluation Report</CardTitle>
+                  <CardDescription>
+                    Generated: {reportData.timestamp ? new Date(reportData.timestamp).toLocaleString() : 'N/A'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {reportData.content && (
+                    <div className="prose prose-sm max-w-none">
+                      <pre className="whitespace-pre-wrap bg-muted p-4 rounded-lg text-sm leading-relaxed">
+                        {reportData.content}
+                      </pre>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Additional metrics if available */}
+              {reportData.exists !== undefined && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Report Status</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-2">
+                      <div className={cn(
+                        "h-3 w-3 rounded-full",
+                        reportData.exists ? "bg-green-500" : "bg-gray-400"
+                      )} />
+                      <span className="text-sm">
+                        {reportData.exists ? "Report exists and is valid" : "Report not found"}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          ) : (
+            <EmptyState
+              icon={CommonIcons.Activity}
+              title="No reports available"
+              description="Evaluation reports will appear here once generated"
+            />
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Dev Debug Panel */}
+      <DevDebugPanel
+        title="Operator Debug Data"
+        data={{ selectedUser, profile, recommendations, fairnessMetrics }}
+      />
     </div>
   )
 }
-
