@@ -253,42 +253,42 @@ export function OperatorView() {
                 {/* Persona */}
                 <div>
                   <h3 className="font-semibold mb-2">Persona (30d)</h3>
-                  <PersonaBadge persona={profile?.persona_30d} />
+                  <PersonaBadge persona={profile?.persona} />
                 </div>
 
                 {/* Quick Signals Overview */}
                 <div>
                   <h3 className="font-semibold mb-2">Key Signals</h3>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    {profile?.signals_30d?.credit && (
+                    {profile?.signals?.credit && (
                       <div className="p-2 bg-muted rounded">
                         <span className="text-muted-foreground">Max Util:</span>{' '}
                         <span className="font-medium">
-                          {Number(profile.signals_30d.credit.credit_utilization_max_pct).toFixed(1)}%
+                          {Number(profile.signals.credit.credit_utilization_max_pct).toFixed(1)}%
                         </span>
                       </div>
                     )}
-                    {profile?.signals_30d?.savings && (
+                    {profile?.signals?.savings && (
                       <div className="p-2 bg-muted rounded">
                         <span className="text-muted-foreground">Emergency:</span>{' '}
                         <span className="font-medium">
-                          {Number(profile.signals_30d.savings.emergency_fund_months).toFixed(1)}mo
+                          {Number(profile.signals.savings.emergency_fund_months).toFixed(1)}mo
                         </span>
                       </div>
                     )}
-                    {profile?.signals_30d?.subscriptions && (
+                    {profile?.signals?.subscriptions && (
                       <div className="p-2 bg-muted rounded">
                         <span className="text-muted-foreground">Subscriptions:</span>{' '}
                         <span className="font-medium">
-                          {profile.signals_30d.subscriptions.recurring_merchant_count}
+                          {profile.signals.subscriptions.recurring_merchant_count}
                         </span>
                       </div>
                     )}
-                    {profile?.signals_30d?.income && (
+                    {profile?.signals?.income && (
                       <div className="p-2 bg-muted rounded">
                         <span className="text-muted-foreground">Cash Buffer:</span>{' '}
                         <span className="font-medium">
-                          {Number(profile.signals_30d.income.cashflow_buffer_months).toFixed(1)}mo
+                          {Number(profile.signals.income.cashflow_buffer_months).toFixed(1)}mo
                         </span>
                       </div>
                     )}
@@ -331,25 +331,25 @@ export function OperatorView() {
             <SignalCard
               title="Subscriptions"
               description="Recurring payment patterns"
-              data={profile.signals_30d?.subscriptions}
+              data={profile.signals?.subscriptions}
               type="subscriptions"
             />
             <SignalCard
               title="Savings"
               description="Savings growth and emergency fund"
-              data={profile.signals_30d?.savings}
+              data={profile.signals?.savings}
               type="savings"
             />
             <SignalCard
               title="Credit"
               description="Credit utilization and behavior"
-              data={profile.signals_30d?.credit}
+              data={profile.signals?.credit}
               type="credit"
             />
             <SignalCard
               title="Income Stability"
               description="Payroll frequency and cash buffer"
-              data={profile.signals_30d?.income}
+              data={profile.signals?.income}
               type="income"
             />
           </div>
