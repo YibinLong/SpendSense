@@ -146,21 +146,21 @@ Why: Expose functionality cleanly with auto docs and structured errors.
 Why: Show users and operators what the system sees, in a simple modern UI.
 
 ### Story: Project setup
-- [ ] Vite + TS app scaffolding with Tailwind and shadcn/ui
-- [ ] API client with base URL from `VITE_API_BASE`
-- [ ] Feature flag for dev-only elements (e.g., decision trace)
+- [x] Vite + TS app scaffolding with Tailwind and shadcn/ui
+- [x] API client with base URL from `VITE_API_BASE`
+- [x] Feature flag for dev-only elements (e.g., decision trace)
 
 ### Story: User Dashboard
-- [ ] Page `frontend/src/pages/UserDashboard.tsx` lists persona (30d/180d) and signals
-- [ ] Render 3–5 education items and 1–3 offers with rationale and disclosure
-- [ ] Components: `PersonaBadge`, `DataTable`, simple cards
-- [ ] Basic tone-safe copy and empty-states
+- [x] Page `frontend/src/pages/UserDashboard.tsx` lists persona (30d/180d) and signals
+- [x] Render 3–5 education items and 1–3 offers with rationale and disclosure
+- [x] Components: `PersonaBadge`, `DataTable`, simple cards
+- [x] Basic tone-safe copy and empty-states
 
 ### Story: Operator View
-- [ ] Page `frontend/src/pages/OperatorView.tsx` lists users; drill into signals/persona/items
-- [ ] Approve/override actions with notes; flag items for follow-up
-- [ ] Show decision traces (dev only)
-- [ ] Pagination for ~100 users
+- [x] Page `frontend/src/pages/OperatorView.tsx` lists users; drill into signals/persona/items
+- [x] Approve/override actions with notes; flag items for follow-up
+- [x] Show decision traces (dev only)
+- [x] Pagination for ~100 users
 
 ---
 
