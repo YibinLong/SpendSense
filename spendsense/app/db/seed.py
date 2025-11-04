@@ -22,8 +22,7 @@ import json
 import random
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
@@ -31,19 +30,18 @@ from sqlalchemy.orm import Session
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import (
-    User,
     Account,
-    Transaction,
-    Liability,
     ConsentEvent,
+    Liability,
+    Transaction,
+    User,
 )
 from spendsense.app.db.session import get_session
-from spendsense.app.schemas.user import UserCreate
 from spendsense.app.schemas.account import AccountCreate
-from spendsense.app.schemas.transaction import TransactionCreate
-from spendsense.app.schemas.liability import LiabilityCreate
 from spendsense.app.schemas.consent_event import ConsentEventCreate
-
+from spendsense.app.schemas.liability import LiabilityCreate
+from spendsense.app.schemas.transaction import TransactionCreate
+from spendsense.app.schemas.user import UserCreate
 
 logger = get_logger(__name__)
 
@@ -117,7 +115,7 @@ def generate_liability_id(user_index: int, liability_index: int) -> str:
     return f"liab_{str(user_index).zfill(6)}_{str(liability_index).zfill(2)}"
 
 
-def generate_users(n: int = 50) -> List[User]:
+def generate_users(n: int = 50) -> list[User]:
     """
     Generate synthetic users.
     
@@ -134,10 +132,10 @@ def generate_users(n: int = 50) -> List[User]:
     """
     logger.info("generating_users", count=n)
     users = []
-    
+
     for i in range(1, n + 1):
         user_id = generate_user_id(i)
-        
+
         # Create via Pydantic for validation
         user_data = UserCreate(
             user_id=user_id,
@@ -148,16 +146,16 @@ def generate_users(n: int = 50) -> List[User]:
             phone_masked=f"***-***-{str(i).zfill(4)}",
             created_at=datetime.utcnow() - timedelta(days=random.randint(180, 730))
         )
-        
+
         # Convert to ORM model
         user = User(**user_data.model_dump())
         users.append(user)
-    
+
     logger.info("users_generated", count=len(users))
     return users
 
 
-def generate_accounts(session: Session, user: User, user_index: int) -> List[Account]:
+def generate_accounts(session: Session, user: User, user_index: int) -> list[Account]:
     """
     Generate 2-4 accounts per user (checking, savings, credit).
     
@@ -176,7 +174,7 @@ def generate_accounts(session: Session, user: User, user_index: int) -> List[Acc
     """
     accounts = []
     num_accounts = random.randint(2, 4)
-    
+
     # Always create checking account (primary)
     checking = AccountCreate(
         account_id=generate_account_id(user_index, 1),
@@ -190,7 +188,7 @@ def generate_accounts(session: Session, user: User, user_index: int) -> List[Acc
         balance_available=None
     )
     accounts.append(Account(**checking.model_dump()))
-    
+
     # Maybe add savings
     if num_accounts >= 2:
         savings = AccountCreate(
@@ -205,14 +203,14 @@ def generate_accounts(session: Session, user: User, user_index: int) -> List[Acc
             balance_available=None
         )
         accounts.append(Account(**savings.model_dump()))
-    
+
     # Maybe add credit card(s)
     if num_accounts >= 3:
         credit_limit = Decimal(str(random.choice([2000, 5000, 10000, 15000, 25000])))
         # Vary utilization (some high, some low) to create different personas
         utilization_pct = random.choice([10, 25, 35, 55, 70, 85])
         balance = credit_limit * Decimal(utilization_pct) / Decimal(100)
-        
+
         credit = AccountCreate(
             account_id=generate_account_id(user_index, 3),
             user_id=user.user_id,
@@ -226,13 +224,13 @@ def generate_accounts(session: Session, user: User, user_index: int) -> List[Acc
             credit_limit=credit_limit
         )
         accounts.append(Account(**credit.model_dump()))
-    
+
     if num_accounts >= 4:
         # Second credit card
         credit_limit = Decimal(str(random.choice([1500, 3000, 5000, 8000])))
         utilization_pct = random.choice([5, 15, 40, 60, 75])
         balance = credit_limit * Decimal(utilization_pct) / Decimal(100)
-        
+
         credit2 = AccountCreate(
             account_id=generate_account_id(user_index, 4),
             user_id=user.user_id,
@@ -246,7 +244,7 @@ def generate_accounts(session: Session, user: User, user_index: int) -> List[Acc
             credit_limit=credit_limit
         )
         accounts.append(Account(**credit2.model_dump()))
-    
+
     return accounts
 
 
@@ -256,7 +254,7 @@ def generate_transactions(
     user_index: int,
     account_index: int,
     days: int = 180
-) -> List[Transaction]:
+) -> list[Transaction]:
     """
     Generate realistic transactions for an account over N days.
     
@@ -280,20 +278,20 @@ def generate_transactions(
     transactions = []
     tx_counter = 0
     today = date.today()
-    
+
     # Determine transaction patterns based on account type
     if account.account_subtype == "checking":
         # Generate payroll deposits (income stability signals)
         pay_frequency = random.choice(["biweekly", "monthly"])
         base_salary = random.randint(3000, 8000)
-        
+
         if pay_frequency == "biweekly":
             # 26 pay periods per year
             for i in range(days // 14):
                 tx_date = today - timedelta(days=i * 14)
                 # Add some variability for gig workers
                 amount = -Decimal(str(base_salary + random.randint(-200, 200)))
-                
+
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                     account_id=account.account_id,
@@ -312,7 +310,7 @@ def generate_transactions(
             for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30)
                 amount = -Decimal(str(base_salary * 2 + random.randint(-400, 400)))
-                
+
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                     account_id=account.account_id,
@@ -326,16 +324,16 @@ def generate_transactions(
                 )
                 transactions.append(Transaction(**tx.model_dump()))
                 tx_counter += 1
-        
+
         # Generate subscription payments (subscription persona trigger)
         num_subscriptions = random.randint(0, 6)
         subscriptions = random.sample(SUBSCRIPTION_MERCHANTS, min(num_subscriptions, len(SUBSCRIPTION_MERCHANTS)))
-        
+
         for merchant in subscriptions:
             # Monthly recurring charge (day of month varies)
             day_of_month = random.randint(1, 28)
             amount_per_month = Decimal(str(random.choice([9.99, 12.99, 14.99, 19.99, 29.99, 49.99])))
-            
+
             for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30 + day_of_month)
                 if tx_date <= today:
@@ -352,13 +350,13 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
-        
+
         # Generate utility bills (monthly recurring, different from subscriptions)
         utilities = random.sample(UTILITY_MERCHANTS, random.randint(2, 4))
         for merchant in utilities:
             amount_base = Decimal(str(random.choice([45, 65, 85, 120, 150])))
             day_of_month = random.randint(1, 28)
-            
+
             for i in range(days // 30):
                 # Utilities vary slightly month-to-month
                 amount = amount_base + Decimal(str(random.randint(-15, 15)))
@@ -377,7 +375,7 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
-        
+
         # Generate groceries (weekly-ish, variable)
         for week in range(days // 7):
             # 1-2 grocery trips per week
@@ -386,7 +384,7 @@ def generate_transactions(
                 if tx_date <= today:
                     merchant = random.choice(GROCERY_MERCHANTS)
                     amount = Decimal(str(random.randint(40, 200)))
-                    
+
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                         account_id=account.account_id,
@@ -400,7 +398,7 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
-        
+
         # Generate dining (few times per week)
         for week in range(days // 7):
             for _ in range(random.randint(2, 5)):
@@ -408,7 +406,7 @@ def generate_transactions(
                 if tx_date <= today:
                     merchant = random.choice(DINING_MERCHANTS)
                     amount = Decimal(str(random.randint(8, 75)))
-                    
+
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                         account_id=account.account_id,
@@ -422,14 +420,14 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
-        
+
         # Generate savings transfers (savings builder persona)
         if random.random() > 0.5:  # 50% of users save regularly
             for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30 + 15)
                 if tx_date <= today:
                     amount = Decimal(str(random.choice([100, 250, 500, 750, 1000])))
-                    
+
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                         account_id=account.account_id,
@@ -443,13 +441,13 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
-        
+
         # Add some refunds (edge case: negative amounts for debits)
         for _ in range(random.randint(1, 3)):
             tx_date = today - timedelta(days=random.randint(0, days))
             merchant = random.choice(SHOPPING_MERCHANTS)
             amount = -Decimal(str(random.randint(20, 150)))  # Negative refund
-            
+
             tx = TransactionCreate(
                 transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                 account_id=account.account_id,
@@ -463,7 +461,7 @@ def generate_transactions(
             )
             transactions.append(Transaction(**tx.model_dump()))
             tx_counter += 1
-    
+
     elif account.account_subtype == "savings":
         # Savings accounts have fewer transactions
         # Mainly transfers from checking
@@ -472,7 +470,7 @@ def generate_transactions(
                 tx_date = today - timedelta(days=i * 30 + 15)
                 if tx_date <= today:
                     amount = -Decimal(str(random.choice([100, 250, 500, 750, 1000])))  # Incoming transfer
-                    
+
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                         account_id=account.account_id,
@@ -486,13 +484,13 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
-        
+
         # Occasional interest payments
         for i in range(days // 90):
             tx_date = today - timedelta(days=i * 90)
             if tx_date <= today:
                 amount = -Decimal(str(random.randint(1, 20)))  # Small interest
-                
+
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                     account_id=account.account_id,
@@ -506,7 +504,7 @@ def generate_transactions(
                 )
                 transactions.append(Transaction(**tx.model_dump()))
                 tx_counter += 1
-    
+
     elif account.account_subtype == "credit card":
         # Credit card payments (monthly)
         for i in range(days // 30):
@@ -519,7 +517,7 @@ def generate_transactions(
                 else:
                     # Larger payment
                     amount = -Decimal(str(random.randint(100, 1500)))
-                
+
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                     account_id=account.account_id,
@@ -533,14 +531,14 @@ def generate_transactions(
                 )
                 transactions.append(Transaction(**tx.model_dump()))
                 tx_counter += 1
-        
+
         # Credit card purchases (variable)
         for _ in range(random.randint(20, 60)):
             tx_date = today - timedelta(days=random.randint(0, days))
             if tx_date <= today:
                 merchant = random.choice(SHOPPING_MERCHANTS + DINING_MERCHANTS + GROCERY_MERCHANTS)
                 amount = Decimal(str(random.randint(15, 300)))
-                
+
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                     account_id=account.account_id,
@@ -554,14 +552,14 @@ def generate_transactions(
                 )
                 transactions.append(Transaction(**tx.model_dump()))
                 tx_counter += 1
-        
+
         # Interest charges (high utilization persona trigger)
         if random.random() > 0.6:  # 40% of credit accounts have interest
             for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30 + 25)
                 if tx_date <= today:
                     amount = Decimal(str(random.randint(15, 120)))
-                    
+
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                         account_id=account.account_id,
@@ -575,11 +573,11 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
-    
+
     return transactions
 
 
-def generate_liabilities(session: Session, user: User, user_index: int, accounts: List[Account]) -> List[Liability]:
+def generate_liabilities(session: Session, user: User, user_index: int, accounts: list[Account]) -> list[Liability]:
     """
     Generate liabilities (credit cards, loans) for a user.
     
@@ -599,26 +597,26 @@ def generate_liabilities(session: Session, user: User, user_index: int, accounts
     """
     liabilities = []
     liability_counter = 0
-    
+
     # Create liabilities for credit card accounts
     credit_accounts = [acc for acc in accounts if acc.account_subtype == "credit card"]
-    
+
     for acc in credit_accounts:
         # Credit limit from account
         credit_limit = acc.credit_limit if acc.credit_limit else Decimal("5000")
         # Current balance (negative in account, positive in liability)
         current_balance = -acc.balance_current if acc.balance_current < 0 else Decimal("0")
-        
+
         # Calculate minimum payment (typically 2-3% of balance or $25, whichever is higher)
         # Round to 2 decimal places to match Pydantic validation
         min_payment = max(current_balance * Decimal("0.025"), Decimal("25")).quantize(Decimal("0.01"))
-        
+
         # Interest rate (varies by creditworthiness)
         interest_rate = Decimal(str(random.choice([15.99, 18.99, 21.99, 24.99])))
-        
+
         # Sometimes overdue (persona trigger)
         is_overdue = random.random() > 0.85  # 15% overdue
-        
+
         liab = LiabilityCreate(
             liability_id=generate_liability_id(user_index, liability_counter),
             user_id=user.user_id,
@@ -636,12 +634,12 @@ def generate_liabilities(session: Session, user: User, user_index: int, accounts
         )
         liabilities.append(Liability(**liab.model_dump()))
         liability_counter += 1
-    
+
     # Maybe add a student loan
     if random.random() > 0.6:  # 40% have student loans
         loan_balance = Decimal(str(random.randint(10000, 80000)))
         min_payment = Decimal(str(random.randint(150, 600)))
-        
+
         liab = LiabilityCreate(
             liability_id=generate_liability_id(user_index, liability_counter),
             user_id=user.user_id,
@@ -659,7 +657,7 @@ def generate_liabilities(session: Session, user: User, user_index: int, accounts
         )
         liabilities.append(Liability(**liab.model_dump()))
         liability_counter += 1
-    
+
     return liabilities
 
 
@@ -688,20 +686,20 @@ def seed_database() -> None:
         seed_database()
     """
     logger.info("starting_database_seed", seed=settings.seed)
-    
+
     with next(get_session()) as session:
         # Generate users
         users = generate_users(n=50)
         session.add_all(users)
         session.flush()  # Get user IDs without committing
-        
+
         logger.info("users_added_to_session", count=len(users))
-        
+
         all_accounts = []
         all_transactions = []
         all_liabilities = []
         all_consents = []
-        
+
         # Generate accounts, transactions, liabilities for each user
         for idx, user in enumerate(users, start=1):
             # Accounts
@@ -709,16 +707,16 @@ def seed_database() -> None:
             all_accounts.extend(accounts)
             session.add_all(accounts)
             session.flush()
-            
+
             # Transactions for each account
             for acc_idx, account in enumerate(accounts, start=1):
                 transactions = generate_transactions(session, account, idx, acc_idx, days=180)
                 all_transactions.extend(transactions)
-            
+
             # Liabilities
             liabilities = generate_liabilities(session, user, idx, accounts)
             all_liabilities.extend(liabilities)
-            
+
             # Consent (most users opt in)
             if random.random() > 0.1:  # 90% opt in
                 consent = ConsentEventCreate(
@@ -740,15 +738,15 @@ def seed_database() -> None:
                         timestamp=user.created_at + timedelta(days=random.randint(1, 30))
                     )
                     all_consents.append(ConsentEvent(**consent.model_dump()))
-        
+
         # Add all to session
         session.add_all(all_transactions)
         session.add_all(all_liabilities)
         session.add_all(all_consents)
-        
+
         # Commit everything
         session.commit()
-        
+
         logger.info(
             "database_seeded_successfully",
             users=len(users),
@@ -759,7 +757,7 @@ def seed_database() -> None:
         )
 
 
-def ingest_from_csv(file_path: str) -> Dict[str, Any]:
+def ingest_from_csv(file_path: str) -> dict[str, Any]:
     """
     Ingest data from CSV file with validation.
     
@@ -780,17 +778,17 @@ def ingest_from_csv(file_path: str) -> Dict[str, Any]:
         usr_002,u***2@example.com,***-***-0002
     """
     logger.info("ingesting_from_csv", file_path=file_path)
-    
-    results: Dict[str, Any] = {
+
+    results: dict[str, Any] = {
         "success_count": 0,
         "error_count": 0,
         "errors": []
     }
-    
+
     try:
-        with open(file_path, 'r') as csvfile:
+        with open(file_path) as csvfile:
             reader = csv.DictReader(csvfile)
-            
+
             with next(get_session()) as session:
                 for row_num, row in enumerate(reader, start=1):
                     try:
@@ -809,10 +807,10 @@ def ingest_from_csv(file_path: str) -> Dict[str, Any]:
                         results["errors"].append(error_msg)  # type: ignore
                         results["error_count"] += 1
                         logger.error("csv_ingestion_error", row=row_num, error=str(e))
-                
+
                 # Commit valid records even if some failed
                 session.commit()
-        
+
         logger.info(
             "csv_ingestion_complete",
             file=file_path,
@@ -823,11 +821,11 @@ def ingest_from_csv(file_path: str) -> Dict[str, Any]:
         error_msg = f"File not found: {file_path}"
         results["errors"].append(error_msg)  # type: ignore
         logger.error("csv_file_not_found", file_path=file_path)
-    
+
     return results
 
 
-def ingest_from_json(file_path: str) -> Dict[str, Any]:
+def ingest_from_json(file_path: str) -> dict[str, Any]:
     """
     Ingest data from JSON file with validation.
     
@@ -855,20 +853,20 @@ def ingest_from_json(file_path: str) -> Dict[str, Any]:
         ]
     """
     logger.info("ingesting_from_json", file_path=file_path)
-    
-    results: Dict[str, Any] = {
+
+    results: dict[str, Any] = {
         "success_count": 0,
         "error_count": 0,
         "errors": []
     }
-    
+
     try:
-        with open(file_path, 'r') as jsonfile:
+        with open(file_path) as jsonfile:
             data = json.load(jsonfile)
-            
+
             if not isinstance(data, list):
                 data = [data]
-            
+
             with next(get_session()) as session:
                 for idx, record in enumerate(data, start=1):
                     try:
@@ -887,10 +885,10 @@ def ingest_from_json(file_path: str) -> Dict[str, Any]:
                         results["errors"].append(error_msg)  # type: ignore
                         results["error_count"] += 1
                         logger.error("json_ingestion_error", record=idx, error=str(e))
-                
+
                 # Commit valid records even if some failed
                 session.commit()
-        
+
         logger.info(
             "json_ingestion_complete",
             file=file_path,
@@ -905,6 +903,6 @@ def ingest_from_json(file_path: str) -> Dict[str, Any]:
         error_msg = f"Invalid JSON format: {str(e)}"
         results["errors"].append(error_msg)  # type: ignore
         logger.error("json_decode_error", error=str(e))
-    
+
     return results
 

@@ -18,15 +18,14 @@ Usage:
         users = session.query(User).all()
 """
 
-from typing import Generator
+from collections.abc import Generator
 
-from sqlalchemy import create_engine, Engine, event
+from sqlalchemy import Engine, create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import Base
-
 
 # Logger for this module
 logger = get_logger(__name__)
@@ -56,13 +55,13 @@ def get_engine() -> Engine:
             # perform queries
     """
     global _engine
-    
+
     if _engine is None:
         logger.info(
             "creating_database_engine",
             database_url=settings.database_url
         )
-        
+
         # Create engine with SQLite-specific settings
         _engine = create_engine(
             settings.database_url,
@@ -72,7 +71,7 @@ def get_engine() -> Engine:
                 "check_same_thread": False  # Allow multi-threaded access
             }
         )
-        
+
         # Enable foreign key support for SQLite
         # Why? SQLite doesn't enforce foreign keys by default
         @event.listens_for(_engine, "connect")
@@ -81,9 +80,9 @@ def get_engine() -> Engine:
             cursor = dbapi_conn.cursor()
             cursor.execute("PRAGMA foreign_keys=ON")
             cursor.close()
-        
+
         logger.info("database_engine_created")
-    
+
     return _engine
 
 
@@ -119,10 +118,10 @@ def get_session() -> Generator[Session, None, None]:
     # Ensure engine is bound
     if SessionLocal.kw.get("bind") is None:
         SessionLocal.configure(bind=get_engine())
-    
+
     # Create session
     session = SessionLocal()
-    
+
     try:
         logger.debug("database_session_created")
         yield session
@@ -156,13 +155,13 @@ def init_db() -> None:
             session.commit()
     """
     logger.info("initializing_database")
-    
+
     engine = get_engine()
-    
+
     # Create all tables defined in Base metadata
     # This looks at all models inheriting from Base and creates their tables
     Base.metadata.create_all(bind=engine)
-    
+
     logger.info(
         "database_initialized",
         tables=list(Base.metadata.tables.keys())
@@ -187,10 +186,10 @@ def drop_all_tables() -> None:
         # Now you have a fresh database
     """
     logger.warning("dropping_all_tables")
-    
+
     engine = get_engine()
     Base.metadata.drop_all(bind=engine)
-    
+
     logger.warning("all_tables_dropped")
 
 
@@ -218,10 +217,10 @@ def get_db() -> Generator[Session, None, None]:
     # Ensure engine is bound
     if SessionLocal.kw.get("bind") is None:
         SessionLocal.configure(bind=get_engine())
-    
+
     # Create session
     session = SessionLocal()
-    
+
     try:
         logger.debug("database_session_created")
         yield session
