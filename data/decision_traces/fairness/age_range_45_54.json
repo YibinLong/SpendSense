@@ -1,0 +1,989 @@
+{
+  "demographic": "age_range",
+  "value": "45-54",
+  "user_count": 13,
+  "traces": [
+    {
+      "user_id": "usr_000006",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": "Black or African American",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 85.0, \"credit_util_flag_50\": true, \"has_interest_charges\": true, \"has_minimum_payment_only\": false, \"is_overdue\": false, \"matched_on\": [\"credit_util_flag_50\", \"has_interest_charges\"]}",
+        "assigned_at": "2025-11-04 17:22:59.827970"
+      },
+      "recommendations": [
+        {
+          "id": 36,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.830174"
+        },
+        {
+          "id": 37,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.830175"
+        },
+        {
+          "id": 38,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.830176"
+        },
+        {
+          "id": 39,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.830176"
+        },
+        {
+          "id": 40,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.853562"
+        },
+        {
+          "id": 41,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.853563"
+        },
+        {
+          "id": 42,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.853564"
+        },
+        {
+          "id": 43,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.853564"
+        },
+        {
+          "id": 362,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.681622"
+        },
+        {
+          "id": 363,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.681622"
+        },
+        {
+          "id": 364,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.681623"
+        },
+        {
+          "id": 365,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.681623"
+        },
+        {
+          "id": 391,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.675911"
+        },
+        {
+          "id": 392,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.675912"
+        },
+        {
+          "id": 393,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.675912"
+        },
+        {
+          "id": 394,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.675912"
+        },
+        {
+          "id": 420,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.271630"
+        },
+        {
+          "id": 421,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.271631"
+        },
+        {
+          "id": 422,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.271632"
+        },
+        {
+          "id": 423,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 85.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.271632"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000009",
+      "age_range": "45-54",
+      "gender": null,
+      "ethnicity": "Asian",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:22:59.930475"
+      },
+      "recommendations": [
+        {
+          "id": 60,
+          "item_type": "education",
+          "title": "The Subscription Audit Checklist",
+          "rationale": "You have 4 recurring subscriptions. totaling about $102.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.944787"
+        },
+        {
+          "id": 61,
+          "item_type": "education",
+          "title": "Negotiating Lower Bills: Scripts That Work",
+          "rationale": "You have 4 recurring subscriptions. totaling about $102.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.944788"
+        },
+        {
+          "id": 62,
+          "item_type": "education",
+          "title": "Setting Up Bill Alerts and Reminders",
+          "rationale": "You have 4 recurring subscriptions. totaling about $102.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.944788"
+        },
+        {
+          "id": 63,
+          "item_type": "offer",
+          "title": "Budgeting App Premium - 3 Months Free",
+          "rationale": "You have 4 recurring subscriptions. totaling about $102.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.944788"
+        },
+        {
+          "id": 64,
+          "item_type": "offer",
+          "title": "Subscription Manager Tool - Free Tier",
+          "rationale": "You have 4 recurring subscriptions. totaling about $102.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.944789"
+        },
+        {
+          "id": 65,
+          "item_type": "offer",
+          "title": "Bill Negotiation Service - No Fee Unless We Save You Money",
+          "rationale": "You have 4 recurring subscriptions. totaling about $102.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"Meets all eligibility criteria\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.944789"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000012",
+      "age_range": "45-54",
+      "gender": null,
+      "ethnicity": null,
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.007788"
+      },
+      "recommendations": [
+        {
+          "id": 82,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 2.05% this period. with $877.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.023072"
+        },
+        {
+          "id": 83,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 2.05% this period. with $877.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.023073"
+        },
+        {
+          "id": 84,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 2.05% this period. with $877.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.023073"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000018",
+      "age_range": "45-54",
+      "gender": null,
+      "ethnicity": "Black or African American",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 60.0, \"credit_util_flag_50\": true, \"has_interest_charges\": true, \"has_minimum_payment_only\": true, \"is_overdue\": false, \"matched_on\": [\"credit_util_flag_50\", \"has_interest_charges\", \"has_minimum_payment_only\"]}",
+        "assigned_at": "2025-11-04 17:23:00.181036"
+      },
+      "recommendations": [
+        {
+          "id": 122,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.183388"
+        },
+        {
+          "id": 123,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.183389"
+        },
+        {
+          "id": 124,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.183389"
+        },
+        {
+          "id": 125,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.183390"
+        },
+        {
+          "id": 126,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.203199"
+        },
+        {
+          "id": 127,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.203200"
+        },
+        {
+          "id": 128,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.203200"
+        },
+        {
+          "id": 129,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.203200"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000022",
+      "age_range": "45-54",
+      "gender": "Female",
+      "ethnicity": "Other",
+      "persona": {
+        "persona_id": "savings_builder",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"savings_builder\", \"savings_growth_rate_pct\": 3.07, \"savings_net_inflow\": 518.0, \"matched_on\": [\"savings_growth_gte_2_pct\", \"net_inflow_gte_200_per_month\", \"all_cards_below_30_pct\"], \"credit_utilization_max_pct\": 25.0, \"credit_util_flag_30\": false}",
+        "assigned_at": "2025-11-04 17:23:00.310767"
+      },
+      "recommendations": [
+        {
+          "id": 154,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 3.07% this period. with $518.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.312852"
+        },
+        {
+          "id": 155,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 3.07% this period. with $518.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.312853"
+        },
+        {
+          "id": 156,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 3.07% this period. with $518.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.312853"
+        },
+        {
+          "id": 157,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 4.70% this period. with $780.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.331166"
+        },
+        {
+          "id": 158,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 4.70% this period. with $780.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.331167"
+        },
+        {
+          "id": 159,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 4.70% this period. with $780.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.331167"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000024",
+      "age_range": "45-54",
+      "gender": null,
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 70.0, \"credit_util_flag_50\": true, \"has_interest_charges\": false, \"has_minimum_payment_only\": false, \"is_overdue\": false, \"matched_on\": [\"credit_util_flag_50\"]}",
+        "assigned_at": "2025-11-04 17:23:00.370099"
+      },
+      "recommendations": [
+        {
+          "id": 168,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372207"
+        },
+        {
+          "id": 169,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372208"
+        },
+        {
+          "id": 170,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372208"
+        },
+        {
+          "id": 171,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372209"
+        },
+        {
+          "id": 172,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390337"
+        },
+        {
+          "id": 173,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390338"
+        },
+        {
+          "id": 174,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390338"
+        },
+        {
+          "id": 175,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390339"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000025",
+      "age_range": "45-54",
+      "gender": "Female",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.399868"
+      },
+      "recommendations": []
+    },
+    {
+      "user_id": "usr_000028",
+      "age_range": "45-54",
+      "gender": "Female",
+      "ethnicity": "Hispanic or Latino",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 70.0, \"credit_util_flag_50\": true, \"has_interest_charges\": true, \"has_minimum_payment_only\": true, \"is_overdue\": false, \"matched_on\": [\"credit_util_flag_50\", \"has_interest_charges\", \"has_minimum_payment_only\"]}",
+        "assigned_at": "2025-11-04 17:23:00.491106"
+      },
+      "recommendations": [
+        {
+          "id": 184,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.493173"
+        },
+        {
+          "id": 185,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.493174"
+        },
+        {
+          "id": 186,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.493174"
+        },
+        {
+          "id": 187,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.493175"
+        },
+        {
+          "id": 188,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.512145"
+        },
+        {
+          "id": 189,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.512145"
+        },
+        {
+          "id": 190,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.512146"
+        },
+        {
+          "id": 191,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 70.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.512146"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000031",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": null,
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.578182"
+      },
+      "recommendations": [
+        {
+          "id": 206,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "with $3263.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.596316"
+        },
+        {
+          "id": 207,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "with $3263.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.596317"
+        },
+        {
+          "id": 208,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "with $3263.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.596317"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000037",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": "Asian",
+      "persona": {
+        "persona_id": "savings_builder",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"savings_builder\", \"savings_growth_rate_pct\": 2.76, \"savings_net_inflow\": 1005.0, \"matched_on\": [\"savings_growth_gte_2_pct\", \"net_inflow_gte_200_per_month\", \"all_cards_below_30_pct\"], \"credit_utilization_max_pct\": 10.0, \"credit_util_flag_30\": false}",
+        "assigned_at": "2025-11-04 17:23:00.746393"
+      },
+      "recommendations": [
+        {
+          "id": 237,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 2.76% this period. with $1005.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.748909"
+        },
+        {
+          "id": 238,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 2.76% this period. with $1005.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.748910"
+        },
+        {
+          "id": 239,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 2.76% this period. with $1005.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.748910"
+        },
+        {
+          "id": 240,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 7.20% this period. with $2516.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.770616"
+        },
+        {
+          "id": 241,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 7.20% this period. with $2516.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.770618"
+        },
+        {
+          "id": 242,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 7.20% this period. with $2516.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.770618"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000043",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 75.0, \"credit_util_flag_50\": true, \"has_interest_charges\": false, \"has_minimum_payment_only\": false, \"is_overdue\": true, \"matched_on\": [\"credit_util_flag_50\", \"is_overdue\"]}",
+        "assigned_at": "2025-11-04 17:23:00.949256"
+      },
+      "recommendations": [
+        {
+          "id": 278,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951852"
+        },
+        {
+          "id": 279,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951853"
+        },
+        {
+          "id": 280,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951853"
+        },
+        {
+          "id": 281,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951853"
+        },
+        {
+          "id": 282,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973453"
+        },
+        {
+          "id": 283,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973454"
+        },
+        {
+          "id": 284,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973454"
+        },
+        {
+          "id": 285,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973455"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000044",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.981609"
+      },
+      "recommendations": [
+        {
+          "id": 286,
+          "item_type": "education",
+          "title": "The Subscription Audit Checklist",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050576"
+        },
+        {
+          "id": 287,
+          "item_type": "education",
+          "title": "Negotiating Lower Bills: Scripts That Work",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050577"
+        },
+        {
+          "id": 288,
+          "item_type": "education",
+          "title": "Setting Up Bill Alerts and Reminders",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050577"
+        },
+        {
+          "id": 289,
+          "item_type": "offer",
+          "title": "Budgeting App Premium - 3 Months Free",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050578"
+        },
+        {
+          "id": 290,
+          "item_type": "offer",
+          "title": "Subscription Manager Tool - Free Tier",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050578"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000048",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": null,
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 60.0, \"credit_util_flag_50\": true, \"has_interest_charges\": true, \"has_minimum_payment_only\": false, \"is_overdue\": false, \"matched_on\": [\"credit_util_flag_50\", \"has_interest_charges\"]}",
+        "assigned_at": "2025-11-04 17:23:01.329104"
+      },
+      "recommendations": [
+        {
+          "id": 315,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.332867"
+        },
+        {
+          "id": 316,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.332869"
+        },
+        {
+          "id": 317,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.332869"
+        },
+        {
+          "id": 318,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.332869"
+        },
+        {
+          "id": 319,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.373608"
+        },
+        {
+          "id": 320,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.373609"
+        },
+        {
+          "id": 321,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.373610"
+        },
+        {
+          "id": 322,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 60.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.373610"
+        }
+      ]
+    }
+  ]
+}

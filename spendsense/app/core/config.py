@@ -78,6 +78,26 @@ class Settings(BaseSettings):
         description="Frontend development server port"
     )
 
+    # Authentication & Security Configuration
+    jwt_secret_key: str = Field(
+        default="dev-secret-key-please-change-in-production-min-32-chars",
+        description="JWT secret key for token signing (min 32 chars)"
+    )
+    jwt_algorithm: str = Field(
+        default="HS256",
+        description="JWT signing algorithm"
+    )
+    access_token_expire_minutes: int = Field(
+        default=1440,  # 24 hours
+        description="JWT access token expiration time in minutes"
+    )
+
+    # Fairness & Evaluation Configuration
+    fairness_threshold: int = Field(
+        default=20,
+        description="Threshold percentage for detecting demographic disparity"
+    )
+
     # Pydantic Settings Configuration
     # This tells Pydantic to read from .env file automatically
     model_config = SettingsConfigDict(

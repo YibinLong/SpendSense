@@ -2,53 +2,52 @@
   "user_id": "usr_000002",
   "window_days": 30,
   "persona": {
-    "persona_id": "high_utilization",
+    "persona_id": "savings_builder",
     "window_days": 30,
-    "assigned_at": "2025-11-04T15:31:05.243209",
+    "assigned_at": "2025-11-04T17:22:59.715426",
     "criteria_met": {
-      "persona": "high_utilization",
-      "credit_utilization_max_pct": 70.0,
-      "credit_util_flag_50": true,
-      "has_interest_charges": false,
-      "has_minimum_payment_only": true,
-      "is_overdue": false,
+      "persona": "savings_builder",
+      "savings_growth_rate_pct": 0.73,
+      "savings_net_inflow": 262.0,
       "matched_on": [
-        "credit_util_flag_50",
-        "has_minimum_payment_only"
-      ]
+        "net_inflow_gte_200_per_month",
+        "all_cards_below_30_pct"
+      ],
+      "credit_utilization_max_pct": 0.0,
+      "credit_util_flag_30": false
     }
   },
   "signals": {
     "subscription": {
       "recurring_merchant_count": 0,
-      "monthly_recurring_spend": 94.97,
-      "subscription_share_pct": 2.57,
-      "computed_at": "2025-11-04T15:31:05.236104"
+      "monthly_recurring_spend": 64.98,
+      "subscription_share_pct": 2.08,
+      "computed_at": "2025-11-04T17:22:59.710666"
     },
     "savings": {
-      "savings_net_inflow": 255.0,
-      "savings_growth_rate_pct": 0.82,
-      "emergency_fund_months": 14.4,
-      "computed_at": "2025-11-04T15:31:05.237684"
+      "savings_net_inflow": 262.0,
+      "savings_growth_rate_pct": 0.73,
+      "emergency_fund_months": 11.56,
+      "computed_at": "2025-11-04T17:22:59.711954"
     },
     "credit": {
-      "credit_utilization_max_pct": 70.0,
-      "credit_utilization_avg_pct": 70.0,
-      "credit_util_flag_30": true,
-      "credit_util_flag_50": true,
+      "credit_utilization_max_pct": 0.0,
+      "credit_utilization_avg_pct": 0.0,
+      "credit_util_flag_30": false,
+      "credit_util_flag_50": false,
       "credit_util_flag_80": false,
       "has_interest_charges": false,
-      "has_minimum_payment_only": true,
+      "has_minimum_payment_only": false,
       "is_overdue": false,
-      "computed_at": "2025-11-04T15:31:05.239202"
+      "computed_at": "2025-11-04T17:22:59.713696"
     },
     "income": {
-      "payroll_deposit_count": 2,
-      "median_pay_gap_days": 30.0,
+      "payroll_deposit_count": 3,
+      "median_pay_gap_days": 14.0,
       "pay_gap_variability": 0.0,
-      "avg_payroll_amount": 14368.5,
-      "cashflow_buffer_months": 1.23,
-      "computed_at": "2025-11-04T15:31:05.240904"
+      "avg_payroll_amount": 4614.0,
+      "cashflow_buffer_months": 4.06,
+      "computed_at": "2025-11-04T17:22:59.713878"
     }
   },
   "signal_count": 4,
@@ -56,166 +55,199 @@
     {
       "id": 4,
       "item_type": "education",
-      "title": "Credit Utilization 101: Why 30% Matters",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Savings Goals: From Dream to Reality",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:05.245410"
+      "created_at": "2025-11-04T17:22:59.717425"
     },
     {
       "id": 5,
       "item_type": "education",
-      "title": "Breaking the Minimum Payment Cycle",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:05.245411"
+      "created_at": "2025-11-04T17:22:59.717426"
     },
     {
       "id": 6,
       "item_type": "education",
-      "title": "Autopay Setup Guide: Never Miss a Payment",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "High-Yield Savings Accounts Compared",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:05.245411"
+      "created_at": "2025-11-04T17:22:59.717426"
     },
     {
-      "id": 7,
-      "item_type": "offer",
-      "title": "Free Credit Monitoring and Score Tracking",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "id": 340,
+      "item_type": "education",
+      "title": "Savings Goals: From Dream to Reality",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
-        "eligible": true,
-        "reason": "No eligibility restrictions",
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:05.245412"
+      "created_at": "2025-11-04T17:23:39.971383"
     },
     {
       "id": 341,
       "item_type": "education",
-      "title": "Credit Utilization 101: Why 30% Matters",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:08.808342"
+      "created_at": "2025-11-04T17:23:39.971387"
     },
     {
       "id": 342,
       "item_type": "education",
-      "title": "Breaking the Minimum Payment Cycle",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "High-Yield Savings Accounts Compared",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:08.808343"
+      "created_at": "2025-11-04T17:23:39.971388"
     },
     {
-      "id": 343,
+      "id": 349,
       "item_type": "education",
-      "title": "Autopay Setup Guide: Never Miss a Payment",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Savings Goals: From Dream to Reality",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:08.808344"
+      "created_at": "2025-11-04T17:23:51.669047"
     },
     {
-      "id": 344,
-      "item_type": "offer",
-      "title": "Free Credit Monitoring and Score Tracking",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
-      "status": "pending",
-      "eligibility_flags": {
-        "eligible": true,
-        "reason": "No eligibility restrictions",
-        "tone_check": "passed"
-      },
-      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:08.808344"
-    },
-    {
-      "id": 368,
+      "id": 350,
       "item_type": "education",
-      "title": "Credit Utilization 101: Why 30% Matters",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:13.261359"
+      "created_at": "2025-11-04T17:23:51.669050"
     },
     {
-      "id": 369,
+      "id": 351,
       "item_type": "education",
-      "title": "Breaking the Minimum Payment Cycle",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "High-Yield Savings Accounts Compared",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:13.261360"
+      "created_at": "2025-11-04T17:23:51.669051"
     },
     {
-      "id": 370,
+      "id": 378,
       "item_type": "education",
-      "title": "Autopay Setup Guide: Never Miss a Payment",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "title": "Savings Goals: From Dream to Reality",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:13.261360"
+      "created_at": "2025-11-04T17:24:04.663166"
     },
     {
-      "id": 371,
-      "item_type": "offer",
-      "title": "Free Credit Monitoring and Score Tracking",
-      "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
-      "persona_id": "high_utilization",
+      "id": 379,
+      "item_type": "education",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
       "status": "pending",
       "eligibility_flags": {
-        "eligible": true,
-        "reason": "No eligibility restrictions",
         "tone_check": "passed"
       },
       "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
-      "created_at": "2025-11-04T15:31:13.261360"
+      "created_at": "2025-11-04T17:24:04.663169"
+    },
+    {
+      "id": 380,
+      "item_type": "education",
+      "title": "High-Yield Savings Accounts Compared",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T17:24:04.663169"
+    },
+    {
+      "id": 407,
+      "item_type": "education",
+      "title": "Savings Goals: From Dream to Reality",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T17:24:19.258256"
+    },
+    {
+      "id": 408,
+      "item_type": "education",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T17:24:19.258259"
+    },
+    {
+      "id": 409,
+      "item_type": "education",
+      "title": "High-Yield Savings Accounts Compared",
+      "rationale": "Your savings grew 0.73% this period. with $262.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T17:24:19.258260"
     }
   ],
-  "recommendation_count": 12,
-  "trace_generated_at": "2025-11-04T15:31:13.309178"
+  "recommendation_count": 15,
+  "trace_generated_at": "2025-11-04T17:24:19.346944"
 }

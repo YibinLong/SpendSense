@@ -1,0 +1,1142 @@
+{
+  "demographic": "ethnicity",
+  "value": "White",
+  "user_count": 13,
+  "traces": [
+    {
+      "user_id": "usr_000001",
+      "age_range": "35-44",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:22:59.670048"
+      },
+      "recommendations": [
+        {
+          "id": 1,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 7.28% this period. with $2126.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.707076"
+        },
+        {
+          "id": 2,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 7.28% this period. with $2126.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.707077"
+        },
+        {
+          "id": 3,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 7.28% this period. with $2126.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.707077"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000003",
+      "age_range": "35-44",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "savings_builder",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"savings_builder\", \"savings_growth_rate_pct\": 3.64, \"savings_net_inflow\": 1003.0, \"matched_on\": [\"savings_growth_gte_2_pct\", \"net_inflow_gte_200_per_month\", \"all_cards_below_30_pct\"], \"credit_utilization_max_pct\": 0.0, \"credit_util_flag_30\": false}",
+        "assigned_at": "2025-11-04 17:22:59.739515"
+      },
+      "recommendations": [
+        {
+          "id": 10,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.741552"
+        },
+        {
+          "id": 11,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.741553"
+        },
+        {
+          "id": 12,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.741554"
+        },
+        {
+          "id": 13,
+          "item_type": "education",
+          "title": "The Subscription Audit Checklist",
+          "rationale": "You have 5 recurring subscriptions. totaling about $119.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.756073"
+        },
+        {
+          "id": 14,
+          "item_type": "education",
+          "title": "Negotiating Lower Bills: Scripts That Work",
+          "rationale": "You have 5 recurring subscriptions. totaling about $119.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.756074"
+        },
+        {
+          "id": 15,
+          "item_type": "education",
+          "title": "Setting Up Bill Alerts and Reminders",
+          "rationale": "You have 5 recurring subscriptions. totaling about $119.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.756074"
+        },
+        {
+          "id": 16,
+          "item_type": "offer",
+          "title": "Budgeting App Premium - 3 Months Free",
+          "rationale": "You have 5 recurring subscriptions. totaling about $119.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.756075"
+        },
+        {
+          "id": 17,
+          "item_type": "offer",
+          "title": "Subscription Manager Tool - Free Tier",
+          "rationale": "You have 5 recurring subscriptions. totaling about $119.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.756075"
+        },
+        {
+          "id": 18,
+          "item_type": "offer",
+          "title": "Bill Negotiation Service - No Fee Unless We Save You Money",
+          "rationale": "You have 5 recurring subscriptions. totaling about $119.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"Meets all eligibility criteria\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.756075"
+        },
+        {
+          "id": 343,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:39.978108"
+        },
+        {
+          "id": 344,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:39.978109"
+        },
+        {
+          "id": 345,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:39.978110"
+        },
+        {
+          "id": 352,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.674391"
+        },
+        {
+          "id": 353,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.674392"
+        },
+        {
+          "id": 354,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.674393"
+        },
+        {
+          "id": 381,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.668838"
+        },
+        {
+          "id": 382,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.668839"
+        },
+        {
+          "id": 383,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.668840"
+        },
+        {
+          "id": 410,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.262775"
+        },
+        {
+          "id": 411,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.262776"
+        },
+        {
+          "id": 412,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 3.64% this period. with $1003.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.262777"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000004",
+      "age_range": "35-44",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "savings_builder",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"savings_builder\", \"savings_growth_rate_pct\": 1.3, \"savings_net_inflow\": 504.0, \"matched_on\": [\"net_inflow_gte_200_per_month\", \"all_cards_below_30_pct\"], \"credit_utilization_max_pct\": 0.0, \"credit_util_flag_30\": false}",
+        "assigned_at": "2025-11-04 17:22:59.763938"
+      },
+      "recommendations": [
+        {
+          "id": 19,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.766130"
+        },
+        {
+          "id": 20,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.766131"
+        },
+        {
+          "id": 21,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.766132"
+        },
+        {
+          "id": 22,
+          "item_type": "education",
+          "title": "The Subscription Audit Checklist",
+          "rationale": "You have 6 recurring subscriptions. totaling about $122.94/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.785625"
+        },
+        {
+          "id": 23,
+          "item_type": "education",
+          "title": "Negotiating Lower Bills: Scripts That Work",
+          "rationale": "You have 6 recurring subscriptions. totaling about $122.94/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.785626"
+        },
+        {
+          "id": 24,
+          "item_type": "education",
+          "title": "Setting Up Bill Alerts and Reminders",
+          "rationale": "You have 6 recurring subscriptions. totaling about $122.94/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.785626"
+        },
+        {
+          "id": 25,
+          "item_type": "offer",
+          "title": "Budgeting App Premium - 3 Months Free",
+          "rationale": "You have 6 recurring subscriptions. totaling about $122.94/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.785627"
+        },
+        {
+          "id": 26,
+          "item_type": "offer",
+          "title": "Subscription Manager Tool - Free Tier",
+          "rationale": "You have 6 recurring subscriptions. totaling about $122.94/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.785627"
+        },
+        {
+          "id": 27,
+          "item_type": "offer",
+          "title": "Bill Negotiation Service - No Fee Unless We Save You Money",
+          "rationale": "You have 6 recurring subscriptions. totaling about $122.94/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"Meets all eligibility criteria\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.785627"
+        },
+        {
+          "id": 346,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:39.980838"
+        },
+        {
+          "id": 347,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:39.980839"
+        },
+        {
+          "id": 348,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:39.980840"
+        },
+        {
+          "id": 355,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.676773"
+        },
+        {
+          "id": 356,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.676774"
+        },
+        {
+          "id": 357,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:51.676774"
+        },
+        {
+          "id": 384,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.671276"
+        },
+        {
+          "id": 385,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.671277"
+        },
+        {
+          "id": 386,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:04.671277"
+        },
+        {
+          "id": 413,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.266022"
+        },
+        {
+          "id": 414,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.266024"
+        },
+        {
+          "id": 415,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 1.30% this period. with $504.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:24:19.266024"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000011",
+      "age_range": "35-44",
+      "gender": "Prefer not to say",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "savings_builder",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"savings_builder\", \"savings_growth_rate_pct\": 7.45, \"savings_net_inflow\": 1016.0, \"matched_on\": [\"savings_growth_gte_2_pct\", \"net_inflow_gte_200_per_month\", \"all_cards_below_30_pct\"], \"credit_utilization_max_pct\": 0.0, \"credit_util_flag_30\": false}",
+        "assigned_at": "2025-11-04 17:22:59.983400"
+      },
+      "recommendations": [
+        {
+          "id": 74,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 7.45% this period. with $1016.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.985334"
+        },
+        {
+          "id": 75,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 7.45% this period. with $1016.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.985335"
+        },
+        {
+          "id": 76,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 7.45% this period. with $1016.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.985335"
+        },
+        {
+          "id": 77,
+          "item_type": "education",
+          "title": "The Subscription Audit Checklist",
+          "rationale": "You have 5 recurring subscriptions. totaling about $89.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.999471"
+        },
+        {
+          "id": 78,
+          "item_type": "education",
+          "title": "Negotiating Lower Bills: Scripts That Work",
+          "rationale": "You have 5 recurring subscriptions. totaling about $89.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.999472"
+        },
+        {
+          "id": 79,
+          "item_type": "education",
+          "title": "Setting Up Bill Alerts and Reminders",
+          "rationale": "You have 5 recurring subscriptions. totaling about $89.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.999472"
+        },
+        {
+          "id": 80,
+          "item_type": "offer",
+          "title": "Budgeting App Premium - 3 Months Free",
+          "rationale": "You have 5 recurring subscriptions. totaling about $89.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.999472"
+        },
+        {
+          "id": 81,
+          "item_type": "offer",
+          "title": "Subscription Manager Tool - Free Tier",
+          "rationale": "You have 5 recurring subscriptions. totaling about $89.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:22:59.999472"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000014",
+      "age_range": "25-34",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.065544"
+      },
+      "recommendations": [
+        {
+          "id": 93,
+          "item_type": "education",
+          "title": "The Subscription Audit Checklist",
+          "rationale": "You have 5 recurring subscriptions. totaling about $87.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.080844"
+        },
+        {
+          "id": 94,
+          "item_type": "education",
+          "title": "Negotiating Lower Bills: Scripts That Work",
+          "rationale": "You have 5 recurring subscriptions. totaling about $87.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.080845"
+        },
+        {
+          "id": 95,
+          "item_type": "education",
+          "title": "Setting Up Bill Alerts and Reminders",
+          "rationale": "You have 5 recurring subscriptions. totaling about $87.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.080845"
+        },
+        {
+          "id": 96,
+          "item_type": "offer",
+          "title": "Budgeting App Premium - 3 Months Free",
+          "rationale": "You have 5 recurring subscriptions. totaling about $87.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.080846"
+        },
+        {
+          "id": 97,
+          "item_type": "offer",
+          "title": "Subscription Manager Tool - Free Tier",
+          "rationale": "You have 5 recurring subscriptions. totaling about $87.95/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.080846"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000024",
+      "age_range": "45-54",
+      "gender": null,
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 70.0, \"credit_util_flag_50\": true, \"has_interest_charges\": false, \"has_minimum_payment_only\": false, \"is_overdue\": false, \"matched_on\": [\"credit_util_flag_50\"]}",
+        "assigned_at": "2025-11-04 17:23:00.370099"
+      },
+      "recommendations": [
+        {
+          "id": 168,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372207"
+        },
+        {
+          "id": 169,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372208"
+        },
+        {
+          "id": 170,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372208"
+        },
+        {
+          "id": 171,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.372209"
+        },
+        {
+          "id": 172,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390337"
+        },
+        {
+          "id": 173,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390338"
+        },
+        {
+          "id": 174,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390338"
+        },
+        {
+          "id": 175,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 70.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.390339"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000025",
+      "age_range": "45-54",
+      "gender": "Female",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.399868"
+      },
+      "recommendations": []
+    },
+    {
+      "user_id": "usr_000026",
+      "age_range": "35-44",
+      "gender": "Female",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.445982"
+      },
+      "recommendations": [
+        {
+          "id": 176,
+          "item_type": "education",
+          "title": "Savings Goals: From Dream to Reality",
+          "rationale": "Your savings grew 20.32% this period. with $2216.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.459843"
+        },
+        {
+          "id": 177,
+          "item_type": "education",
+          "title": "Automating Your Savings: Set It and Forget It",
+          "rationale": "Your savings grew 20.32% this period. with $2216.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.459844"
+        },
+        {
+          "id": 178,
+          "item_type": "education",
+          "title": "High-Yield Savings Accounts Compared",
+          "rationale": "Your savings grew 20.32% this period. with $2216.00/month in new deposits. This resource could help you optimize your savings strategy.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.459844"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000036",
+      "age_range": "18-24",
+      "gender": "Female",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 25.0, \"credit_util_flag_50\": false, \"has_interest_charges\": true, \"has_minimum_payment_only\": false, \"is_overdue\": false, \"matched_on\": [\"has_interest_charges\"]}",
+        "assigned_at": "2025-11-04 17:23:00.711649"
+      },
+      "recommendations": [
+        {
+          "id": 229,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.713717"
+        },
+        {
+          "id": 230,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.713717"
+        },
+        {
+          "id": 231,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.713718"
+        },
+        {
+          "id": 232,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.713718"
+        },
+        {
+          "id": 233,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.735342"
+        },
+        {
+          "id": 234,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.735343"
+        },
+        {
+          "id": 235,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.735343"
+        },
+        {
+          "id": 236,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.735344"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000041",
+      "age_range": "35-44",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 35.0, \"credit_util_flag_50\": false, \"has_interest_charges\": false, \"has_minimum_payment_only\": true, \"is_overdue\": true, \"matched_on\": [\"has_minimum_payment_only\", \"is_overdue\"]}",
+        "assigned_at": "2025-11-04 17:23:00.879020"
+      },
+      "recommendations": [
+        {
+          "id": 262,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.881458"
+        },
+        {
+          "id": 263,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.881459"
+        },
+        {
+          "id": 264,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.881460"
+        },
+        {
+          "id": 265,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.881460"
+        },
+        {
+          "id": 266,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.905015"
+        },
+        {
+          "id": 267,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.905016"
+        },
+        {
+          "id": 268,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.905017"
+        },
+        {
+          "id": 269,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 35.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.905017"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000042",
+      "age_range": "35-44",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 85.0, \"credit_util_flag_50\": true, \"has_interest_charges\": false, \"has_minimum_payment_only\": false, \"is_overdue\": false, \"matched_on\": [\"credit_util_flag_50\"]}",
+        "assigned_at": "2025-11-04 17:23:00.915386"
+      },
+      "recommendations": [
+        {
+          "id": 270,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.917528"
+        },
+        {
+          "id": 271,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.917529"
+        },
+        {
+          "id": 272,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.917529"
+        },
+        {
+          "id": 273,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.917530"
+        },
+        {
+          "id": 274,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.939048"
+        },
+        {
+          "id": 275,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.939049"
+        },
+        {
+          "id": 276,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.939050"
+        },
+        {
+          "id": 277,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 85.00%. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.939050"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000043",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "high_utilization",
+        "window_days": 30,
+        "criteria_met": "{\"persona\": \"high_utilization\", \"credit_utilization_max_pct\": 75.0, \"credit_util_flag_50\": true, \"has_interest_charges\": false, \"has_minimum_payment_only\": false, \"is_overdue\": true, \"matched_on\": [\"credit_util_flag_50\", \"is_overdue\"]}",
+        "assigned_at": "2025-11-04 17:23:00.949256"
+      },
+      "recommendations": [
+        {
+          "id": 278,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951852"
+        },
+        {
+          "id": 279,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951853"
+        },
+        {
+          "id": 280,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951853"
+        },
+        {
+          "id": 281,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.951853"
+        },
+        {
+          "id": 282,
+          "item_type": "education",
+          "title": "Credit Utilization 101: Why 30% Matters",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973453"
+        },
+        {
+          "id": 283,
+          "item_type": "education",
+          "title": "Breaking the Minimum Payment Cycle",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973454"
+        },
+        {
+          "id": 284,
+          "item_type": "education",
+          "title": "Autopay Setup Guide: Never Miss a Payment",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973454"
+        },
+        {
+          "id": 285,
+          "item_type": "offer",
+          "title": "Free Credit Monitoring and Score Tracking",
+          "rationale": "Your credit utilization is 75.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:00.973455"
+        }
+      ]
+    },
+    {
+      "user_id": "usr_000044",
+      "age_range": "45-54",
+      "gender": "Male",
+      "ethnicity": "White",
+      "persona": {
+        "persona_id": "insufficient_data",
+        "window_days": 30,
+        "criteria_met": "{\"reason\": \"Signals present but no persona criteria met\", \"window_days\": 30}",
+        "assigned_at": "2025-11-04 17:23:00.981609"
+      },
+      "recommendations": [
+        {
+          "id": 286,
+          "item_type": "education",
+          "title": "The Subscription Audit Checklist",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050576"
+        },
+        {
+          "id": 287,
+          "item_type": "education",
+          "title": "Negotiating Lower Bills: Scripts That Work",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050577"
+        },
+        {
+          "id": 288,
+          "item_type": "education",
+          "title": "Setting Up Bill Alerts and Reminders",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050577"
+        },
+        {
+          "id": 289,
+          "item_type": "offer",
+          "title": "Budgeting App Premium - 3 Months Free",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050578"
+        },
+        {
+          "id": 290,
+          "item_type": "offer",
+          "title": "Subscription Manager Tool - Free Tier",
+          "rationale": "You have 4 recurring subscriptions. totaling about $74.96/month. Consider this resource to help optimize your subscriptions.",
+          "eligibility_flags": "{\"eligible\": true, \"reason\": \"No eligibility restrictions\", \"tone_check\": \"passed\"}",
+          "status": "pending",
+          "created_at": "2025-11-04 17:23:01.050578"
+        }
+      ]
+    }
+  ]
+}

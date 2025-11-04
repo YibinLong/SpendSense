@@ -134,6 +134,7 @@ async def root() -> dict[str, str]:
 
 # Import route modules
 from spendsense.app.api import (
+    routes_auth,
     routes_consent,
     routes_operator,
     routes_profiles,
@@ -142,6 +143,7 @@ from spendsense.app.api import (
 )
 
 # Include all routers
+app.include_router(routes_auth.router)  # Auth routes already have /auth prefix
 app.include_router(routes_users.router, prefix="/users", tags=["users"])
 app.include_router(routes_consent.router, prefix="/consent", tags=["consent"])
 app.include_router(routes_profiles.router, prefix="/profile", tags=["profiles"])

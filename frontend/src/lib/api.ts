@@ -3,12 +3,14 @@
  * 
  * Why this exists:
  * - Centralizes all API calls with TypeScript types matching backend Pydantic schemas
- * - Handles errors consistently (403 consent, 404 not found, 500 server errors)
+ * - Handles errors consistently (401 auth, 403 consent/forbidden, 404 not found, 500 server errors)
  * - Provides React Query hooks for automatic caching and refetching
+ * - Adds Authorization header with JWT token
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { getToken, clearToken } from './authUtils'
 
 // ============================================================================
 // TypeScript Interfaces (matching backend Pydantic schemas)
@@ -157,12 +159,14 @@ class ApiClient {
   }
 
   /**
-   * Generic fetch wrapper with error handling.
+   * Generic fetch wrapper with error handling and auth.
    * 
    * Why this exists:
-   * - Centralizes error handling for 403 consent errors, 404, 500
+   * - Centralizes error handling for 401, 403, 404, 500
+   * - Automatically adds Authorization header if token exists
    * - Automatically parses JSON responses
    * - Shows toast notifications for errors
+   * - Redirects to login on 401 Unauthorized
    */
   private async fetch<T>(
     endpoint: string,
@@ -170,13 +174,21 @@ class ApiClient {
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
     
+    // Add Authorization header if token exists
+    const token = getToken()
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    }
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+    
     try {
       const response = await fetch(url, {
         ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
       })
 
       // Handle error responses
@@ -190,7 +202,15 @@ class ApiClient {
           (typeof (errorBody as any).error === 'string' && (errorBody as any).error) ||
           `Request failed with status ${response.status}`
 
-        if (response.status === 404) {
+        // Handle different error types
+        if (response.status === 401) {
+          // Unauthorized - clear token and redirect to login
+          clearToken()
+          toast.error('Session Expired', { description: 'Please log in again' })
+          window.location.href = '/login'
+        } else if (response.status === 403) {
+          toast.error('Access Denied', { description: message })
+        } else if (response.status === 404) {
           toast.error('Not Found', { description: message })
         } else if (response.status >= 500) {
           toast.error('Server Error', { description: message })
