@@ -1,0 +1,46 @@
+{
+  "coverage": {
+    "total_users": 50,
+    "users_with_persona": 50,
+    "users_with_3plus_signals": 50,
+    "users_with_full_coverage": 50,
+    "coverage_persona_pct": 100.0,
+    "coverage_signals_pct": 100.0,
+    "full_coverage_pct": 100.0
+  },
+  "explainability": {
+    "total_recommendations": 427,
+    "recommendations_with_rationale": 427,
+    "explainability_pct": 100.0
+  },
+  "latency": {
+    "sample_size": 10,
+    "latencies_seconds": [
+      0.002,
+      0.005,
+      0.003,
+      0.001,
+      0.002,
+      0.002,
+      0.004,
+      0.001,
+      0.002,
+      0.002
+    ],
+    "min_latency_s": 0.001,
+    "max_latency_s": 0.005,
+    "avg_latency_s": 0.002,
+    "median_latency_s": 0.002,
+    "users_under_5s": 10,
+    "users_under_5s_pct": 100.0
+  },
+  "auditability": {
+    "total_recommendations": 454,
+    "recommendations_with_traces": 454,
+    "auditability_pct": 100.0
+  },
+  "metadata": {
+    "computed_at": "2025-11-04 09:31:14",
+    "latency_sample_size": 10
+  }
+}

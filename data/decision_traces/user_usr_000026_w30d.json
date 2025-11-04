@@ -1,0 +1,112 @@
+{
+  "user_id": "usr_000026",
+  "window_days": 30,
+  "persona": {
+    "persona_id": "high_utilization",
+    "window_days": 30,
+    "assigned_at": "2025-11-04T15:31:05.969079",
+    "criteria_met": {
+      "persona": "high_utilization",
+      "credit_utilization_max_pct": 15.0,
+      "credit_util_flag_50": false,
+      "has_interest_charges": false,
+      "has_minimum_payment_only": false,
+      "is_overdue": true,
+      "matched_on": [
+        "is_overdue"
+      ]
+    }
+  },
+  "signals": {
+    "subscription": {
+      "recurring_merchant_count": 0,
+      "monthly_recurring_spend": 92.96,
+      "subscription_share_pct": 3.63,
+      "computed_at": "2025-11-04T15:31:05.962365"
+    },
+    "savings": {
+      "savings_net_inflow": 102.0,
+      "savings_growth_rate_pct": 0.32,
+      "emergency_fund_months": 16.83,
+      "computed_at": "2025-11-04T15:31:05.963839"
+    },
+    "credit": {
+      "credit_utilization_max_pct": 15.0,
+      "credit_utilization_avg_pct": 12.5,
+      "credit_util_flag_30": false,
+      "credit_util_flag_50": false,
+      "credit_util_flag_80": false,
+      "has_interest_charges": false,
+      "has_minimum_payment_only": false,
+      "is_overdue": true,
+      "computed_at": "2025-11-04T15:31:05.965308"
+    },
+    "income": {
+      "payroll_deposit_count": 2,
+      "median_pay_gap_days": 30.0,
+      "pay_gap_variability": 0.0,
+      "avg_payroll_amount": 11475.0,
+      "cashflow_buffer_months": 2.18,
+      "computed_at": "2025-11-04T15:31:05.966937"
+    }
+  },
+  "signal_count": 4,
+  "recommendations": [
+    {
+      "id": 168,
+      "item_type": "education",
+      "title": "Credit Utilization 101: Why 30% Matters",
+      "rationale": "Your credit utilization is 15.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.971464"
+    },
+    {
+      "id": 169,
+      "item_type": "education",
+      "title": "Breaking the Minimum Payment Cycle",
+      "rationale": "Your credit utilization is 15.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.971465"
+    },
+    {
+      "id": 170,
+      "item_type": "education",
+      "title": "Autopay Setup Guide: Never Miss a Payment",
+      "rationale": "Your credit utilization is 15.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.971465"
+    },
+    {
+      "id": 171,
+      "item_type": "offer",
+      "title": "Free Credit Monitoring and Score Tracking",
+      "rationale": "Your credit utilization is 15.00%. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.971465"
+    }
+  ],
+  "recommendation_count": 4,
+  "trace_generated_at": "2025-11-04T15:31:13.339534"
+}

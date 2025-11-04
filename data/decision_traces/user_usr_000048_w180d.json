@@ -1,0 +1,141 @@
+{
+  "user_id": "usr_000048",
+  "window_days": 180,
+  "persona": {
+    "persona_id": "subscription_heavy",
+    "window_days": 180,
+    "assigned_at": "2025-11-04T15:31:06.685238",
+    "criteria_met": {
+      "persona": "subscription_heavy",
+      "recurring_merchant_count": 3,
+      "monthly_recurring_spend": 114.97,
+      "subscription_share_pct": 5.65,
+      "matched_on": [
+        "recurring_merchants_gte_3",
+        "monthly_recurring_gte_50"
+      ]
+    }
+  },
+  "signals": {
+    "subscription": {
+      "recurring_merchant_count": 3,
+      "monthly_recurring_spend": 114.97,
+      "subscription_share_pct": 5.65,
+      "computed_at": "2025-11-04T15:31:06.677713"
+    },
+    "savings": {
+      "savings_net_inflow": 1621.0,
+      "savings_growth_rate_pct": 6.33,
+      "emergency_fund_months": 13.39,
+      "computed_at": "2025-11-04T15:31:06.680264"
+    },
+    "credit": {
+      "credit_utilization_max_pct": 0.0,
+      "credit_utilization_avg_pct": 0.0,
+      "credit_util_flag_30": false,
+      "credit_util_flag_50": false,
+      "credit_util_flag_80": false,
+      "has_interest_charges": false,
+      "has_minimum_payment_only": false,
+      "is_overdue": false,
+      "computed_at": "2025-11-04T15:31:06.683242"
+    },
+    "income": {
+      "payroll_deposit_count": 12,
+      "median_pay_gap_days": 14.0,
+      "pay_gap_variability": 0.0,
+      "avg_payroll_amount": 3516.92,
+      "cashflow_buffer_months": 3.62,
+      "computed_at": "2025-11-04T15:31:06.683425"
+    }
+  },
+  "signal_count": 4,
+  "recommendations": [
+    {
+      "id": 327,
+      "item_type": "education",
+      "title": "The Subscription Audit Checklist",
+      "rationale": "You have 3 recurring subscriptions. totaling about $114.97/month. Consider this resource to help optimize your subscriptions.",
+      "persona_id": "subscription_heavy",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.687362"
+    },
+    {
+      "id": 328,
+      "item_type": "education",
+      "title": "Negotiating Lower Bills: Scripts That Work",
+      "rationale": "You have 3 recurring subscriptions. totaling about $114.97/month. Consider this resource to help optimize your subscriptions.",
+      "persona_id": "subscription_heavy",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.687363"
+    },
+    {
+      "id": 329,
+      "item_type": "education",
+      "title": "Setting Up Bill Alerts and Reminders",
+      "rationale": "You have 3 recurring subscriptions. totaling about $114.97/month. Consider this resource to help optimize your subscriptions.",
+      "persona_id": "subscription_heavy",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.687363"
+    },
+    {
+      "id": 330,
+      "item_type": "offer",
+      "title": "Budgeting App Premium - 3 Months Free",
+      "rationale": "You have 3 recurring subscriptions. totaling about $114.97/month. Consider this resource to help optimize your subscriptions.",
+      "persona_id": "subscription_heavy",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.687363"
+    },
+    {
+      "id": 331,
+      "item_type": "offer",
+      "title": "Subscription Manager Tool - Free Tier",
+      "rationale": "You have 3 recurring subscriptions. totaling about $114.97/month. Consider this resource to help optimize your subscriptions.",
+      "persona_id": "subscription_heavy",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.687364"
+    },
+    {
+      "id": 332,
+      "item_type": "offer",
+      "title": "Bill Negotiation Service - No Fee Unless We Save You Money",
+      "rationale": "You have 3 recurring subscriptions. totaling about $114.97/month. Consider this resource to help optimize your subscriptions.",
+      "persona_id": "subscription_heavy",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "Meets all eligibility criteria",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.687364"
+    }
+  ],
+  "recommendation_count": 6,
+  "trace_generated_at": "2025-11-04T15:31:14.798434"
+}

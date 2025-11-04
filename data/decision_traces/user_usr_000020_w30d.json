@@ -1,0 +1,50 @@
+{
+  "user_id": "usr_000020",
+  "window_days": 30,
+  "persona": {
+    "persona_id": "insufficient_data",
+    "window_days": 30,
+    "assigned_at": "2025-11-04T15:31:05.813748",
+    "criteria_met": {
+      "reason": "Signals present but no persona criteria met",
+      "window_days": 30
+    }
+  },
+  "signals": {
+    "subscription": {
+      "recurring_merchant_count": 0,
+      "monthly_recurring_spend": 0.0,
+      "subscription_share_pct": 0.0,
+      "computed_at": "2025-11-04T15:31:05.807941"
+    },
+    "savings": {
+      "savings_net_inflow": 4.0,
+      "savings_growth_rate_pct": 0.07,
+      "emergency_fund_months": 2.79,
+      "computed_at": "2025-11-04T15:31:05.809259"
+    },
+    "credit": {
+      "credit_utilization_max_pct": 40.0,
+      "credit_utilization_avg_pct": 37.5,
+      "credit_util_flag_30": true,
+      "credit_util_flag_50": false,
+      "credit_util_flag_80": false,
+      "has_interest_charges": false,
+      "has_minimum_payment_only": false,
+      "is_overdue": false,
+      "computed_at": "2025-11-04T15:31:05.810686"
+    },
+    "income": {
+      "payroll_deposit_count": 2,
+      "median_pay_gap_days": 30.0,
+      "pay_gap_variability": 0.0,
+      "avg_payroll_amount": 11630.0,
+      "cashflow_buffer_months": 3.59,
+      "computed_at": "2025-11-04T15:31:05.812225"
+    }
+  },
+  "signal_count": 4,
+  "recommendations": [],
+  "recommendation_count": 0,
+  "trace_generated_at": "2025-11-04T15:31:13.331883"
+}
