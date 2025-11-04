@@ -8,9 +8,9 @@ Why this exists:
 """
 
 from datetime import datetime
-from typing import Optional, Literal
+from typing import Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class OperatorReviewResponse(BaseModel):
@@ -31,12 +31,12 @@ class OperatorReviewResponse(BaseModel):
         description="Operator decision"
     )
     reviewer: str = Field(description="Operator who made this decision")
-    notes: Optional[str] = Field(
+    notes: str | None = Field(
         default=None,
         description="Operator's notes explaining the decision"
     )
     decided_at: datetime = Field(description="When this decision was made")
-    
+
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -61,7 +61,7 @@ class ApprovalRequest(BaseModel):
         description="Decision: approved, rejected, or flagged for follow-up"
     )
     reviewer: str = Field(description="Operator username or ID")
-    notes: Optional[str] = Field(
+    notes: str | None = Field(
         default=None,
         description="Optional notes explaining the decision"
     )

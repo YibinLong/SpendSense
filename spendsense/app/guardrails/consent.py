@@ -13,9 +13,8 @@ Why this exists:
 - All consent changes are logged for compliance
 """
 
-from datetime import datetime
-from typing import Optional
 import uuid
+from datetime import datetime
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -24,14 +23,13 @@ from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import ConsentEvent, User
 from spendsense.app.db.session import get_db
 
-
 logger = get_logger(__name__)
 
 
 def record_consent(
     user_id: str,
     action: str,
-    reason: Optional[str],
+    reason: str | None,
     by: str,
     session: Session,
 ) -> ConsentEvent:
@@ -71,15 +69,15 @@ def record_consent(
     # Validate action
     if action not in ["opt_in", "opt_out"]:
         raise ValueError(f"Invalid consent action: {action}. Must be 'opt_in' or 'opt_out'")
-    
+
     # Verify user exists
     user = session.query(User).filter(User.user_id == user_id).first()
     if not user:
         raise ValueError(f"User not found: {user_id}")
-    
+
     # Create consent event
     trace_id = str(uuid.uuid4())
-    
+
     consent_event = ConsentEvent(
         user_id=user_id,
         action=action,
@@ -87,11 +85,11 @@ def record_consent(
         consent_given_by=by,
         timestamp=datetime.utcnow(),
     )
-    
+
     session.add(consent_event)
     session.commit()
     session.refresh(consent_event)
-    
+
     logger.info(
         "consent_recorded",
         user_id=user_id,
@@ -99,7 +97,7 @@ def record_consent(
         by=by,
         trace_id=trace_id,
     )
-    
+
     return consent_event
 
 
@@ -137,20 +135,20 @@ def check_consent(user_id: str, session: Session) -> bool:
         .order_by(ConsentEvent.timestamp.desc())
         .first()
     )
-    
+
     if not latest_event:
         logger.debug("no_consent_found", user_id=user_id)
         return False
-    
+
     has_consent = latest_event.action == "opt_in"
-    
+
     logger.debug(
         "consent_checked",
         user_id=user_id,
         has_consent=has_consent,
         latest_action=latest_event.action,
     )
-    
+
     return has_consent
 
 
@@ -182,13 +180,13 @@ def get_consent_status(user_id: str, session: Session) -> dict:
         .order_by(ConsentEvent.timestamp.desc())
         .first()
     )
-    
+
     event_count = (
         session.query(ConsentEvent)
         .filter(ConsentEvent.user_id == user_id)
         .count()
     )
-    
+
     if not latest_event:
         return {
             "has_consent": False,
@@ -196,7 +194,7 @@ def get_consent_status(user_id: str, session: Session) -> dict:
             "latest_timestamp": None,
             "event_count": 0,
         }
-    
+
     return {
         "has_consent": latest_event.action == "opt_in",
         "latest_action": latest_event.action,
@@ -227,23 +225,23 @@ def require_consent(user_id: str, db: Session = Depends(get_db)) -> None:
     """
     if not check_consent(user_id, db):
         trace_id = str(uuid.uuid4())
-        
+
         logger.warning(
             "consent_required_blocked",
             user_id=user_id,
             trace_id=trace_id,
         )
-        
+
         # Get detailed status for better error message
         status_info = get_consent_status(user_id, db)
-        
+
         if status_info["latest_action"] == "opt_out":
             detail = f"User {user_id} has opted out of data processing. Consent was revoked at {status_info['latest_timestamp']}."
             consent_status = "opt_out"
         else:
             detail = f"User {user_id} has not provided consent for data processing."
             consent_status = "not_found"
-        
+
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -254,4 +252,5 @@ def require_consent(user_id: str, db: Session = Depends(get_db)) -> None:
                 "trace_id": trace_id,
             },
         )
+
 

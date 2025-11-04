@@ -7,7 +7,7 @@ Why this exists:
 - Matches PRD requirement for structured errors with logging
 """
 
-from typing import Optional, Any
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -34,15 +34,15 @@ class ApiError(BaseModel):
         }
     """
     error: str = Field(description="High-level error message")
-    detail: Optional[str] = Field(
+    detail: str | None = Field(
         default=None,
         description="Detailed explanation of the error"
     )
-    trace_id: Optional[str] = Field(
+    trace_id: str | None = Field(
         default=None,
         description="Request trace ID for debugging (from structlog)"
     )
-    field_errors: Optional[dict[str, Any]] = Field(
+    field_errors: dict[str, Any] | None = Field(
         default=None,
         description="Field-level validation errors (for 422 responses)"
     )
@@ -78,7 +78,7 @@ class ConsentError(BaseModel):
     detail: str = Field(
         description="Explanation of the consent issue"
     )
-    consent_status: Optional[str] = Field(
+    consent_status: str | None = Field(
         default=None,
         description="Current consent status: not_found, opt_out, expired"
     )
@@ -86,7 +86,7 @@ class ConsentError(BaseModel):
         default="POST /consent with action='opt_in' to continue",
         description="How to resolve this error"
     )
-    trace_id: Optional[str] = Field(
+    trace_id: str | None = Field(
         default=None,
         description="Request trace ID for debugging"
     )
@@ -108,7 +108,7 @@ class ConsentRequest(BaseModel):
     """
     user_id: str = Field(description="User identifier")
     action: str = Field(description="Consent action: opt_in or opt_out")
-    reason: Optional[str] = Field(
+    reason: str | None = Field(
         default=None,
         description="Reason for this consent action"
     )
@@ -128,4 +128,5 @@ class ConsentResponse(BaseModel):
     user_id: str = Field(description="User identifier")
     action: str = Field(description="Action that was recorded")
     message: str = Field(description="Confirmation message")
+
 

@@ -12,32 +12,30 @@ Why this exists:
 """
 
 import json
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 from decimal import Decimal
+from pathlib import Path
+from typing import Any
 
 from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import (
-    Recommendation,
-    SubscriptionSignal,
-    SavingsSignal,
     CreditSignal,
     IncomeSignal,
     Persona,
-    Liability,
+    Recommendation,
+    SavingsSignal,
+    SubscriptionSignal,
 )
+from spendsense.app.recommend.disclosure import add_disclosure
 from spendsense.app.recommend.eligibility import check_eligibility, validate_offer_safety
 from spendsense.app.recommend.tone import check_tone
-from spendsense.app.recommend.disclosure import add_disclosure
 from spendsense.app.schemas.recommendation import RecommendationItem
-
 
 logger = get_logger(__name__)
 
 
-def load_content_catalog() -> Dict[str, List[Dict[str, Any]]]:
+def load_content_catalog() -> dict[str, list[dict[str, Any]]]:
     """
     Load the content catalog JSON file.
     
@@ -45,10 +43,10 @@ def load_content_catalog() -> Dict[str, List[Dict[str, Any]]]:
         Dict with 'education_items' and 'partner_offers' lists
     """
     catalog_path = Path(__file__).parent / "content_catalog.json"
-    
+
     try:
-        with open(catalog_path, "r") as f:
-            catalog = json.load(f)
+        with open(catalog_path) as f:
+            catalog: dict[str, list[dict[str, Any]]] = json.load(f)
         logger.debug("content_catalog_loaded", item_count=len(catalog.get("education_items", [])) + len(catalog.get("partner_offers", [])))
         return catalog
     except Exception as e:
@@ -57,9 +55,9 @@ def load_content_catalog() -> Dict[str, List[Dict[str, Any]]]:
 
 
 def build_rationale(
-    item: Dict[str, Any],
+    item: dict[str, Any],
     persona_id: str,
-    signals: Dict[str, Any],
+    signals: dict[str, Any],
 ) -> str:
     """
     Build a plain-language rationale citing concrete signal data.
@@ -80,65 +78,65 @@ def build_rationale(
         than the minimum to reduce interest charges and improve your credit score."
     """
     rationale_parts = []
-    
+
     # Persona-specific rationale builders
     if persona_id == "high_utilization":
         credit = signals.get("credit", {})
         max_util = credit.get("credit_utilization_max_pct", 0)
         has_interest = credit.get("has_interest_charges", False)
         is_overdue = credit.get("is_overdue", False)
-        
+
         if max_util > 0:
             rationale_parts.append(f"Your credit utilization is {max_util}%")
         if has_interest:
             rationale_parts.append("you're paying interest charges")
         if is_overdue:
             rationale_parts.append("you have overdue payments")
-        
+
         rationale_parts.append("Consider this resource to help reduce your credit burden")
-    
+
     elif persona_id == "variable_income_budgeter":
         income = signals.get("income", {})
         pay_gap = income.get("median_pay_gap_days", 0)
         buffer = income.get("cashflow_buffer_months", 0)
-        
+
         rationale_parts.append(f"Your paychecks arrive every {pay_gap} days on average")
         rationale_parts.append(f"with a {buffer:.1f} month cash-flow buffer")
         rationale_parts.append("This resource might help you manage irregular income")
-    
+
     elif persona_id == "subscription_heavy":
         subscription = signals.get("subscription", {})
         merchant_count = subscription.get("recurring_merchant_count", 0)
         monthly_spend = subscription.get("monthly_recurring_spend", 0)
-        
+
         rationale_parts.append(f"You have {merchant_count} recurring subscriptions")
         rationale_parts.append(f"totaling about ${monthly_spend}/month")
         rationale_parts.append("Consider this resource to help optimize your subscriptions")
-    
+
     elif persona_id == "savings_builder":
         savings = signals.get("savings", {})
         growth = savings.get("savings_growth_rate_pct", 0)
         inflow = savings.get("savings_net_inflow", 0)
-        
+
         if growth > 0:
             rationale_parts.append(f"Your savings grew {growth}% this period")
         if inflow > 0:
             rationale_parts.append(f"with ${inflow:.2f}/month in new deposits")
         rationale_parts.append("This resource could help you optimize your savings strategy")
-    
+
     elif persona_id == "cash_flow_optimizer":
         income = signals.get("income", {})
         buffer = income.get("cashflow_buffer_months", 0)
-        
+
         rationale_parts.append(f"Your cash-flow buffer is {buffer:.1f} months")
         rationale_parts.append("suggesting opportunity for short-term optimization")
         rationale_parts.append("This resource might help you improve your cash flow")
-    
+
     else:
         # Generic rationale
         rationale_parts.append("Based on your financial profile")
         rationale_parts.append("this resource might be helpful")
-    
+
     return ". ".join(rationale_parts) + "."
 
 
@@ -146,7 +144,7 @@ def generate_recommendations(
     user_id: str,
     window_days: int,
     session: Session,
-) -> List[RecommendationItem]:
+) -> list[RecommendationItem]:
     """
     Generate personalized recommendations for a user.
     
@@ -179,40 +177,40 @@ def generate_recommendations(
         user_id=user_id,
         window_days=window_days,
     )
-    
+
     # Load persona
     persona = session.query(Persona).filter(
         Persona.user_id == user_id,
         Persona.window_days == window_days,
     ).first()
-    
+
     if not persona:
         logger.warning("no_persona_found", user_id=user_id, window_days=window_days)
         return []
-    
+
     persona_id = persona.persona_id
-    
+
     # Load all signals
     subscription_signal = session.query(SubscriptionSignal).filter(
         SubscriptionSignal.user_id == user_id,
         SubscriptionSignal.window_days == window_days,
     ).first()
-    
+
     savings_signal = session.query(SavingsSignal).filter(
         SavingsSignal.user_id == user_id,
         SavingsSignal.window_days == window_days,
     ).first()
-    
+
     credit_signal = session.query(CreditSignal).filter(
         CreditSignal.user_id == user_id,
         CreditSignal.window_days == window_days,
     ).first()
-    
+
     income_signal = session.query(IncomeSignal).filter(
         IncomeSignal.user_id == user_id,
         IncomeSignal.window_days == window_days,
     ).first()
-    
+
     # Build signals dict for eligibility and rationale
     signals = {
         "subscription": {
@@ -239,35 +237,35 @@ def generate_recommendations(
             "cashflow_buffer_months": income_signal.cashflow_buffer_months if income_signal else Decimal("0"),
         } if income_signal else {},
     }
-    
+
     # Load content catalog
     catalog = load_content_catalog()
-    
+
     # Filter items by persona tags
     education_candidates = [
         item for item in catalog.get("education_items", [])
         if persona_id in item.get("tags", [])
     ]
-    
+
     offer_candidates = [
         item for item in catalog.get("partner_offers", [])
         if persona_id in item.get("tags", [])
     ]
-    
+
     logger.debug(
         "candidates_filtered",
         persona_id=persona_id,
         education_count=len(education_candidates),
         offer_count=len(offer_candidates),
     )
-    
+
     # Build final recommendations
     recommendations = []
-    
+
     # Process education items (target 3-5)
     for item in education_candidates[:5]:
         rationale = build_rationale(item, persona_id, signals)
-        
+
         # Tone check
         tone_passed, tone_issues = check_tone(rationale)
         if not tone_passed:
@@ -277,10 +275,10 @@ def generate_recommendations(
                 issues=tone_issues,
             )
             continue  # Skip this item
-        
+
         # Add disclosure
         item_with_disclosure = add_disclosure(item)
-        
+
         # Create recommendation record
         rec = Recommendation(
             user_id=user_id,
@@ -295,14 +293,14 @@ def generate_recommendations(
         )
         session.add(rec)
         recommendations.append(rec)
-    
+
     # Process offers (target 1-3)
     for item in offer_candidates[:3]:
         # Safety check
         if not validate_offer_safety(item):
             logger.warning("offer_blocked_unsafe", item_id=item["id"])
             continue
-        
+
         # Eligibility check
         eligible, eligibility_reason = check_eligibility(item, signals)
         if not eligible:
@@ -312,9 +310,9 @@ def generate_recommendations(
                 reason=eligibility_reason,
             )
             continue
-        
+
         rationale = build_rationale(item, persona_id, signals)
-        
+
         # Tone check
         tone_passed, tone_issues = check_tone(rationale)
         if not tone_passed:
@@ -324,10 +322,10 @@ def generate_recommendations(
                 issues=tone_issues,
             )
             continue
-        
+
         # Add disclosure
         item_with_disclosure = add_disclosure(item)
-        
+
         # Create recommendation record
         rec = Recommendation(
             user_id=user_id,
@@ -346,16 +344,16 @@ def generate_recommendations(
         )
         session.add(rec)
         recommendations.append(rec)
-    
+
     # Commit all recommendations
     session.commit()
-    
+
     # Refresh and convert to schemas
     result = []
     for rec in recommendations:
         session.refresh(rec)
         result.append(RecommendationItem.model_validate(rec))
-    
+
     logger.info(
         "recommendations_generated",
         user_id=user_id,
@@ -364,6 +362,6 @@ def generate_recommendations(
         education_count=len([r for r in result if r.item_type == "education"]),
         offer_count=len([r for r in result if r.item_type == "offer"]),
     )
-    
+
     return result
 

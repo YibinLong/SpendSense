@@ -168,20 +168,20 @@ Why: Show users and operators what the system sees, in a simple modern UI.
 Why: Measure coverage, explainability, latency, and simple fairness so you know it works.
 
 ### Story: Metrics harness and exports
-- [ ] Add `spendsense/app/eval/metrics.py` to compute metrics per PRD
-- [ ] Export `eval_metrics.json` and `.csv` to `./data/`
-- [ ] Export per-user decision traces to `./data/decision_traces/`
-- [ ] CLI or script to run metrics end-to-end on seeded dataset
-- [ ] Tests that validate targets are produced in expected format
+- [x] Add `spendsense/app/eval/metrics.py` to compute metrics per PRD
+- [x] Export `eval_metrics.json` and `.csv` to `./data/`
+- [x] Export per-user decision traces to `./data/decision_traces/`
+- [x] CLI or script to run metrics end-to-end on seeded dataset
+- [x] Tests that validate targets are produced in expected format
 
 ---
 
 ## Epic: Testing & Quality
 Why: Catch mistakes early and keep behavior deterministic.
 
-- [ ] Integration: seed → persona → recommendations → operator approve flow
-- [ ] Type checks via `mypy app` and `pytest -q` shortcuts
-- [ ] Optional: add `ruff`/`flake8` and simple pre-commit hooks
+- [x] Integration: seed → persona → recommendations → operator approve flow
+- [x] Type checks via `mypy app` and `pytest -q` shortcuts
+- [x] Optional: add `ruff`/`flake8` and simple pre-commit hooks
 
 ---
 

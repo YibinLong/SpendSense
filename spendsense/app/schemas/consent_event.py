@@ -11,7 +11,7 @@ Why this exists:
 """
 
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -22,7 +22,7 @@ class ConsentEventBase(BaseModel):
     
     Tracks every consent action (opt-in, opt-out) with full context.
     """
-    
+
     user_id: str = Field(
         ...,
         description="User who gave or revoked consent",
@@ -32,7 +32,7 @@ class ConsentEventBase(BaseModel):
         ...,
         description="Whether user opted in or out of data processing"
     )
-    reason: Optional[str] = Field(
+    reason: str | None = Field(
         default=None,
         description="Optional reason for consent action",
         max_length=500
@@ -68,10 +68,10 @@ class ConsentEvent(ConsentEventBase):
     - Showing consent history
     - Auditing consent changes
     """
-    
+
     id: int = Field(..., description="Database primary key")
     timestamp: datetime
-    
+
     model_config = {"from_attributes": True}  # Enables ORM mode for SQLAlchemy compatibility
 
 
@@ -93,17 +93,17 @@ class ConsentStatus(BaseModel):
     - Checking if processing is allowed before any operation
     - Returning 403 with guidance when consent missing
     """
-    
+
     user_id: str
     has_consent: bool = Field(
         ...,
         description="Whether user currently has active consent"
     )
-    last_action: Optional[Literal["opt_in", "opt_out"]] = Field(
+    last_action: Literal["opt_in", "opt_out"] | None = Field(
         default=None,
         description="Most recent consent action"
     )
-    last_updated: Optional[datetime] = Field(
+    last_updated: datetime | None = Field(
         default=None,
         description="When consent was last changed"
     )

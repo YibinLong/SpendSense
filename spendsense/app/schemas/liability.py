@@ -11,7 +11,7 @@ Why this exists:
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -22,7 +22,7 @@ class LiabilityBase(BaseModel):
     
     Covers credit cards, loans, and other liabilities.
     """
-    
+
     liability_id: str = Field(
         ...,
         description="Unique liability identifier",
@@ -34,7 +34,7 @@ class LiabilityBase(BaseModel):
         description="Reference to the user who owns this liability",
         min_length=1
     )
-    account_id: Optional[str] = Field(
+    account_id: str | None = Field(
         default=None,
         description="Related account_id if this liability is linked to an account"
     )
@@ -54,32 +54,32 @@ class LiabilityBase(BaseModel):
         ge=Decimal("0"),
         decimal_places=2
     )
-    credit_limit: Optional[Decimal] = Field(
+    credit_limit: Decimal | None = Field(
         default=None,
         description="Credit limit (for credit cards)",
         ge=Decimal("0"),
         decimal_places=2
     )
-    minimum_payment: Optional[Decimal] = Field(
+    minimum_payment: Decimal | None = Field(
         default=None,
         description="Minimum payment due this cycle",
         ge=Decimal("0"),
         decimal_places=2
     )
-    last_payment_amount: Optional[Decimal] = Field(
+    last_payment_amount: Decimal | None = Field(
         default=None,
         description="Amount of last payment made",
         decimal_places=2
     )
-    last_payment_date: Optional[date] = Field(
+    last_payment_date: date | None = Field(
         default=None,
         description="Date of last payment"
     )
-    next_payment_due_date: Optional[date] = Field(
+    next_payment_due_date: date | None = Field(
         default=None,
         description="When the next payment is due"
     )
-    interest_rate_percentage: Optional[Decimal] = Field(
+    interest_rate_percentage: Decimal | None = Field(
         default=None,
         description="Annual interest rate as percentage (e.g., 18.99)",
         ge=Decimal("0"),
@@ -90,7 +90,7 @@ class LiabilityBase(BaseModel):
         default=False,
         description="Whether account is overdue"
     )
-    
+
     @field_validator('current_balance')
     @classmethod
     def validate_current_balance(cls, v: Decimal) -> Decimal:
@@ -98,10 +98,10 @@ class LiabilityBase(BaseModel):
         if v < 0:
             raise ValueError("Liability balance cannot be negative")
         return v
-    
+
     @field_validator('credit_limit')
     @classmethod
-    def validate_credit_limit(cls, v: Optional[Decimal]) -> Optional[Decimal]:
+    def validate_credit_limit(cls, v: Decimal | None) -> Decimal | None:
         """Ensure credit limit is non-negative if provided."""
         if v is not None and v < 0:
             raise ValueError("Credit limit cannot be negative")
@@ -120,9 +120,9 @@ class LiabilityCreate(LiabilityBase):
         default_factory=datetime.utcnow,
         description="When this liability record was created"
     )
-    
+
     @property
-    def utilization_percentage(self) -> Optional[Decimal]:
+    def utilization_percentage(self) -> Decimal | None:
         """
         Calculate credit utilization percentage.
         
@@ -148,14 +148,14 @@ class Liability(LiabilityBase):
     - Credit utilization calculations
     - Persona assignment (High Utilization persona)
     """
-    
+
     id: int = Field(..., description="Database primary key")
     created_at: datetime
-    
+
     model_config = {"from_attributes": True}  # Enables ORM mode for SQLAlchemy compatibility
-    
+
     @property
-    def utilization_percentage(self) -> Optional[Decimal]:
+    def utilization_percentage(self) -> Decimal | None:
         """
         Calculate credit utilization percentage.
         

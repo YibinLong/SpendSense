@@ -1,0 +1,112 @@
+{
+  "user_id": "usr_000027",
+  "window_days": 180,
+  "persona": {
+    "persona_id": "high_utilization",
+    "window_days": 180,
+    "assigned_at": "2025-11-04T15:31:06.018732",
+    "criteria_met": {
+      "persona": "high_utilization",
+      "credit_utilization_max_pct": 25.0,
+      "credit_util_flag_50": false,
+      "has_interest_charges": true,
+      "has_minimum_payment_only": false,
+      "is_overdue": false,
+      "matched_on": [
+        "has_interest_charges"
+      ]
+    }
+  },
+  "signals": {
+    "subscription": {
+      "recurring_merchant_count": 2,
+      "monthly_recurring_spend": 42.98,
+      "subscription_share_pct": 1.59,
+      "computed_at": "2025-11-04T15:31:06.007579"
+    },
+    "savings": {
+      "savings_net_inflow": 2718.0,
+      "savings_growth_rate_pct": 23.14,
+      "emergency_fund_months": 8.8,
+      "computed_at": "2025-11-04T15:31:06.010673"
+    },
+    "credit": {
+      "credit_utilization_max_pct": 25.0,
+      "credit_utilization_avg_pct": 25.0,
+      "credit_util_flag_30": false,
+      "credit_util_flag_50": false,
+      "credit_util_flag_80": false,
+      "has_interest_charges": true,
+      "has_minimum_payment_only": false,
+      "is_overdue": false,
+      "computed_at": "2025-11-04T15:31:06.013584"
+    },
+    "income": {
+      "payroll_deposit_count": 6,
+      "median_pay_gap_days": 30.0,
+      "pay_gap_variability": 0.0,
+      "avg_payroll_amount": 8682.0,
+      "cashflow_buffer_months": 6.35,
+      "computed_at": "2025-11-04T15:31:06.016722"
+    }
+  },
+  "signal_count": 4,
+  "recommendations": [
+    {
+      "id": 180,
+      "item_type": "education",
+      "title": "Credit Utilization 101: Why 30% Matters",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.021020"
+    },
+    {
+      "id": 181,
+      "item_type": "education",
+      "title": "Breaking the Minimum Payment Cycle",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.021021"
+    },
+    {
+      "id": 182,
+      "item_type": "education",
+      "title": "Autopay Setup Guide: Never Miss a Payment",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.021021"
+    },
+    {
+      "id": 183,
+      "item_type": "offer",
+      "title": "Free Credit Monitoring and Score Tracking",
+      "rationale": "Your credit utilization is 25.00%. you're paying interest charges. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.021021"
+    }
+  ],
+  "recommendation_count": 4,
+  "trace_generated_at": "2025-11-04T15:31:14.774050"
+}

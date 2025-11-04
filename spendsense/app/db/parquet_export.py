@@ -16,18 +16,19 @@ Outputs:
 """
 
 from datetime import date, timedelta
-from decimal import Decimal
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any
 
 import pandas as pd
 
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import get_logger
+from spendsense.app.db.models import (
+    Account, Transaction, User,
+    SubscriptionSignal, SavingsSignal, CreditSignal, IncomeSignal
+)
 from spendsense.app.db.session import get_session
-from spendsense.app.db.models import User, Account, Transaction, Liability
-from spendsense.app.features import subscriptions, savings, credit, income
-
+from spendsense.app.features import credit, income, savings, subscriptions
 
 logger = get_logger(__name__)
 
@@ -50,7 +51,7 @@ def export_transactions_denorm() -> str:
     - user_id
     """
     logger.info("exporting_denormalized_transactions")
-    
+
     with next(get_session()) as session:
         # Query all transactions with joined account and user info
         query = session.query(
@@ -77,18 +78,18 @@ def export_transactions_denorm() -> str:
         ).filter(
             Account.holder_category == "individual"  # Filter business accounts per PRD
         )
-        
+
         # Convert to DataFrame
         df = pd.read_sql(query.statement, session.bind)  # type: ignore[arg-type]
-        
+
         logger.info("transactions_queried", count=len(df))
-        
+
         # Export to Parquet
         output_path = Path(settings.parquet_dir) / "transactions_denorm.parquet"
         df.to_parquet(output_path, index=False, compression="snappy")
-        
+
         logger.info("transactions_denorm_exported", path=str(output_path), rows=len(df))
-        
+
         return str(output_path)
 
 
@@ -120,38 +121,58 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
     - Income: payroll frequency, variability, cash-flow buffer
     """
     logger.info("computing_window_features", window_days=window_days)
-    
+
     cutoff_date = date.today() - timedelta(days=window_days)
-    
+
     with next(get_session()) as session:
         # Get all users
         users = session.query(User).all()
-        
+
         features_list = []
-        
+
         for user in users:
             logger.debug("computing_features_for_user", user_id=user.user_id, window_days=window_days)
-            
+
             # Check if user has accounts
             accounts = session.query(Account).filter(
                 Account.user_id == user.user_id,
                 Account.holder_category == "individual"
             ).all()
-            
+
             if not accounts:
                 logger.warning("no_accounts_for_user", user_id=user.user_id)
                 continue
-            
+
             # Initialize feature dict with metadata
-            features: Dict[str, Any] = {
+            features: dict[str, Any] = {
                 "user_id": user.user_id,
                 "window_days": window_days,
                 "computed_at": pd.Timestamp.now()
             }
-            
+
             # === COMPUTE SIGNALS USING FEATURE MODULES ===
             # This is the refactored approach - each signal type has its own module
             
+            # Delete existing signals for this user/window to avoid unique constraint errors
+            # (signals are now auto-persisted by compute functions)
+            session.query(SubscriptionSignal).filter(
+                SubscriptionSignal.user_id == user.user_id,
+                SubscriptionSignal.window_days == window_days
+            ).delete()
+            session.query(SavingsSignal).filter(
+                SavingsSignal.user_id == user.user_id,
+                SavingsSignal.window_days == window_days
+            ).delete()
+            session.query(CreditSignal).filter(
+                CreditSignal.user_id == user.user_id,
+                CreditSignal.window_days == window_days
+            ).delete()
+            session.query(IncomeSignal).filter(
+                IncomeSignal.user_id == user.user_id,
+                IncomeSignal.window_days == window_days
+            ).delete()
+            session.commit()
+
             # Subscription signals
             subscription_signal = subscriptions.compute_subscription_signals(
                 user.user_id, window_days, session
@@ -159,7 +180,7 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
             features["recurring_merchant_count"] = subscription_signal.recurring_merchant_count
             features["monthly_recurring_spend"] = float(subscription_signal.monthly_recurring_spend)
             features["subscription_share_pct"] = float(subscription_signal.subscription_share_pct)
-            
+
             # Savings signals
             savings_signal = savings.compute_savings_signals(
                 user.user_id, window_days, session
@@ -167,7 +188,7 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
             features["savings_net_inflow"] = float(savings_signal.savings_net_inflow)
             features["savings_growth_rate_pct"] = float(savings_signal.savings_growth_rate_pct)
             features["emergency_fund_months"] = float(savings_signal.emergency_fund_months)
-            
+
             # Credit signals
             credit_signal = credit.compute_credit_signals(
                 user.user_id, window_days, session
@@ -180,7 +201,7 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
             features["has_interest_charges"] = credit_signal.has_interest_charges
             features["has_minimum_payment_only"] = credit_signal.has_minimum_payment_only
             features["is_overdue"] = credit_signal.is_overdue
-            
+
             # Income signals
             income_signal = income.compute_income_signals(
                 user.user_id, window_days, session
@@ -190,7 +211,7 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
             features["pay_gap_variability"] = float(income_signal.pay_gap_variability)
             features["avg_payroll_amount"] = float(income_signal.avg_payroll_amount)
             features["cashflow_buffer_months"] = float(income_signal.cashflow_buffer_months)
-            
+
             # === GENERAL SPENDING METRICS ===
             # These are still computed here as they don't fit into a specific signal category
             account_ids = [acc.account_id for acc in accounts]
@@ -199,25 +220,25 @@ def compute_window_features(window_days: int) -> pd.DataFrame:
                 Transaction.transaction_date >= cutoff_date,
                 Transaction.pending == False
             ).all()
-            
+
             total_income = sum(abs(tx.amount) for tx in transactions if tx.amount < 0)  # Credits
             total_expenses = sum(tx.amount for tx in transactions if tx.amount > 0)  # Debits
-            
+
             features["total_income"] = float(total_income)
             features["total_expenses"] = float(total_expenses)
             features["net_cashflow"] = float(total_income - total_expenses)
-            
+
             features_list.append(features)
-        
+
         # Convert to DataFrame
         df = pd.DataFrame(features_list)
-        
+
         logger.info("window_features_computed", window_days=window_days, users=len(df))
-        
+
         return df
 
 
-def export_features_to_parquet() -> Dict[str, str]:
+def export_features_to_parquet() -> dict[str, str]:
     """
     Export all feature tables to Parquet.
     
@@ -234,27 +255,27 @@ def export_features_to_parquet() -> Dict[str, str]:
     - features_180d.parquet: 180-day window features
     """
     logger.info("exporting_features_to_parquet")
-    
+
     paths = {}
-    
+
     # 30-day features
     df_30d = compute_window_features(30)
     path_30d = Path(settings.parquet_dir) / "features_30d.parquet"
     df_30d.to_parquet(path_30d, index=False, compression="snappy")
     paths["30d"] = str(path_30d)
     logger.info("features_30d_exported", path=str(path_30d), rows=len(df_30d))
-    
+
     # 180-day features
     df_180d = compute_window_features(180)
     path_180d = Path(settings.parquet_dir) / "features_180d.parquet"
     df_180d.to_parquet(path_180d, index=False, compression="snappy")
     paths["180d"] = str(path_180d)
     logger.info("features_180d_exported", path=str(path_180d), rows=len(df_180d))
-    
+
     return paths
 
 
-def export_all() -> Dict[str, Any]:
+def export_all() -> dict[str, Any]:
     """
     Export all analytics files to Parquet.
     
@@ -270,13 +291,13 @@ def export_all() -> Dict[str, Any]:
         print(results)
     """
     logger.info("exporting_all_analytics")
-    
+
     results = {
         "transactions_denorm": export_transactions_denorm(),
         "features": export_features_to_parquet()
     }
-    
+
     logger.info("all_analytics_exported", results=results)
-    
+
     return results
 

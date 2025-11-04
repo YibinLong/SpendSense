@@ -1,0 +1,114 @@
+{
+  "user_id": "usr_000040",
+  "window_days": 180,
+  "persona": {
+    "persona_id": "high_utilization",
+    "window_days": 180,
+    "assigned_at": "2025-11-04T15:31:06.468929",
+    "criteria_met": {
+      "persona": "high_utilization",
+      "credit_utilization_max_pct": 75.0,
+      "credit_util_flag_50": true,
+      "has_interest_charges": true,
+      "has_minimum_payment_only": false,
+      "is_overdue": true,
+      "matched_on": [
+        "credit_util_flag_50",
+        "has_interest_charges",
+        "is_overdue"
+      ]
+    }
+  },
+  "signals": {
+    "subscription": {
+      "recurring_merchant_count": 2,
+      "monthly_recurring_spend": 64.98,
+      "subscription_share_pct": 2.16,
+      "computed_at": "2025-11-04T15:31:06.453827"
+    },
+    "savings": {
+      "savings_net_inflow": 828.0,
+      "savings_growth_rate_pct": 2.79,
+      "emergency_fund_months": 18.75,
+      "computed_at": "2025-11-04T15:31:06.458318"
+    },
+    "credit": {
+      "credit_utilization_max_pct": 75.0,
+      "credit_utilization_avg_pct": 65.0,
+      "credit_util_flag_30": true,
+      "credit_util_flag_50": true,
+      "credit_util_flag_80": false,
+      "has_interest_charges": true,
+      "has_minimum_payment_only": false,
+      "is_overdue": true,
+      "computed_at": "2025-11-04T15:31:06.462564"
+    },
+    "income": {
+      "payroll_deposit_count": 6,
+      "median_pay_gap_days": 30.0,
+      "pay_gap_variability": 0.0,
+      "avg_payroll_amount": 9038.67,
+      "cashflow_buffer_months": 4.53,
+      "computed_at": "2025-11-04T15:31:06.466285"
+    }
+  },
+  "signal_count": 4,
+  "recommendations": [
+    {
+      "id": 275,
+      "item_type": "education",
+      "title": "Credit Utilization 101: Why 30% Matters",
+      "rationale": "Your credit utilization is 75.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.471480"
+    },
+    {
+      "id": 276,
+      "item_type": "education",
+      "title": "Breaking the Minimum Payment Cycle",
+      "rationale": "Your credit utilization is 75.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.471481"
+    },
+    {
+      "id": 277,
+      "item_type": "education",
+      "title": "Autopay Setup Guide: Never Miss a Payment",
+      "rationale": "Your credit utilization is 75.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.471482"
+    },
+    {
+      "id": 278,
+      "item_type": "offer",
+      "title": "Free Credit Monitoring and Score Tracking",
+      "rationale": "Your credit utilization is 75.00%. you're paying interest charges. you have overdue payments. Consider this resource to help reduce your credit burden.",
+      "persona_id": "high_utilization",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:06.471482"
+    }
+  ],
+  "recommendation_count": 4,
+  "trace_generated_at": "2025-11-04T15:31:14.789378"
+}

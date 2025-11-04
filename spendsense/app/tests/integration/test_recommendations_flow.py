@@ -8,23 +8,24 @@ Tests the end-to-end recommendation generation:
 - Verify eligibility filtering works
 """
 
+from decimal import Decimal
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from decimal import Decimal
 
 from spendsense.app.db.models import (
     Base,
-    User,
     CreditSignal,
     IncomeSignal,
-    SubscriptionSignal,
-    SavingsSignal,
     Persona,
+    SavingsSignal,
+    SubscriptionSignal,
+    User,
 )
+from spendsense.app.guardrails.consent import record_consent
 from spendsense.app.personas.assign import assign_persona
 from spendsense.app.recommend.engine import generate_recommendations
-from spendsense.app.guardrails.consent import record_consent
 
 
 @pytest.fixture
@@ -52,10 +53,10 @@ def test_high_utilization_recommendations(test_db):
     user = User(user_id="test_rec_high_util")
     test_db.add(user)
     test_db.commit()
-    
+
     # Opt-in consent
     record_consent("test_rec_high_util", "opt_in", "Testing", "api", test_db)
-    
+
     # Create signals
     credit = CreditSignal(
         user_id="test_rec_high_util",
@@ -71,21 +72,21 @@ def test_high_utilization_recommendations(test_db):
     )
     test_db.add(credit)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_rec_high_util", 30, test_db)
     assert persona.persona_id == "high_utilization"
-    
+
     # Generate recommendations
     recs = generate_recommendations("test_rec_high_util", 30, test_db)
-    
+
     # Verify we got recommendations
     assert len(recs) > 0
-    
+
     # Verify at least one education item
     education_recs = [r for r in recs if r.item_type == "education"]
     assert len(education_recs) > 0
-    
+
     # Verify first education item
     first_edu = education_recs[0]
     assert first_edu.persona_id == "high_utilization"
@@ -93,7 +94,7 @@ def test_high_utilization_recommendations(test_db):
     assert "68" in first_edu.rationale  # Should cite actual utilization
     assert first_edu.disclosure is not None
     assert "educational content" in first_edu.disclosure.lower()
-    
+
     # Verify offers exist (if eligible)
     offer_recs = [r for r in recs if r.item_type == "offer"]
     # May be 0 if ineligible, but should have tried
@@ -109,10 +110,10 @@ def test_recommendations_filtered_by_eligibility(test_db):
     user = User(user_id="test_rec_ineligible")
     test_db.add(user)
     test_db.commit()
-    
+
     # Opt-in consent
     record_consent("test_rec_ineligible", "opt_in", "Testing", "api", test_db)
-    
+
     # Create very high utilization signals
     credit = CreditSignal(
         user_id="test_rec_ineligible",
@@ -128,17 +129,17 @@ def test_recommendations_filtered_by_eligibility(test_db):
     )
     test_db.add(credit)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_rec_ineligible", 30, test_db)
-    
+
     # Generate recommendations
     recs = generate_recommendations("test_rec_ineligible", 30, test_db)
-    
+
     # Should still get education items (no eligibility restriction)
     education_recs = [r for r in recs if r.item_type == "education"]
     assert len(education_recs) > 0
-    
+
     # Offers may be filtered by eligibility
     # (depends on catalog criteria, may be 0)
 
@@ -155,10 +156,10 @@ def test_subscription_heavy_recommendations(test_db):
     user = User(user_id="test_rec_subs")
     test_db.add(user)
     test_db.commit()
-    
+
     # Opt-in consent
     record_consent("test_rec_subs", "opt_in", "Testing", "api", test_db)
-    
+
     # Create subscription signals
     subscription = SubscriptionSignal(
         user_id="test_rec_subs",
@@ -169,16 +170,16 @@ def test_subscription_heavy_recommendations(test_db):
     )
     test_db.add(subscription)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_rec_subs", 30, test_db)
     assert persona.persona_id == "subscription_heavy"
-    
+
     # Generate recommendations
     recs = generate_recommendations("test_rec_subs", 30, test_db)
-    
+
     assert len(recs) > 0
-    
+
     # Verify rationale mentions subscription details
     first_rec = recs[0]
     assert "6" in first_rec.rationale  # Merchant count
@@ -195,10 +196,10 @@ def test_recommendations_have_mandatory_disclosure(test_db):
     user = User(user_id="test_rec_disclosure")
     test_db.add(user)
     test_db.commit()
-    
+
     # Opt-in consent
     record_consent("test_rec_disclosure", "opt_in", "Testing", "api", test_db)
-    
+
     # Create any signals
     savings = SavingsSignal(
         user_id="test_rec_disclosure",
@@ -209,16 +210,17 @@ def test_recommendations_have_mandatory_disclosure(test_db):
     )
     test_db.add(savings)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_rec_disclosure", 30, test_db)
-    
+
     # Generate recommendations
     recs = generate_recommendations("test_rec_disclosure", 30, test_db)
-    
+
     # Verify EVERY recommendation has disclosure
     for rec in recs:
         assert rec.disclosure is not None
         assert "educational content" in rec.disclosure.lower()
         assert "not financial advice" in rec.disclosure.lower()
+
 

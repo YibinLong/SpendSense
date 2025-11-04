@@ -8,18 +8,19 @@ Tests the end-to-end persona assignment flow:
 - Verify criteria_met explainability
 """
 
+from decimal import Decimal
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from decimal import Decimal
 
 from spendsense.app.db.models import (
     Base,
-    User,
     CreditSignal,
     IncomeSignal,
-    SubscriptionSignal,
     SavingsSignal,
+    SubscriptionSignal,
+    User,
 )
 from spendsense.app.personas.assign import assign_persona
 
@@ -48,7 +49,7 @@ def test_high_utilization_persona_priority_1(test_db):
     user = User(user_id="test_user_high_util")
     test_db.add(user)
     test_db.commit()
-    
+
     # Create signals that match BOTH High Utilization AND Subscription-Heavy
     credit = CreditSignal(
         user_id="test_user_high_util",
@@ -62,7 +63,7 @@ def test_high_utilization_persona_priority_1(test_db):
         has_minimum_payment_only=False,
         is_overdue=False,
     )
-    
+
     subscription = SubscriptionSignal(
         user_id="test_user_high_util",
         window_days=30,
@@ -70,18 +71,18 @@ def test_high_utilization_persona_priority_1(test_db):
         monthly_recurring_spend=Decimal("75.00"),
         subscription_share_pct=Decimal("12.0"),
     )
-    
+
     test_db.add(credit)
     test_db.add(subscription)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_user_high_util", 30, test_db)
-    
+
     # Verify High Utilization wins (priority 1)
     assert persona.persona_id == "high_utilization"
     assert persona.window_days == 30
-    
+
     # Verify criteria_met explains why
     import json
     criteria = json.loads(persona.criteria_met) if isinstance(persona.criteria_met, str) else persona.criteria_met
@@ -101,7 +102,7 @@ def test_variable_income_budgeter_persona(test_db):
     user = User(user_id="test_user_var_income")
     test_db.add(user)
     test_db.commit()
-    
+
     # Create income signal matching Variable Income criteria
     income = IncomeSignal(
         user_id="test_user_var_income",
@@ -112,16 +113,16 @@ def test_variable_income_budgeter_persona(test_db):
         avg_payroll_amount=Decimal("2000.00"),
         cashflow_buffer_months=Decimal("0.8"),  # < 1 month
     )
-    
+
     test_db.add(income)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_user_var_income", 30, test_db)
-    
+
     # Verify Variable Income Budgeter assigned
     assert persona.persona_id == "variable_income_budgeter"
-    
+
     # Verify criteria
     import json
     criteria = json.loads(persona.criteria_met) if isinstance(persona.criteria_met, str) else persona.criteria_met
@@ -141,7 +142,7 @@ def test_subscription_heavy_persona(test_db):
     user = User(user_id="test_user_subs")
     test_db.add(user)
     test_db.commit()
-    
+
     # Create subscription signal
     subscription = SubscriptionSignal(
         user_id="test_user_subs",
@@ -150,16 +151,16 @@ def test_subscription_heavy_persona(test_db):
         monthly_recurring_spend=Decimal("65.00"),  # ≥ $50
         subscription_share_pct=Decimal("8.0"),  # < 10% but still matches
     )
-    
+
     test_db.add(subscription)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_user_subs", 30, test_db)
-    
+
     # Verify Subscription-Heavy assigned
     assert persona.persona_id == "subscription_heavy"
-    
+
     # Verify criteria
     import json
     criteria = json.loads(persona.criteria_met) if isinstance(persona.criteria_met, str) else persona.criteria_met
@@ -179,7 +180,7 @@ def test_savings_builder_persona(test_db):
     user = User(user_id="test_user_saver")
     test_db.add(user)
     test_db.commit()
-    
+
     # Create savings and credit signals
     savings = SavingsSignal(
         user_id="test_user_saver",
@@ -188,7 +189,7 @@ def test_savings_builder_persona(test_db):
         savings_growth_rate_pct=Decimal("1.5"),  # < 2% but inflow triggers
         emergency_fund_months=Decimal("3.0"),
     )
-    
+
     credit = CreditSignal(
         user_id="test_user_saver",
         window_days=30,
@@ -201,17 +202,17 @@ def test_savings_builder_persona(test_db):
         has_minimum_payment_only=False,
         is_overdue=False,
     )
-    
+
     test_db.add(savings)
     test_db.add(credit)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_user_saver", 30, test_db)
-    
+
     # Verify Savings Builder assigned
     assert persona.persona_id == "savings_builder"
-    
+
     # Verify criteria
     import json
     criteria = json.loads(persona.criteria_met) if isinstance(persona.criteria_met, str) else persona.criteria_met
@@ -227,16 +228,17 @@ def test_insufficient_data_persona(test_db):
     user = User(user_id="test_user_no_data")
     test_db.add(user)
     test_db.commit()
-    
+
     # Assign persona
     persona = assign_persona("test_user_no_data", 30, test_db)
-    
+
     # Verify insufficient_data assigned
     assert persona.persona_id == "insufficient_data"
-    
+
     # Verify reason
     import json
     criteria = json.loads(persona.criteria_met) if isinstance(persona.criteria_met, str) else persona.criteria_met
     assert "reason" in criteria
     assert "No behavioral signals" in criteria["reason"]
+
 

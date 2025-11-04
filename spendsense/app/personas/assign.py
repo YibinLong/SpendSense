@@ -13,21 +13,19 @@ Why this exists:
 
 import json
 from datetime import datetime
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import (
-    Persona,
-    SubscriptionSignal,
-    SavingsSignal,
     CreditSignal,
     IncomeSignal,
+    Persona,
+    SavingsSignal,
+    SubscriptionSignal,
 )
 from spendsense.app.personas.rules import PERSONA_CHECKS
 from spendsense.app.schemas.persona import PersonaAssignment
-
 
 logger = get_logger(__name__)
 
@@ -71,28 +69,28 @@ def assign_persona(
         user_id=user_id,
         window_days=window_days,
     )
-    
+
     # Fetch all signals for this user and window
     subscription_signal = session.query(SubscriptionSignal).filter(
         SubscriptionSignal.user_id == user_id,
         SubscriptionSignal.window_days == window_days,
     ).first()
-    
+
     savings_signal = session.query(SavingsSignal).filter(
         SavingsSignal.user_id == user_id,
         SavingsSignal.window_days == window_days,
     ).first()
-    
+
     credit_signal = session.query(CreditSignal).filter(
         CreditSignal.user_id == user_id,
         CreditSignal.window_days == window_days,
     ).first()
-    
+
     income_signal = session.query(IncomeSignal).filter(
         IncomeSignal.user_id == user_id,
         IncomeSignal.window_days == window_days,
     ).first()
-    
+
     logger.debug(
         "signals_fetched",
         user_id=user_id,
@@ -102,7 +100,7 @@ def assign_persona(
         has_credit=credit_signal is not None,
         has_income=income_signal is not None,
     )
-    
+
     # Check if we have any signals at all
     has_any_signals = any([
         subscription_signal,
@@ -110,7 +108,7 @@ def assign_persona(
         credit_signal,
         income_signal,
     ])
-    
+
     if not has_any_signals:
         # No data available, assign "insufficient_data" persona
         logger.warning(
@@ -127,7 +125,7 @@ def assign_persona(
         # Check personas in priority order
         assigned_persona_id = None
         criteria_met = {}
-        
+
         for persona_id, check_func in PERSONA_CHECKS:
             matches, criteria = check_func(
                 credit=credit_signal,
@@ -135,7 +133,7 @@ def assign_persona(
                 savings=savings_signal,
                 income=income_signal,
             )
-            
+
             if matches:
                 assigned_persona_id = persona_id
                 criteria_met = criteria
@@ -147,7 +145,7 @@ def assign_persona(
                     matched_on=criteria.get("matched_on", []),
                 )
                 break  # First match wins
-        
+
         # If no persona matched, assign "insufficient_data"
         if not assigned_persona_id:
             logger.warning(
@@ -160,28 +158,28 @@ def assign_persona(
                 "reason": "Signals present but no persona criteria met",
                 "window_days": window_days,
             }
-    
+
     # Check if persona already exists for this user and window
     existing_persona = session.query(Persona).filter(
         Persona.user_id == user_id,
         Persona.window_days == window_days,
     ).first()
-    
+
     if existing_persona:
         # Update existing persona
-        existing_persona.persona_id = assigned_persona_id
+        existing_persona.persona_id = str(assigned_persona_id) if assigned_persona_id else "insufficient_data"
         existing_persona.criteria_met = json.dumps(criteria_met)
         existing_persona.assigned_at = datetime.utcnow()
         session.commit()
         session.refresh(existing_persona)
-        
+
         logger.info(
             "persona_updated",
             user_id=user_id,
             window_days=window_days,
             persona_id=assigned_persona_id,
         )
-        
+
         return PersonaAssignment.model_validate(existing_persona)
     else:
         # Create new persona
@@ -195,14 +193,14 @@ def assign_persona(
         session.add(new_persona)
         session.commit()
         session.refresh(new_persona)
-        
+
         logger.info(
             "persona_created",
             user_id=user_id,
             window_days=window_days,
             persona_id=assigned_persona_id,
         )
-        
+
         return PersonaAssignment.model_validate(new_persona)
 
 
@@ -210,7 +208,7 @@ def get_persona(
     user_id: str,
     window_days: int,
     session: Session,
-) -> Optional[PersonaAssignment]:
+) -> PersonaAssignment | None:
     """
     Retrieve existing persona assignment for a user.
     
@@ -228,8 +226,9 @@ def get_persona(
         Persona.user_id == user_id,
         Persona.window_days == window_days,
     ).first()
-    
+
     if persona:
         return PersonaAssignment.model_validate(persona)
     return None
+
 

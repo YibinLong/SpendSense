@@ -1,0 +1,53 @@
+# Ruff configuration for SpendSense
+# https://docs.astral.sh/ruff/
+
+# What is Ruff?
+# - Fast Python linter written in Rust
+# - Replaces flake8, isort, and more
+# - Catches common errors and style issues
+
+# Target Python 3.11+
+target-version = "py311"
+
+# Line length (default 88, we use 120 for better readability)
+line-length = 120
+
+# Exclude common directories
+exclude = [
+    ".git",
+    ".venv",
+    ".mypy_cache",
+    ".pytest_cache",
+    "__pycache__",
+    "node_modules",
+    "dist",
+    "build",
+    "frontend",
+    "data",
+]
+
+[lint]
+# Enable these rule sets:
+# - E/W: pycodestyle errors and warnings (PEP 8 style)
+# - F: Pyflakes (common Python errors like undefined names)
+# - I: isort (import sorting)
+# - N: pep8-naming (naming conventions)
+# - UP: pyupgrade (modern Python syntax)
+select = ["E", "W", "F", "I", "N", "UP"]
+
+# Ignore these specific rules:
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+    "N805",  # First argument should be named 'self' (conflicts with SQLAlchemy)
+]
+
+# Allow unused variables when prefixed with underscore
+# Example: _unused_var = some_function()
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
+"**/tests/**" = ["F401", "F811"]  # Allow redefined fixtures and unused imports in tests
+
+[lint.isort]
+# Import sorting configuration
+known-first-party = ["spendsense"]
+

@@ -1,0 +1,98 @@
+{
+  "user_id": "usr_000021",
+  "window_days": 180,
+  "persona": {
+    "persona_id": "savings_builder",
+    "window_days": 180,
+    "assigned_at": "2025-11-04T15:31:05.850664",
+    "criteria_met": {
+      "persona": "savings_builder",
+      "savings_growth_rate_pct": 4.5,
+      "savings_net_inflow": 827.0,
+      "matched_on": [
+        "savings_growth_gte_2_pct",
+        "net_inflow_gte_200_per_month",
+        "all_cards_below_30_pct"
+      ],
+      "credit_utilization_max_pct": 0.0,
+      "credit_util_flag_30": false
+    }
+  },
+  "signals": {
+    "subscription": {
+      "recurring_merchant_count": 0,
+      "monthly_recurring_spend": 0.0,
+      "subscription_share_pct": 0.0,
+      "computed_at": "2025-11-04T15:31:05.843386"
+    },
+    "savings": {
+      "savings_net_inflow": 827.0,
+      "savings_growth_rate_pct": 4.5,
+      "emergency_fund_months": 9.29,
+      "computed_at": "2025-11-04T15:31:05.845751"
+    },
+    "credit": {
+      "credit_utilization_max_pct": 0.0,
+      "credit_utilization_avg_pct": 0.0,
+      "credit_util_flag_30": false,
+      "credit_util_flag_50": false,
+      "credit_util_flag_80": false,
+      "has_interest_charges": false,
+      "has_minimum_payment_only": false,
+      "is_overdue": false,
+      "computed_at": "2025-11-04T15:31:05.848663"
+    },
+    "income": {
+      "payroll_deposit_count": 12,
+      "median_pay_gap_days": 14.0,
+      "pay_gap_variability": 0.0,
+      "avg_payroll_amount": 6611.42,
+      "cashflow_buffer_months": 5.27,
+      "computed_at": "2025-11-04T15:31:05.848847"
+    }
+  },
+  "signal_count": 4,
+  "recommendations": [
+    {
+      "id": 142,
+      "item_type": "education",
+      "title": "Savings Goals: From Dream to Reality",
+      "rationale": "Your savings grew 4.50% this period. with $827.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.852935"
+    },
+    {
+      "id": 143,
+      "item_type": "education",
+      "title": "Automating Your Savings: Set It and Forget It",
+      "rationale": "Your savings grew 4.50% this period. with $827.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.852936"
+    },
+    {
+      "id": 144,
+      "item_type": "education",
+      "title": "High-Yield Savings Accounts Compared",
+      "rationale": "Your savings grew 4.50% this period. with $827.00/month in new deposits. This resource could help you optimize your savings strategy.",
+      "persona_id": "savings_builder",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.852936"
+    }
+  ],
+  "recommendation_count": 3,
+  "trace_generated_at": "2025-11-04T15:31:14.767217"
+}

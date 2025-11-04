@@ -9,9 +9,9 @@ Why this exists:
 
 import json
 from datetime import datetime
-from typing import Optional, Literal, Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class RecommendationItem(BaseModel):
@@ -28,7 +28,7 @@ class RecommendationItem(BaseModel):
     """
     id: int = Field(description="Database ID of the recommendation")
     user_id: str = Field(description="User identifier")
-    persona_id: Optional[str] = Field(
+    persona_id: str | None = Field(
         default=None,
         description="Persona that triggered this recommendation"
     )
@@ -40,23 +40,23 @@ class RecommendationItem(BaseModel):
         description="Type of recommendation: education or offer"
     )
     title: str = Field(description="Recommendation title")
-    description: Optional[str] = Field(
+    description: str | None = Field(
         default=None,
         description="Full description of the item"
     )
-    url: Optional[str] = Field(
+    url: str | None = Field(
         default=None,
         description="Link to content or offer"
     )
-    rationale: Optional[str] = Field(
+    rationale: str | None = Field(
         default=None,
         description="Plain-language explanation citing concrete data (e.g., 'utilization 68% on Visa 4523')"
     )
-    eligibility_flags: Optional[dict[str, Any]] = Field(
+    eligibility_flags: dict[str, Any] | None = Field(
         default=None,
         description="JSON object with eligibility check results"
     )
-    disclosure: Optional[str] = Field(
+    disclosure: str | None = Field(
         default=None,
         description="Mandatory educational disclaimer text"
     )
@@ -65,21 +65,24 @@ class RecommendationItem(BaseModel):
         description="Status: pending, approved, rejected"
     )
     created_at: datetime = Field(description="When this recommendation was created")
-    
+
     model_config = ConfigDict(from_attributes=True)
-    
+
     @field_validator("eligibility_flags", mode="before")
     @classmethod
-    def parse_eligibility_flags(cls, v: Any) -> Optional[dict[str, Any]]:
+    def parse_eligibility_flags(cls, v: Any) -> dict[str, Any] | None:
         """Parse eligibility_flags if it's a JSON string."""
         if v is None:
             return None
         if isinstance(v, str):
             try:
-                return json.loads(v)
+                parsed: dict[str, Any] = json.loads(v)
+                return parsed
             except json.JSONDecodeError:
                 return None
-        return v
+        if isinstance(v, dict):
+            return v
+        return None
 
 
 class FeedbackRequest(BaseModel):
@@ -99,7 +102,7 @@ class FeedbackRequest(BaseModel):
     action: Literal["helpful", "not_helpful", "dismissed"] = Field(
         description="User's feedback action"
     )
-    notes: Optional[str] = Field(
+    notes: str | None = Field(
         default=None,
         description="Optional user notes"
     )

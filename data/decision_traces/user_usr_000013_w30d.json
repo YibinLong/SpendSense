@@ -1,0 +1,141 @@
+{
+  "user_id": "usr_000013",
+  "window_days": 30,
+  "persona": {
+    "persona_id": "cash_flow_optimizer",
+    "window_days": 30,
+    "assigned_at": "2025-11-04T15:31:05.617623",
+    "criteria_met": {
+      "persona": "cash_flow_optimizer",
+      "avg_payroll_amount": 3799.33,
+      "payroll_deposit_count": 3,
+      "matched_on": [
+        "stable_income_gte_2_deposits",
+        "credit_util_below_50_pct",
+        "cashflow_buffer_suggests_slight_overspend"
+      ],
+      "credit_utilization_max_pct": 40.0,
+      "cashflow_buffer_months": 0.63
+    }
+  },
+  "signals": {
+    "subscription": {
+      "recurring_merchant_count": 0,
+      "monthly_recurring_spend": 140.95,
+      "subscription_share_pct": 2.99,
+      "computed_at": "2025-11-04T15:31:05.611260"
+    },
+    "savings": {
+      "savings_net_inflow": 1007.0,
+      "savings_growth_rate_pct": 2.65,
+      "emergency_fund_months": 21.06,
+      "computed_at": "2025-11-04T15:31:05.612676"
+    },
+    "credit": {
+      "credit_utilization_max_pct": 40.0,
+      "credit_utilization_avg_pct": 37.5,
+      "credit_util_flag_30": true,
+      "credit_util_flag_50": false,
+      "credit_util_flag_80": false,
+      "has_interest_charges": false,
+      "has_minimum_payment_only": false,
+      "is_overdue": false,
+      "computed_at": "2025-11-04T15:31:05.614185"
+    },
+    "income": {
+      "payroll_deposit_count": 3,
+      "median_pay_gap_days": 14.0,
+      "pay_gap_variability": 0.0,
+      "avg_payroll_amount": 3799.33,
+      "cashflow_buffer_months": 0.63,
+      "computed_at": "2025-11-04T15:31:05.615890"
+    }
+  },
+  "signal_count": 4,
+  "recommendations": [
+    {
+      "id": 86,
+      "item_type": "education",
+      "title": "Short-Term Budgeting Tactics",
+      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
+      "persona_id": "cash_flow_optimizer",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.619851"
+    },
+    {
+      "id": 87,
+      "item_type": "education",
+      "title": "Expense Triage: What to Cut First",
+      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
+      "persona_id": "cash_flow_optimizer",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.619852"
+    },
+    {
+      "id": 88,
+      "item_type": "offer",
+      "title": "Budgeting App Premium - 3 Months Free",
+      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
+      "persona_id": "cash_flow_optimizer",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:05.619852"
+    },
+    {
+      "id": 403,
+      "item_type": "education",
+      "title": "Short-Term Budgeting Tactics",
+      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
+      "persona_id": "cash_flow_optimizer",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:13.288710"
+    },
+    {
+      "id": 404,
+      "item_type": "education",
+      "title": "Expense Triage: What to Cut First",
+      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
+      "persona_id": "cash_flow_optimizer",
+      "status": "pending",
+      "eligibility_flags": {
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:13.288711"
+    },
+    {
+      "id": 405,
+      "item_type": "offer",
+      "title": "Budgeting App Premium - 3 Months Free",
+      "rationale": "Your cash-flow buffer is 0.6 months. suggesting opportunity for short-term optimization. This resource might help you improve your cash flow.",
+      "persona_id": "cash_flow_optimizer",
+      "status": "pending",
+      "eligibility_flags": {
+        "eligible": true,
+        "reason": "No eligibility restrictions",
+        "tone_check": "passed"
+      },
+      "disclosure": "This is educational content, not financial advice. Consult a licensed advisor for personalized guidance.",
+      "created_at": "2025-11-04T15:31:13.288712"
+    }
+  ],
+  "recommendation_count": 6,
+  "trace_generated_at": "2025-11-04T15:31:13.323078"
+}

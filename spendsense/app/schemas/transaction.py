@@ -12,7 +12,7 @@ Why this exists:
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -23,7 +23,7 @@ class TransactionBase(BaseModel):
     
     Matches Plaid-style transaction structure with key validations.
     """
-    
+
     transaction_id: str = Field(
         ...,
         description="Unique transaction identifier",
@@ -49,21 +49,21 @@ class TransactionBase(BaseModel):
         ...,
         description="Date when transaction occurred"
     )
-    posted_date: Optional[date] = Field(
+    posted_date: date | None = Field(
         default=None,
         description="Date when transaction posted (may be after transaction_date)"
     )
-    merchant_name: Optional[str] = Field(
+    merchant_name: str | None = Field(
         default=None,
         description="Merchant or counterparty name",
         max_length=255
     )
-    category: Optional[str] = Field(
+    category: str | None = Field(
         default=None,
         description="Transaction category (e.g., 'Food and Drink', 'Transfer')",
         max_length=100
     )
-    subcategory: Optional[str] = Field(
+    subcategory: str | None = Field(
         default=None,
         description="Transaction subcategory (e.g., 'Restaurants', 'Credit Card Payment')",
         max_length=100
@@ -76,11 +76,11 @@ class TransactionBase(BaseModel):
         default=False,
         description="Whether transaction is still pending"
     )
-    payment_channel: Optional[Literal["online", "in store", "other"]] = Field(
+    payment_channel: Literal["online", "in store", "other"] | None = Field(
         default=None,
         description="How the transaction was made"
     )
-    
+
     @field_validator('currency')
     @classmethod
     def validate_currency(cls, v: str) -> str:
@@ -88,7 +88,7 @@ class TransactionBase(BaseModel):
         if v.upper() != "USD":
             raise ValueError(f"Unsupported currency: {v}. Only USD is supported in MVP.")
         return v.upper()
-    
+
     @field_validator('transaction_date')
     @classmethod
     def validate_transaction_date(cls, v: date) -> date:
@@ -102,15 +102,15 @@ class TransactionBase(BaseModel):
         if v > date.today():
             raise ValueError(f"Transaction date cannot be in the future: {v}")
         return v
-    
+
     @field_validator('posted_date')
     @classmethod
-    def validate_posted_date(cls, v: Optional[date]) -> Optional[date]:
+    def validate_posted_date(cls, v: date | None) -> date | None:
         """Ensure posted date is not in the future if provided."""
         if v and v > date.today():
             raise ValueError(f"Posted date cannot be in the future: {v}")
         return v
-    
+
     @field_validator('amount')
     @classmethod
     def validate_amount(cls, v: Decimal, info) -> Decimal:
@@ -154,10 +154,10 @@ class Transaction(TransactionBase):
     - API responses
     - Analytics and feature computation
     """
-    
+
     id: int = Field(..., description="Database primary key")
     created_at: datetime
-    
+
     model_config = {"from_attributes": True}  # Enables ORM mode for SQLAlchemy compatibility
 
 

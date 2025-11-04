@@ -11,7 +11,6 @@ Why this exists:
 """
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -25,19 +24,19 @@ class UserBase(BaseModel):
     - Create: fields needed when creating a user
     - Response: fields returned from API (may include computed fields)
     """
-    
+
     user_id: str = Field(
         ...,
         description="Masked user identifier (no real PII)",
         min_length=1,
         max_length=100
     )
-    email_masked: Optional[str] = Field(
+    email_masked: str | None = Field(
         default=None,
         description="Masked email like 'u***@example.com'",
         max_length=255
     )
-    phone_masked: Optional[str] = Field(
+    phone_masked: str | None = Field(
         default=None,
         description="Masked phone like '***-***-1234'",
         max_length=20
@@ -46,7 +45,7 @@ class UserBase(BaseModel):
         default_factory=datetime.utcnow,
         description="When this user record was created"
     )
-    
+
     @field_validator('user_id')
     @classmethod
     def validate_user_id(cls, v: str) -> str:
@@ -77,9 +76,9 @@ class User(UserBase):
     - API responses
     - Internal processing
     """
-    
+
     id: int = Field(..., description="Database primary key")
-    
+
     model_config = {"from_attributes": True}  # Enables ORM mode for SQLAlchemy compatibility
 
 

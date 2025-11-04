@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     Pydantic validates types automatically and raises clear errors
     if required values are missing or invalid.
     """
-    
+
     # Application Environment
     app_env: Literal["dev", "prod"] = Field(
         default="dev",
@@ -39,7 +39,7 @@ class Settings(BaseSettings):
         default=True,
         description="Enable debug mode with verbose logging"
     )
-    
+
     # Backend API Configuration
     api_host: str = Field(
         default="127.0.0.1",
@@ -49,13 +49,13 @@ class Settings(BaseSettings):
         default=8000,
         description="API server port"
     )
-    
+
     # Database Configuration
     database_url: str = Field(
         default="sqlite:///./data/spendsense.db",
         description="SQLAlchemy database connection string"
     )
-    
+
     # Data Storage Paths
     data_dir: str = Field(
         default="./data",
@@ -65,19 +65,19 @@ class Settings(BaseSettings):
         default="./data/parquet",
         description="Directory for Parquet analytics files"
     )
-    
+
     # Logging Configuration
     log_level: str = Field(
         default="WARNING",
         description="Logging level (DEBUG, INFO, WARNING, ERROR)"
     )
-    
+
     # Frontend Configuration
     frontend_port: int = Field(
         default=5173,
         description="Frontend development server port"
     )
-    
+
     # Pydantic Settings Configuration
     # This tells Pydantic to read from .env file automatically
     model_config = SettingsConfigDict(
@@ -86,7 +86,7 @@ class Settings(BaseSettings):
         case_sensitive=False,  # Allow lowercase env vars
         extra="ignore"  # Ignore extra env vars not in model
     )
-    
+
     @field_validator("log_level")
     @classmethod
     def validate_log_level(cls, v: str) -> str:
@@ -96,7 +96,7 @@ class Settings(BaseSettings):
         if v_upper not in valid_levels:
             raise ValueError(f"log_level must be one of {valid_levels}")
         return v_upper
-    
+
     def ensure_data_directories(self) -> None:
         """
         Create data directories if they don't exist.
@@ -106,12 +106,12 @@ class Settings(BaseSettings):
         """
         Path(self.data_dir).mkdir(parents=True, exist_ok=True)
         Path(self.parquet_dir).mkdir(parents=True, exist_ok=True)
-    
+
     @property
     def is_dev(self) -> bool:
         """Helper to check if running in development mode."""
         return self.app_env == "dev"
-    
+
     @property
     def is_prod(self) -> bool:
         """Helper to check if running in production mode."""

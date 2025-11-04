@@ -15,11 +15,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from spendsense.app.db.models import Base, User, Account, Transaction
-from spendsense.app.features.subscriptions import (
-    detect_recurring_merchants,
-    compute_subscription_signals
-)
+from spendsense.app.db.models import Account, Base, Transaction, User
+from spendsense.app.features.subscriptions import compute_subscription_signals, detect_recurring_merchants
 
 
 @pytest.fixture
@@ -36,9 +33,9 @@ def in_memory_db():
     Base.metadata.create_all(engine)
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
-    
+
     yield session
-    
+
     session.close()
 
 
@@ -47,7 +44,7 @@ def sample_user(in_memory_db):
     """Create a sample user with a checking account."""
     user = User(user_id="user_test_001", email_masked="test@example.com")
     in_memory_db.add(user)
-    
+
     account = Account(
         account_id="acc_test_001",
         user_id="user_test_001",
@@ -59,7 +56,7 @@ def sample_user(in_memory_db):
     )
     in_memory_db.add(account)
     in_memory_db.commit()
-    
+
     return user, account
 
 
@@ -72,7 +69,7 @@ def test_detect_recurring_merchants_with_valid_subscriptions(in_memory_db, sampl
     - PRD requires ≥3 occurrences to identify subscriptions
     """
     user, account = sample_user
-    
+
     # Create 3 Netflix transactions (should be detected)
     for i in range(3):
         tx = Transaction(
@@ -85,7 +82,7 @@ def test_detect_recurring_merchants_with_valid_subscriptions(in_memory_db, sampl
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     # Create 2 Spotify transactions (should NOT be detected - only 2)
     for i in range(2):
         tx = Transaction(
@@ -98,15 +95,15 @@ def test_detect_recurring_merchants_with_valid_subscriptions(in_memory_db, sampl
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     # Get all transactions
     transactions = in_memory_db.query(Transaction).all()
-    
+
     # Detect recurring merchants
     recurring = detect_recurring_merchants(transactions, window_days=90)
-    
+
     # Should only detect Netflix (≥3 occurrences)
     assert len(recurring) == 1
     assert "Netflix" in recurring
@@ -122,7 +119,7 @@ def test_detect_recurring_merchants_no_subscriptions(in_memory_db, sample_user):
     - Should return empty list, not error
     """
     user, account = sample_user
-    
+
     # Create non-subscription transactions
     tx = Transaction(
         transaction_id="tx_grocery_001",
@@ -135,10 +132,10 @@ def test_detect_recurring_merchants_no_subscriptions(in_memory_db, sample_user):
     )
     in_memory_db.add(tx)
     in_memory_db.commit()
-    
+
     transactions = in_memory_db.query(Transaction).all()
     recurring = detect_recurring_merchants(transactions, window_days=30)
-    
+
     assert len(recurring) == 0
 
 
@@ -151,7 +148,7 @@ def test_compute_subscription_signals_valid_data(in_memory_db, sample_user):
     - Tests the complete flow from transactions to signals
     """
     user, account = sample_user
-    
+
     # Create 3 Netflix subscriptions within 90-day window (spaced 10 days apart)
     # This ensures all 3 fall within the test window
     for i in range(3):
@@ -165,7 +162,7 @@ def test_compute_subscription_signals_valid_data(in_memory_db, sample_user):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     # Create some non-subscription spending (to test subscription share)
     for i in range(5):
         tx = Transaction(
@@ -178,12 +175,12 @@ def test_compute_subscription_signals_valid_data(in_memory_db, sample_user):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     # Compute signals for 90-day window to capture all Netflix transactions
     signal = compute_subscription_signals("user_test_001", 90, in_memory_db)
-    
+
     # Verify signal attributes
     assert signal.user_id == "user_test_001"
     assert signal.window_days == 90
@@ -205,9 +202,9 @@ def test_compute_subscription_signals_no_accounts(in_memory_db):
     user = User(user_id="user_no_accounts", email_masked="test@example.com")
     in_memory_db.add(user)
     in_memory_db.commit()
-    
+
     signal = compute_subscription_signals("user_no_accounts", 30, in_memory_db)
-    
+
     assert signal.user_id == "user_no_accounts"
     assert signal.recurring_merchant_count == 0
     assert signal.monthly_recurring_spend == Decimal("0.00")
@@ -223,7 +220,7 @@ def test_compute_subscription_signals_no_transactions(in_memory_db, sample_user)
     - Should return zeros gracefully
     """
     signal = compute_subscription_signals("user_test_001", 30, in_memory_db)
-    
+
     assert signal.recurring_merchant_count == 0
     assert signal.monthly_recurring_spend == Decimal("0.00")
     assert signal.subscription_share_pct == Decimal("0.00")
@@ -238,7 +235,7 @@ def test_compute_subscription_signals_excludes_pending(in_memory_db, sample_user
     - Prevents false positives from authorization holds
     """
     user, account = sample_user
-    
+
     # Create 3 pending subscription transactions
     for i in range(3):
         tx = Transaction(
@@ -252,11 +249,11 @@ def test_compute_subscription_signals_excludes_pending(in_memory_db, sample_user
             pending=True  # Marked as pending
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_subscription_signals("user_test_001", 90, in_memory_db)
-    
+
     # Should NOT detect any recurring merchants (all are pending)
     assert signal.recurring_merchant_count == 0
 
@@ -271,7 +268,7 @@ def test_compute_subscription_signals_with_refunds(in_memory_db, sample_user):
     - Refunds count as separate transactions in detection
     """
     user, account = sample_user
-    
+
     # Create 3 regular Netflix charges
     for i in range(3):
         tx = Transaction(
@@ -284,7 +281,7 @@ def test_compute_subscription_signals_with_refunds(in_memory_db, sample_user):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     # Create 1 Netflix refund (negative amount)
     tx_refund = Transaction(
         transaction_id="tx_netflix_refund",
@@ -296,11 +293,11 @@ def test_compute_subscription_signals_with_refunds(in_memory_db, sample_user):
         transaction_type="credit"
     )
     in_memory_db.add(tx_refund)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_subscription_signals("user_test_001", 90, in_memory_db)
-    
+
     # Should detect Netflix as recurring (4 total transactions including refund)
     assert signal.recurring_merchant_count == 1
     # Monthly spend should account for the refund
@@ -316,7 +313,7 @@ def test_compute_subscription_signals_sparse_data(in_memory_db, sample_user):
     - Should handle gracefully without division errors
     """
     user, account = sample_user
-    
+
     # Create only 1 subscription transaction
     tx = Transaction(
         transaction_id="tx_single",
@@ -329,9 +326,9 @@ def test_compute_subscription_signals_sparse_data(in_memory_db, sample_user):
     )
     in_memory_db.add(tx)
     in_memory_db.commit()
-    
+
     signal = compute_subscription_signals("user_test_001", 30, in_memory_db)
-    
+
     # Should NOT detect as recurring (only 1 occurrence)
     assert signal.recurring_merchant_count == 0
     # But should still calculate monthly spend
@@ -347,7 +344,7 @@ def test_subscription_share_calculation(in_memory_db, sample_user):
     - PRD criteria: subscription share ≥10%
     """
     user, account = sample_user
-    
+
     # Create $30 in subscriptions
     for i in range(3):
         tx = Transaction(
@@ -360,7 +357,7 @@ def test_subscription_share_calculation(in_memory_db, sample_user):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     # Create $270 in other spending (total = $300)
     for i in range(27):
         tx = Transaction(
@@ -373,11 +370,11 @@ def test_subscription_share_calculation(in_memory_db, sample_user):
             transaction_type="debit"
         )
         in_memory_db.add(tx)
-    
+
     in_memory_db.commit()
-    
+
     signal = compute_subscription_signals("user_test_001", 30, in_memory_db)
-    
+
     # Subscription share should be 10% (30/300)
     assert abs(float(signal.subscription_share_pct) - 10.0) < 0.1  # Allow small floating point error
 

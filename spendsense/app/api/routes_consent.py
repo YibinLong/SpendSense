@@ -12,9 +12,8 @@ from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.session import get_db
-from spendsense.app.guardrails.consent import record_consent, get_consent_status
+from spendsense.app.guardrails.consent import get_consent_status, record_consent
 from spendsense.app.schemas.errors import ConsentRequest, ConsentResponse
-
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -57,7 +56,7 @@ async def record_consent_action(
         user_id=consent_data.user_id,
         action=consent_data.action,
     )
-    
+
     try:
         # Record the consent event
         event = record_consent(
@@ -67,14 +66,14 @@ async def record_consent_action(
             by=consent_data.by,
             session=db,
         )
-        
+
         return ConsentResponse(
             success=True,
             user_id=consent_data.user_id,
             action=consent_data.action,
             message=f"Consent recorded successfully. User has {consent_data.action}.",
         )
-    
+
     except ValueError as e:
         # Invalid user or action
         logger.error("consent_recording_failed", error=str(e))
@@ -103,8 +102,9 @@ async def get_user_consent_status(
         }
     """
     logger.debug("getting_consent_status", user_id=user_id)
-    
+
     status = get_consent_status(user_id, db)
-    
+
     return status
+
 

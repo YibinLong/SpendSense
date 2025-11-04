@@ -19,21 +19,20 @@ Signals computed:
 
 from datetime import date, timedelta
 from decimal import Decimal
-from typing import List, Dict, Any
+from typing import Any
 
 from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
-from spendsense.app.db.models import Account, Transaction, Liability, CreditSignal
-
+from spendsense.app.db.models import Account, CreditSignal, Liability, Transaction
 
 logger = get_logger(__name__)
 
 
 def compute_credit_utilization(
-    liabilities: List[Liability],
-    transactions: List[Transaction]
-) -> Dict[str, Any]:
+    liabilities: list[Liability],
+    transactions: list[Transaction]
+) -> dict[str, Any]:
     """
     Calculate credit utilization stats and flags.
     
@@ -65,13 +64,13 @@ def compute_credit_utilization(
     - No credit cards: return zeros and False flags
     """
     utilizations = []
-    
+
     for liab in liabilities:
         # Only calculate if we have a valid credit limit
         if liab.credit_limit and liab.credit_limit > 0:
             util_pct = (liab.current_balance / liab.credit_limit) * Decimal("100.0")
             utilizations.append(float(util_pct))
-    
+
     if utilizations:
         max_pct = max(utilizations)
         avg_pct = sum(utilizations) / len(utilizations)
@@ -84,7 +83,7 @@ def compute_credit_utilization(
         flag_30 = False
         flag_50 = False
         flag_80 = False
-    
+
     return {
         "max_pct": max_pct,
         "avg_pct": avg_pct,
@@ -96,9 +95,9 @@ def compute_credit_utilization(
 
 
 def check_credit_flags(
-    liabilities: List[Liability],
-    transactions: List[Transaction]
-) -> Dict[str, bool]:
+    liabilities: list[Liability],
+    transactions: list[Transaction]
+) -> dict[str, bool]:
     """
     Check for interest charges, minimum payments, and overdue status.
     
@@ -135,29 +134,29 @@ def check_credit_flags(
     has_interest_charges = False
     has_minimum_payment_only = False
     is_overdue = False
-    
+
     for liab in liabilities:
         # Check for interest charges in transactions
         if liab.account_id:
             interest_txs = [
-                tx for tx in transactions 
-                if tx.account_id == liab.account_id 
+                tx for tx in transactions
+                if tx.account_id == liab.account_id
                 and tx.merchant_name == "Interest Charge"
             ]
             if interest_txs:
                 has_interest_charges = True
-        
+
         # Check for minimum-payment-only behavior
         # If last payment ≈ minimum payment (within 10%), user is paying minimum only
         if liab.last_payment_amount and liab.minimum_payment:
             # Payment is within 10% of minimum = minimum-only
             if liab.last_payment_amount <= liab.minimum_payment * Decimal("1.1"):
                 has_minimum_payment_only = True
-        
+
         # Check overdue status
         if liab.is_overdue:
             is_overdue = True
-    
+
     return {
         "has_interest_charges": has_interest_charges,
         "has_minimum_payment_only": has_minimum_payment_only,
@@ -200,16 +199,16 @@ def compute_credit_signals(
     - Cards with zero limit: skipped from utilization calculation
     """
     logger.info("computing_credit_signals", user_id=user_id, window_days=window_days)
-    
+
     # Calculate cutoff date
     cutoff_date = date.today() - timedelta(days=window_days)
-    
+
     # Get user's credit card liabilities
     liabilities = session.query(Liability).filter(
         Liability.user_id == user_id,
         Liability.liability_type == "credit_card"
     ).all()
-    
+
     if not liabilities:
         logger.info("no_credit_cards", user_id=user_id)
         return CreditSignal(
@@ -224,16 +223,16 @@ def compute_credit_signals(
             has_minimum_payment_only=False,
             is_overdue=False
         )
-    
+
     # Get user's accounts for transaction lookup
     accounts = session.query(Account).filter(
         Account.user_id == user_id,
         Account.holder_category == "individual"
     ).all()
-    
+
     if accounts:
         account_ids = [acc.account_id for acc in accounts]
-        
+
         # Get transactions in window (exclude pending)
         transactions = session.query(Transaction).filter(
             Transaction.account_id.in_(account_ids),
@@ -242,13 +241,13 @@ def compute_credit_signals(
         ).all()
     else:
         transactions = []
-    
+
     # Compute utilization stats
     utilization_stats = compute_credit_utilization(liabilities, transactions)
-    
+
     # Check credit behavior flags
     credit_flags = check_credit_flags(liabilities, transactions)
-    
+
     # Create signal model
     signal = CreditSignal(
         user_id=user_id,
@@ -262,7 +261,7 @@ def compute_credit_signals(
         has_minimum_payment_only=credit_flags["has_minimum_payment_only"],
         is_overdue=credit_flags["is_overdue"]
     )
-    
+
     logger.info(
         "credit_signals_computed",
         user_id=user_id,
@@ -273,6 +272,11 @@ def compute_credit_signals(
         has_interest=signal.has_interest_charges,
         overdue=signal.is_overdue
     )
-    
+
+    # Persist to database
+    session.add(signal)
+    session.commit()
+
     return signal
+
 
