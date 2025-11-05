@@ -195,7 +195,7 @@ export default function Login() {
                   <Input
                     id="username"
                     type="text"
-                    placeholder="usr_000001 or operator@spendsense.local"
+                    placeholder="alice.martinez or operator@spendsense.local"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     disabled={isLoading}
@@ -203,7 +203,7 @@ export default function Login() {
                     className="h-11"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Try: usr_000001 or operator@spendsense.local
+                    Try: <span className="font-medium">alice.martinez</span> or <span className="font-medium">operator@spendsense.local</span>
                   </p>
                 </div>
                 
@@ -226,7 +226,7 @@ export default function Login() {
                     className="h-11"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Try: usr000001123 or operator123
+                    Try: <span className="font-medium">alice123</span> or <span className="font-medium">operator123</span>
                   </p>
                 </div>
                 

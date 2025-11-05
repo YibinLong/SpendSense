@@ -124,16 +124,16 @@ def main():
     
     # Step 3: Seed with users, accounts, transactions
     print("Step 3: Seeding database with users, accounts, and transactions...")
-    print("  - Creating 50 users")
+    print("  - Creating 25 users (5 per persona)")
     print("  - Creating 2-4 accounts per user")
     print("  - Creating 180 days of transaction history")
     seed_database()
-    print("✓ Database seeded")
+    print("✓ Database seeded with persona-labeled users")
     print()
     
     # Step 4: Run feature engineering for ALL users
     print("Step 4: Running feature engineering pipeline for ALL users...")
-    print("  - Computing behavioral signals")
+    print("  - Computing behavioral signals (30d and 180d windows)")
     print("  - Assigning personas")
     print("  - Generating recommendations")
     print()

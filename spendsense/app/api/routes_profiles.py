@@ -9,9 +9,12 @@ Endpoints:
 
 import json
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from spendsense.app.auth.dependencies import get_optional_user
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import (
     CreditSignal,
@@ -39,18 +42,20 @@ async def get_profile(
     user_id: str,
     window: int | None = Query(default=30, description="Time window in days (30 or 180)"),
     db: Session = Depends(get_db),
+    current_user: Annotated[User | None, Depends(get_optional_user)] = None,
 ) -> dict:
     """
     Get user profile with persona and behavioral signals.
     
-    This endpoint requires active user consent.
+    This endpoint requires active user consent UNLESS the requester is an operator.
+    Operators can view any user's profile for monitoring and operational purposes.
     Returns persona assignment and all 4 signal types for the requested window.
     
     Why this exists:
     - Central endpoint for user's behavioral profile
     - Shows persona with explainability (criteria_met)
     - Provides all signals in one response
-    - Enforces consent requirement
+    - Enforces consent requirement (except for operators)
     
     Query params:
         window: Time window in days (30 or 180), default 30
@@ -72,13 +77,16 @@ async def get_profile(
             }
         }
     
-    Returns 403 if consent not found.
+    Returns 403 if consent not found (and requester is not an operator).
     Returns 404 if user not found.
     """
-    logger.info("getting_profile", user_id=user_id, window_days=window)
+    # Check if requester is an operator
+    is_operator = current_user is not None and current_user.role == "operator"
+    
+    logger.info("getting_profile", user_id=user_id, window_days=window, is_operator=is_operator)
 
-    # Check consent
-    if not check_consent(user_id, db):
+    # Check consent (skip for operators)
+    if not is_operator and not check_consent(user_id, db):
         logger.warning("profile_access_denied_no_consent", user_id=user_id)
 
         # Get detailed consent status to distinguish between opt-out and never consented
@@ -101,6 +109,9 @@ async def get_profile(
                 "guidance": "POST /consent with action='opt_in' to continue",
             },
         )
+    
+    if is_operator:
+        logger.info("operator_access_granted", operator_id=current_user.user_id, target_user_id=user_id)
 
     # Verify user exists
     user = db.query(User).filter(User.user_id == user_id).first()

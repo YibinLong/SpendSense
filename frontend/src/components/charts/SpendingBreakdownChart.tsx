@@ -39,17 +39,25 @@ function formatCurrency(value: number): string {
 
 /**
  * Custom tooltip showing category name and amount.
+ * 
+ * Why this design:
+ * - Explicit bg-white/dark:bg-gray-900 for better visibility
+ * - Thicker border with clear colors for definition
+ * - Strong shadow for depth
+ * - Matches the operator fairness chart tooltips
  */
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-lg border bg-card p-3 shadow-lg">
-        <p className="text-sm font-semibold">{payload[0].name}</p>
-        <p className="text-lg font-bold text-primary">
+      <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-xl p-3 space-y-1">
+        <p className="text-sm font-semibold text-gray-900 dark:text-white">
+          {payload[0].name}
+        </p>
+        <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
           {formatCurrency(payload[0].value)}
         </p>
-        <p className="text-xs text-muted-foreground">
-          {payload[0].payload.percentage}%
+        <p className="text-xs text-gray-600 dark:text-gray-300">
+          {payload[0].payload.percentage}% of total
         </p>
       </div>
     );

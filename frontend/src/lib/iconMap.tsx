@@ -60,6 +60,7 @@ import {
   Info,
   AlertTriangle,
   HelpCircle,
+  FileText,
 } from 'lucide-react';
 
 import type { LucideProps } from 'lucide-react';
@@ -221,6 +222,7 @@ export const CommonIcons = {
   AlertCircle,
   AlertTriangle,
   HelpCircle,
+  FileText,
   
   // Chevrons
   ChevronDown,
@@ -240,5 +242,9 @@ export const CommonIcons = {
   PieChart,
   Activity,
   TrendingUp,
+  
+  // Misc
+  Zap,
+  Shield,
 };
 

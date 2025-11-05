@@ -79,21 +79,71 @@ UTILITY_MERCHANTS = [
 ]
 
 
-# Friendly labels to make demo users easy to recognize in the UI
-# These are stored in the email_masked field purely as a display label
-# so it is obvious what behavior/persona to expect when testing.
-FRIENDLY_USER_LABELS = [
-    "Sam Subscriber — Subscription-heavy",
-    "Sally Saver — Savings builder",
-    "Harry HighUtil — High credit utilization",
-    "Ivy Irregular — Variable income",
-    "Paula PayMin — Minimum payments only",
-    "Owen Overdue — Overdue risk",
-    "Gina Groceries — Grocery spender",
-    "Dina Dining — Eats out often",
-    "Cathy CashBuffer — Strong cash buffer",
-    "Manny Minimalist — Low activity",
-]
+# Persona-specific user data for easy debugging and clean UX
+# 10 users per persona (50 total users)
+# Format: (first_name, last_name, description)
+PERSONA_USERS = {
+    "high_utilization": [
+        ("Alice", "Martinez", "Heavy credit card user"),
+        ("Bob", "Thompson", "Maxed out cards"),
+        ("Carol", "Rodriguez", "Paying interest charges"),
+        ("Dave", "Anderson", "High credit balances"),
+        ("Eve", "Williams", "Near credit limit"),
+        ("Marcus", "Bennett", "Struggling with debt"),
+        ("Nina", "Foster", "Multiple maxed cards"),
+        ("Oscar", "Hughes", "High interest payments"),
+        ("Priya", "Shah", "Credit repair needed"),
+        ("Ryan", "Sullivan", "Over credit limit"),
+    ],
+    "savings_builder": [
+        ("Frank", "Garcia", "Consistent saver"),
+        ("Grace", "Chen", "Growing emergency fund"),
+        ("Henry", "Patel", "Auto-save enthusiast"),
+        ("Iris", "Johnson", "High savings rate"),
+        ("Jack", "Kim", "Building wealth"),
+        ("Maya", "Brooks", "Smart saver"),
+        ("Nathan", "Reed", "Emergency fund pro"),
+        ("Sophia", "Nguyen", "Automated savings"),
+        ("Tyler", "Coleman", "Long-term planner"),
+        ("Zoe", "Mitchell", "Financial goals achiever"),
+    ],
+    "subscription_heavy": [
+        ("Kelly", "Brown", "Many subscriptions"),
+        ("Liam", "Davis", "Streaming services fan"),
+        ("Mia", "Wilson", "Service collector"),
+        ("Noah", "Taylor", "Monthly recurring bills"),
+        ("Olivia", "Moore", "Subscription overload"),
+        ("Aiden", "Cooper", "Digital service addict"),
+        ("Bella", "Rivera", "Streaming everything"),
+        ("Caleb", "Barnes", "Too many memberships"),
+        ("Diana", "Powell", "Subscription reviewer"),
+        ("Ethan", "Russell", "Recurring payment king"),
+    ],
+    "variable_income_budgeter": [
+        ("Paul", "Jackson", "Freelance designer"),
+        ("Quinn", "White", "Gig economy worker"),
+        ("Rita", "Harris", "Irregular paychecks"),
+        ("Sam", "Martin", "Self-employed consultant"),
+        ("Tara", "Lopez", "Contract worker"),
+        ("Isaac", "Murphy", "Freelance writer"),
+        ("Julia", "Price", "Independent contractor"),
+        ("Kevin", "Bell", "Side hustle expert"),
+        ("Laura", "Sanders", "Consulting business owner"),
+        ("Miles", "Perry", "Variable income pro"),
+    ],
+    "cash_flow_optimizer": [
+        ("Uma", "Lee", "Tight monthly budget"),
+        ("Victor", "Clark", "Low cash buffer"),
+        ("Wendy", "Lewis", "Paycheck to paycheck"),
+        ("Xavier", "Walker", "Budget conscious"),
+        ("Yara", "Hall", "Expense optimizer"),
+        ("Blake", "Ross", "Living close to budget"),
+        ("Chloe", "Henderson", "Cash flow manager"),
+        ("Derek", "Griffin", "Monthly balancer"),
+        ("Emma", "Patterson", "Budget stretcher"),
+        ("Felix", "Jenkins", "Smart spender"),
+    ],
+}
 
 
 def generate_user_id(index: int) -> str:
@@ -116,34 +166,34 @@ def generate_liability_id(user_index: int, liability_index: int) -> str:
     return f"liab_{str(user_index).zfill(6)}_{str(liability_index).zfill(2)}"
 
 
-def generate_demographics() -> dict[str, str | None]:
+def generate_demographics() -> dict[str, str]:
     """
     Generate realistic demographic data with weighted distributions.
     
     Why we do this:
     - Enables fairness analysis across demographics
     - Uses realistic age/gender/ethnicity distributions
-    - Respects privacy by making fields nullable (some users opt out)
+    - All users have complete demographic data for better fairness analysis
     
     Returns:
-        Dict with age_range, gender, ethnicity (some may be None)
+        Dict with age_range, gender, ethnicity (all values populated)
     """
     # Age distribution (weighted to match general population)
     age_ranges = ["18-24", "25-34", "35-44", "45-54", "55-64", "65+"]
     age_weights = [15, 30, 25, 20, 7, 3]  # Percentages
     age_range = random.choices(age_ranges, weights=age_weights, k=1)[0]
     
-    # Gender (some users don't provide - 30% null for privacy)
-    genders = ["Male", "Female", "Non-binary", "Prefer not to say", None]
-    gender_weights = [35, 35, 5, 5, 30]  # 30% don't provide
+    # Gender distribution (everyone provides data for fairness analysis)
+    genders = ["Male", "Female", "Non-binary", "Prefer not to say"]
+    gender_weights = [45, 45, 5, 5]  # Balanced distribution
     gender = random.choices(genders, weights=gender_weights, k=1)[0]
     
-    # Ethnicity (40% don't provide for privacy)
+    # Ethnicity (everyone provides data for comprehensive fairness analysis)
     ethnicities = [
         "White", "Hispanic or Latino", "Black or African American",
-        "Asian", "Two or More Races", "Other", None
+        "Asian", "Two or More Races", "Other"
     ]
-    ethnicity_weights = [30, 10, 8, 8, 4, 3, 40]  # 40% don't provide
+    ethnicity_weights = [50, 15, 13, 13, 6, 3]  # Realistic US distribution
     ethnicity = random.choices(ethnicities, weights=ethnicity_weights, k=1)[0]
     
     return {
@@ -155,69 +205,87 @@ def generate_demographics() -> dict[str, str | None]:
 
 def generate_users(n: int = 50) -> list[User]:
     """
-    Generate synthetic users with demographics and auth credentials.
+    Generate synthetic users with predetermined personas for easy testing.
     
-    Why 50 users:
-    - Per plan requirements
-    - Enough to test all personas
-    - Small enough for quick local development
+    NEW DESIGN:
+    - 50 total users (10 per persona)
+    - Real names and clean emails (firstname.lastname@example.com)
+    - Simple passwords (firstname123)
+    - Deterministic generation based on seed
+    - Easy to debug: name tells you expected persona
     
-    New features:
-    - Passwords for authentication (pattern: user{id}123)
-    - Demographic data for fairness analysis
-    - All users are card_user role by default
+    Personas generated:
+    - 10x high_utilization users
+    - 10x savings_builder users
+    - 10x subscription_heavy users
+    - 10x variable_income_budgeter users
+    - 10x cash_flow_optimizer users
     
     Args:
-        n: Number of users to generate (default 50)
+        n: Number of users to generate (default 50, must be multiple of 5)
     
     Returns:
         List of User ORM objects
     """
     logger.info("generating_users", count=n)
+    
+    # Personas in order
+    personas = ["high_utilization", "savings_builder", "subscription_heavy", 
+                "variable_income_budgeter", "cash_flow_optimizer"]
+    
     users = []
+    user_counter = 1
 
-    for i in range(1, n + 1):
-        user_id = generate_user_id(i)
-        
-        # Generate demographics (weighted distributions)
-        demographics = generate_demographics()
-        
-        # Generate password for authentication
-        # Pattern: user001123, user002123, etc. (easy to remember for testing)
-        password = f"{user_id.replace('_', '')}123"  # usr_000001 -> usr000001123
-        password_hash = hash_password(password)
+    for persona in personas:
+        persona_user_data = PERSONA_USERS[persona]
+        for first_name, last_name, description in persona_user_data:
+            # Generate clean IDs and emails
+            user_id = f"{first_name.lower()}.{last_name.lower()}"
+            # Store name in email_masked as "First Last <email@example.com>"
+            # This allows frontend to parse and display nicely
+            email = f"{first_name} {last_name} <{first_name.lower()}.{last_name.lower()}@example.com>"
+            
+            # Generate demographics (weighted distributions)
+            demographics = generate_demographics()
+            
+            # Simple password: firstname123 (e.g., alice123, bob123)
+            password = f"{first_name.lower()}123"
+            password_hash = hash_password(password)
 
-        # Create via Pydantic for validation
-        user_data = UserCreate(
-            user_id=user_id,
-            # Use friendly labels for the first handful of users so they are easy to pick
-            email_masked=(
-                FRIENDLY_USER_LABELS[i - 1] if i <= len(FRIENDLY_USER_LABELS) else f"u***{i}@example.com"
-            ),
-            phone_masked=f"***-***-{str(i).zfill(4)}",
-            password=password,  # Will be hashed in model creation
-            role="card_user",
-            is_active=True,
-            age_range=demographics["age_range"],
-            gender=demographics["gender"],
-            ethnicity=demographics["ethnicity"],
-            created_at=datetime.utcnow() - timedelta(days=random.randint(180, 730))
-        )
+            # Create via Pydantic for validation
+            user_data = UserCreate(
+                user_id=user_id,
+                email_masked=email,
+                phone_masked=f"***-***-{str(user_counter).zfill(4)}",
+                password=password,
+                role="card_user",
+                is_active=True,
+                age_range=demographics["age_range"],
+                gender=demographics["gender"],
+                ethnicity=demographics["ethnicity"],
+                created_at=datetime.utcnow() - timedelta(days=random.randint(180, 730))
+            )
 
-        # Convert to ORM model
-        # Override password with already-hashed version
-        user_dict = user_data.model_dump()
-        user_dict['password_hash'] = password_hash
-        del user_dict['password']  # Remove plain password field
-        
-        user = User(**user_dict)
-        users.append(user)
+            # Convert to ORM model
+            # Override password with already-hashed version
+            user_dict = user_data.model_dump()
+            user_dict['password_hash'] = password_hash
+            del user_dict['password']  # Remove plain password field
+            
+            user = User(**user_dict)
+            # Store expected persona and display name as temporary attributes
+            user._expected_persona = persona  # type: ignore
+            user._display_name = f"{first_name} {last_name}"  # type: ignore
+            user._description = description  # type: ignore
+            users.append(user)
+            
+            user_counter += 1
 
-    logger.info("users_generated", count=len(users), demographics_included=True)
+    logger.info("users_generated", count=len(users), personas=len(personas), demographics_included=True)
     return users
 
 
-def generate_accounts(session: Session, user: User, user_index: int) -> list[Account]:
+def generate_accounts(session: Session, user: User, user_index: int, expected_persona: str | None = None) -> list[Account]:
     """
     Generate 2-4 accounts per user (checking, savings, credit).
     
@@ -269,8 +337,16 @@ def generate_accounts(session: Session, user: User, user_index: int) -> list[Acc
     # Maybe add credit card(s)
     if num_accounts >= 3:
         credit_limit = Decimal(str(random.choice([2000, 5000, 10000, 15000, 25000])))
-        # Vary utilization (some high, some low) to create different personas
-        utilization_pct = random.choice([10, 25, 35, 55, 70, 85])
+        # PERSONA-SPECIFIC utilization
+        if expected_persona == "high_utilization":
+            utilization_pct = random.choice([55, 65, 75, 85, 95])  # High utilization ≥50%
+        elif expected_persona == "savings_builder":
+            utilization_pct = random.choice([5, 10, 15, 20, 25])  # Low utilization <30%
+        elif expected_persona in ["subscription_heavy", "cash_flow_optimizer", "variable_income_budgeter"]:
+            utilization_pct = random.choice([15, 25, 35, 40])  # Moderate <50%
+        else:
+            utilization_pct = random.choice([10, 25, 35, 55, 70, 85])  # Default random
+        
         balance = credit_limit * Decimal(utilization_pct) / Decimal(100)
 
         credit = AccountCreate(
@@ -290,7 +366,16 @@ def generate_accounts(session: Session, user: User, user_index: int) -> list[Acc
     if num_accounts >= 4:
         # Second credit card
         credit_limit = Decimal(str(random.choice([1500, 3000, 5000, 8000])))
-        utilization_pct = random.choice([5, 15, 40, 60, 75])
+        # PERSONA-SPECIFIC utilization (same as first card)
+        if expected_persona == "high_utilization":
+            utilization_pct = random.choice([55, 65, 75, 85])
+        elif expected_persona == "savings_builder":
+            utilization_pct = random.choice([5, 10, 15, 20])
+        elif expected_persona in ["subscription_heavy", "cash_flow_optimizer", "variable_income_budgeter"]:
+            utilization_pct = random.choice([15, 25, 30, 40])
+        else:
+            utilization_pct = random.choice([5, 15, 40, 60, 75])
+        
         balance = credit_limit * Decimal(utilization_pct) / Decimal(100)
 
         credit2 = AccountCreate(
@@ -315,7 +400,8 @@ def generate_transactions(
     account: Account,
     user_index: int,
     account_index: int,
-    days: int = 180
+    days: int = 180,
+    expected_persona: str | None = None
 ) -> list[Transaction]:
     """
     Generate realistic transactions for an account over N days.
@@ -327,12 +413,17 @@ def generate_transactions(
     - Groceries/dining: variable frequency (realistic spending)
     - Refunds/reversals: edge cases
     
+    PERSONA-SPECIFIC GENERATION:
+    - Uses expected_persona to generate transactions that will trigger correct persona assignment
+    - Ensures users get assigned to their intended personas
+    
     Args:
         session: Database session
         account: Account to generate transactions for
         user_index: User's index
         account_index: Account's index
         days: How many days back to generate (default 180)
+        expected_persona: Expected persona for this user (for tailored transaction generation)
     
     Returns:
         List of Transaction ORM objects
@@ -344,57 +435,106 @@ def generate_transactions(
     # Determine transaction patterns based on account type
     if account.account_subtype == "checking":
         # Generate payroll deposits (income stability signals)
-        pay_frequency = random.choice(["biweekly", "monthly"])
-        base_salary = random.randint(3000, 8000)
-
-        if pay_frequency == "biweekly":
-            # 26 pay periods per year
-            for i in range(days // 14):
-                tx_date = today - timedelta(days=i * 14)
-                # Add some variability for gig workers
-                amount = -Decimal(str(base_salary + random.randint(-200, 200)))
-
-                tx = TransactionCreate(
-                    transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
-                    account_id=account.account_id,
-                    amount=amount,  # Negative = credit/income
-                    currency="USD",
-                    transaction_date=tx_date,
-                    merchant_name="Payroll ACH",
-                    category="Income",
-                    subcategory="Paycheck",
-                    transaction_type="credit"
-                )
-                transactions.append(Transaction(**tx.model_dump()))
-                tx_counter += 1
-        else:
-            # Monthly payroll
-            for i in range(days // 30):
-                tx_date = today - timedelta(days=i * 30)
-                amount = -Decimal(str(base_salary * 2 + random.randint(-400, 400)))
-
+        # PERSONA-SPECIFIC: Variable income budgeters need irregular pay gaps
+        if expected_persona == "variable_income_budgeter":
+            # Irregular income: 60-90 day gaps between paychecks
+            # This will trigger: median_pay_gap > 45 days
+            # PLUS low income to ensure cashflow_buffer < 1 month
+            pay_dates = []
+            current_date = today
+            while current_date > today - timedelta(days=days):
+                pay_dates.append(current_date)
+                # Irregular gaps: 60-90 days (MUST be > 45 for persona)
+                gap_days = random.randint(60, 90)
+                current_date = current_date - timedelta(days=gap_days)
+            
+            # REDUCED base salary to ensure low cashflow buffer
+            base_salary = random.randint(1500, 2500)  # Lower income for buffer < 1 month
+            for tx_date in pay_dates:
+                # High variability in amount (freelance/gig work)
+                amount = -Decimal(str(base_salary + random.randint(-500, 500)))
+                if amount > 0:  # Ensure it's income (negative = credit)
+                    amount = -abs(amount)
+                
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
                     account_id=account.account_id,
                     amount=amount,
                     currency="USD",
                     transaction_date=tx_date,
-                    merchant_name="Payroll ACH",
+                    merchant_name="Freelance Payment",
                     category="Income",
-                    subcategory="Paycheck",
+                    subcategory="Paycheck",  # MUST be "Paycheck" for payroll detection!
                     transaction_type="credit"
                 )
                 transactions.append(Transaction(**tx.model_dump()))
                 tx_counter += 1
+        else:
+            # Regular income for other personas
+            pay_frequency = random.choice(["biweekly", "monthly"])
+            base_salary = random.randint(3000, 8000)
+
+            if pay_frequency == "biweekly":
+                # 26 pay periods per year
+                for i in range(days // 14):
+                    tx_date = today - timedelta(days=i * 14)
+                    # Small variability for regular workers
+                    amount = -Decimal(str(base_salary + random.randint(-200, 200)))
+
+                    tx = TransactionCreate(
+                        transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
+                        account_id=account.account_id,
+                        amount=amount,  # Negative = credit/income
+                        currency="USD",
+                        transaction_date=tx_date,
+                        merchant_name="Payroll ACH",
+                        category="Income",
+                        subcategory="Paycheck",
+                        transaction_type="credit"
+                    )
+                    transactions.append(Transaction(**tx.model_dump()))
+                    tx_counter += 1
+            else:
+                # Monthly payroll
+                for i in range(days // 30):
+                    tx_date = today - timedelta(days=i * 30)
+                    amount = -Decimal(str(base_salary * 2 + random.randint(-400, 400)))
+
+                    tx = TransactionCreate(
+                        transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
+                        account_id=account.account_id,
+                        amount=amount,
+                        currency="USD",
+                        transaction_date=tx_date,
+                        merchant_name="Payroll ACH",
+                        category="Income",
+                        subcategory="Paycheck",
+                        transaction_type="credit"
+                    )
+                    transactions.append(Transaction(**tx.model_dump()))
+                    tx_counter += 1
 
         # Generate subscription payments (subscription persona trigger)
-        num_subscriptions = random.randint(0, 6)
+        # PERSONA-SPECIFIC: Subscription-heavy users need ≥3 merchants AND ≥$50/month
+        if expected_persona == "subscription_heavy":
+            num_subscriptions = random.randint(3, 6)  # Ensure ≥3 for persona match
+        elif expected_persona == "high_utilization":
+            num_subscriptions = random.randint(1, 2)  # Don't trigger subscription persona
+        elif expected_persona == "variable_income_budgeter":
+            num_subscriptions = random.randint(0, 1)  # Few subscriptions
+        else:
+            num_subscriptions = random.randint(0, 2)  # Below threshold
+        
         subscriptions = random.sample(SUBSCRIPTION_MERCHANTS, min(num_subscriptions, len(SUBSCRIPTION_MERCHANTS)))
 
         for merchant in subscriptions:
             # Monthly recurring charge (day of month varies)
             day_of_month = random.randint(1, 28)
-            amount_per_month = Decimal(str(random.choice([9.99, 12.99, 14.99, 19.99, 29.99, 49.99])))
+            # PERSONA-SPECIFIC: Subscription-heavy users need higher amounts to reach ≥$50 total
+            if expected_persona == "subscription_heavy":
+                amount_per_month = Decimal(str(random.choice([14.99, 19.99, 29.99, 49.99])))  # Higher amounts
+            else:
+                amount_per_month = Decimal(str(random.choice([9.99, 12.99, 14.99, 19.99])))  # Lower amounts
 
             for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30 + day_of_month)
@@ -439,13 +579,27 @@ def generate_transactions(
                     tx_counter += 1
 
         # Generate groceries (weekly-ish, variable)
+        # PERSONA-SPECIFIC: Control spending to influence buffer
+        if expected_persona == "variable_income_budgeter":
+            # AGGRESSIVE spending to create low buffer with irregular income
+            # Need buffer < 1 month, so spend heavily
+            grocery_frequency = random.randint(3, 4)  # Many trips
+            grocery_amount_range = (80, 300)  # HIGH amounts
+        elif expected_persona == "cash_flow_optimizer":
+            # CALIBRATED spending to hit buffer 0.5-1.0 month range
+            grocery_frequency = 2
+            grocery_amount_range = (60, 140)  # Moderate-high
+        else:
+            # Normal spending
+            grocery_frequency = random.randint(1, 2)
+            grocery_amount_range = (40, 200)
+        
         for week in range(days // 7):
-            # 1-2 grocery trips per week
-            for _ in range(random.randint(1, 2)):
+            for _ in range(grocery_frequency):
                 tx_date = today - timedelta(days=week * 7 + random.randint(0, 6))
                 if tx_date <= today:
                     merchant = random.choice(GROCERY_MERCHANTS)
-                    amount = Decimal(str(random.randint(40, 200)))
+                    amount = Decimal(str(random.randint(grocery_amount_range[0], grocery_amount_range[1])))
 
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
@@ -462,12 +616,24 @@ def generate_transactions(
                     tx_counter += 1
 
         # Generate dining (few times per week)
+        # PERSONA-SPECIFIC: Variable income budgeters spend more on dining too
+        if expected_persona == "variable_income_budgeter":
+            dining_frequency = random.randint(4, 7)  # Lots of dining out
+            dining_amount_range = (20, 120)  # Higher amounts
+        elif expected_persona == "cash_flow_optimizer":
+            # Moderate dining to hit 0.5-1.0 month buffer sweet spot
+            dining_frequency = random.randint(3, 5)
+            dining_amount_range = (15, 85)
+        else:
+            dining_frequency = random.randint(2, 5)
+            dining_amount_range = (8, 75)
+        
         for week in range(days // 7):
-            for _ in range(random.randint(2, 5)):
+            for _ in range(dining_frequency):
                 tx_date = today - timedelta(days=week * 7 + random.randint(0, 6))
                 if tx_date <= today:
                     merchant = random.choice(DINING_MERCHANTS)
-                    amount = Decimal(str(random.randint(8, 75)))
+                    amount = Decimal(str(random.randint(dining_amount_range[0], dining_amount_range[1])))
 
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
@@ -484,11 +650,13 @@ def generate_transactions(
                     tx_counter += 1
 
         # Generate savings transfers (savings builder persona)
-        if random.random() > 0.5:  # 50% of users save regularly
+        # PERSONA-SPECIFIC: Control savings to match persona criteria
+        if expected_persona == "savings_builder":
+            # Force regular savings: $200-1000/month to ensure net inflow ≥$200
             for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30 + 15)
                 if tx_date <= today:
-                    amount = Decimal(str(random.choice([100, 250, 500, 750, 1000])))
+                    amount = Decimal(str(random.choice([250, 500, 750, 1000])))  # Higher amounts
 
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
@@ -503,6 +671,52 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
+        elif expected_persona == "cash_flow_optimizer":
+            # VERY SMALL/irregular savings to hit 0.5-1.0 month buffer sweet spot
+            for i in range(days // 90):  # Every 3 months
+                if random.random() > 0.5:  # Skip half the time
+                    tx_date = today - timedelta(days=i * 90 + 15)
+                    if tx_date <= today:
+                        amount = Decimal(str(random.choice([30, 50, 75, 100])))  # Small amounts
+
+                        tx = TransactionCreate(
+                            transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
+                            account_id=account.account_id,
+                            amount=amount,
+                            currency="USD",
+                            transaction_date=tx_date,
+                            merchant_name="Transfer to Savings",
+                            category="Transfer",
+                            subcategory="Savings Transfer",
+                            transaction_type="transfer"
+                        )
+                        transactions.append(Transaction(**tx.model_dump()))
+                        tx_counter += 1
+        elif expected_persona == "variable_income_budgeter":
+            # No regular savings - low buffer is key criteria
+            pass  # Skip savings transfers
+        elif expected_persona == "subscription_heavy":
+            # Some savings but not primary focus
+            if random.random() > 0.5:
+                for i in range(days // 60):
+                    tx_date = today - timedelta(days=i * 60 + 15)
+                    if tx_date <= today:
+                        amount = Decimal(str(random.choice([100, 200, 300])))
+
+                        tx = TransactionCreate(
+                            transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
+                            account_id=account.account_id,
+                            amount=amount,
+                            currency="USD",
+                            transaction_date=tx_date,
+                            merchant_name="Transfer to Savings",
+                            category="Transfer",
+                            subcategory="Savings Transfer",
+                            transaction_type="transfer"
+                        )
+                        transactions.append(Transaction(**tx.model_dump()))
+                        tx_counter += 1
+        # else: high_utilization and others get no savings transfers (default)
 
         # Add some refunds (edge case: negative amounts for debits)
         for _ in range(random.randint(1, 3)):
@@ -527,11 +741,13 @@ def generate_transactions(
     elif account.account_subtype == "savings":
         # Savings accounts have fewer transactions
         # Mainly transfers from checking
-        for i in range(days // 30):
-            if random.random() > 0.3:  # Not every month
+        # PERSONA-SPECIFIC: Match the checking account savings transfers
+        if expected_persona == "savings_builder":
+            # Regular deposits: $200-1000/month
+            for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30 + 15)
                 if tx_date <= today:
-                    amount = -Decimal(str(random.choice([100, 250, 500, 750, 1000])))  # Incoming transfer
+                    amount = -Decimal(str(random.choice([250, 500, 750, 1000])))  # Incoming transfer
 
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
@@ -546,6 +762,50 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
+        elif expected_persona == "cash_flow_optimizer":
+            # VERY SMALL/irregular deposits to keep buffer in 0.5-1.0 range
+            # Less frequent and smaller amounts
+            for i in range(days // 90):  # Every 3 months
+                if random.random() > 0.5:  # Skip half the time
+                    tx_date = today - timedelta(days=i * 90 + 15)
+                    if tx_date <= today:
+                        amount = -Decimal(str(random.choice([30, 50, 75, 100])))
+
+                        tx = TransactionCreate(
+                            transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
+                            account_id=account.account_id,
+                            amount=amount,
+                            currency="USD",
+                            transaction_date=tx_date,
+                            merchant_name="Transfer from Checking",
+                            category="Transfer",
+                            subcategory="Savings Transfer",
+                            transaction_type="credit"
+                        )
+                        transactions.append(Transaction(**tx.model_dump()))
+                        tx_counter += 1
+        elif expected_persona == "subscription_heavy":
+            # Some deposits
+            for i in range(days // 60):
+                if random.random() > 0.5:
+                    tx_date = today - timedelta(days=i * 60 + 15)
+                    if tx_date <= today:
+                        amount = -Decimal(str(random.choice([100, 200, 300])))
+
+                        tx = TransactionCreate(
+                            transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
+                            account_id=account.account_id,
+                            amount=amount,
+                            currency="USD",
+                            transaction_date=tx_date,
+                            merchant_name="Transfer from Checking",
+                            category="Transfer",
+                            subcategory="Savings Transfer",
+                            transaction_type="credit"
+                        )
+                        transactions.append(Transaction(**tx.model_dump()))
+                        tx_counter += 1
+        # else: variable_income_budgeter and high_utilization get minimal/no deposits
 
         # Occasional interest payments
         for i in range(days // 90):
@@ -569,16 +829,20 @@ def generate_transactions(
 
     elif account.account_subtype == "credit card":
         # Credit card payments (monthly)
+        # PERSONA-SPECIFIC: Control payment amounts to influence utilization
         for i in range(days // 30):
             tx_date = today - timedelta(days=i * 30 + 5)
             if tx_date <= today:
-                # Payment amount (sometimes minimum, sometimes more)
-                if random.random() > 0.7:
-                    # Minimum payment only (high utilization persona trigger)
-                    amount = -Decimal(str(random.randint(25, 50)))
+                # Payment amount varies by persona
+                if expected_persona == "high_utilization":
+                    # Minimum payments only to maintain high balances
+                    amount = -Decimal(str(random.randint(25, 75)))
+                elif expected_persona == "savings_builder":
+                    # Pay off in full to keep utilization low
+                    amount = -Decimal(str(random.randint(500, 2000)))
                 else:
-                    # Larger payment
-                    amount = -Decimal(str(random.randint(100, 1500)))
+                    # Moderate payments
+                    amount = -Decimal(str(random.randint(100, 800)))
 
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
@@ -595,11 +859,29 @@ def generate_transactions(
                 tx_counter += 1
 
         # Credit card purchases (variable)
-        for _ in range(random.randint(20, 60)):
+        # PERSONA-SPECIFIC: Control purchase amounts to create correct utilization levels
+        if expected_persona == "high_utilization":
+            # More purchases, higher amounts to create ≥50% utilization
+            num_purchases = random.randint(40, 70)
+            amount_range = (50, 400)  # Higher amounts
+        elif expected_persona == "savings_builder":
+            # Fewer purchases, lower amounts to keep utilization <30%
+            num_purchases = random.randint(10, 25)
+            amount_range = (10, 100)  # Lower amounts
+        elif expected_persona in ["cash_flow_optimizer", "variable_income_budgeter"]:
+            # Moderate purchases for <50% utilization
+            num_purchases = random.randint(20, 40)
+            amount_range = (15, 200)
+        else:
+            # Default
+            num_purchases = random.randint(20, 60)
+            amount_range = (15, 300)
+        
+        for _ in range(num_purchases):
             tx_date = today - timedelta(days=random.randint(0, days))
             if tx_date <= today:
                 merchant = random.choice(SHOPPING_MERCHANTS + DINING_MERCHANTS + GROCERY_MERCHANTS)
-                amount = Decimal(str(random.randint(15, 300)))
+                amount = Decimal(str(random.randint(amount_range[0], amount_range[1])))
 
                 tx = TransactionCreate(
                     transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
@@ -616,11 +898,14 @@ def generate_transactions(
                 tx_counter += 1
 
         # Interest charges (high utilization persona trigger)
-        if random.random() > 0.6:  # 40% of credit accounts have interest
+        # PERSONA-SPECIFIC: ONLY high_utilization users get interest charges!
+        # This prevents other personas from being incorrectly classified as high_utilization
+        if expected_persona == "high_utilization":
+            # FORCE interest charges every month (guarantees persona match)
             for i in range(days // 30):
                 tx_date = today - timedelta(days=i * 30 + 25)
                 if tx_date <= today:
-                    amount = Decimal(str(random.randint(15, 120)))
+                    amount = Decimal(str(random.randint(30, 150)))  # Higher interest
 
                     tx = TransactionCreate(
                         transaction_id=generate_transaction_id(user_index, account_index, tx_counter),
@@ -635,11 +920,12 @@ def generate_transactions(
                     )
                     transactions.append(Transaction(**tx.model_dump()))
                     tx_counter += 1
+        # ALL other personas: NO interest charges to avoid high_utilization classification
 
     return transactions
 
 
-def generate_liabilities(session: Session, user: User, user_index: int, accounts: list[Account]) -> list[Liability]:
+def generate_liabilities(session: Session, user: User, user_index: int, accounts: list[Account], expected_persona: str | None = None) -> list[Liability]:
     """
     Generate liabilities (credit cards, loans) for a user.
     
@@ -676,8 +962,12 @@ def generate_liabilities(session: Session, user: User, user_index: int, accounts
         # Interest rate (varies by creditworthiness)
         interest_rate = Decimal(str(random.choice([15.99, 18.99, 21.99, 24.99])))
 
-        # Sometimes overdue (persona trigger)
-        is_overdue = random.random() > 0.85  # 15% overdue
+        # Overdue status - PERSONA-SPECIFIC
+        # ONLY high_utilization users can be overdue (otherwise triggers wrong persona)
+        if expected_persona == "high_utilization":
+            is_overdue = random.random() > 0.7  # 30% overdue for high_utilization users
+        else:
+            is_overdue = False  # Never overdue for other personas
 
         liab = LiabilityCreate(
             liability_id=generate_liability_id(user_index, liability_counter),
@@ -733,8 +1023,10 @@ def seed_database() -> None:
     - Provides clear logging for debugging
     - Deterministic due to SEED configuration
     
+    NEW: Generates 50 users (10 per persona) for easier testing
+    
     Generates:
-    - 50 users
+    - 50 users (10 per persona with descriptive names)
     - 2-4 accounts per user
     - 180 days of transactions per account
     - 1-3 liabilities per user
@@ -750,7 +1042,25 @@ def seed_database() -> None:
     logger.info("starting_database_seed", seed=settings.seed)
 
     with next(get_session()) as session:
-        # Generate users
+        # Create operator account first
+        operator_password_hash = hash_password("operator123")
+        operator_demographics = generate_demographics()  # Operator needs demographics too for fairness analysis
+        operator = User(
+            user_id="operator@spendsense.local",
+            email_masked="operator@spendsense.local",
+            password_hash=operator_password_hash,
+            role="operator",
+            is_active=True,
+            age_range=operator_demographics["age_range"],
+            gender=operator_demographics["gender"],
+            ethnicity=operator_demographics["ethnicity"],
+            created_at=datetime.utcnow()
+        )
+        session.add(operator)
+        session.flush()
+        logger.info("operator_account_created", user_id="operator@spendsense.local")
+        
+        # Generate users (50 users: 10 per persona)
         users = generate_users(n=50)
         session.add_all(users)
         session.flush()  # Get user IDs without committing
@@ -765,41 +1075,35 @@ def seed_database() -> None:
         # Generate accounts, transactions, liabilities for each user
         for idx, user in enumerate(users, start=1):
             # Accounts
-            accounts = generate_accounts(session, user, idx)
+            expected_persona = getattr(user, '_expected_persona', None)
+            accounts = generate_accounts(session, user, idx, expected_persona=expected_persona)
             all_accounts.extend(accounts)
             session.add_all(accounts)
             session.flush()
 
             # Transactions for each account
             for acc_idx, account in enumerate(accounts, start=1):
-                transactions = generate_transactions(session, account, idx, acc_idx, days=180)
+                # Pass expected persona to ensure correct transaction patterns
+                expected_persona = getattr(user, '_expected_persona', None)
+                transactions = generate_transactions(session, account, idx, acc_idx, days=180, expected_persona=expected_persona)
                 all_transactions.extend(transactions)
 
             # Liabilities
-            liabilities = generate_liabilities(session, user, idx, accounts)
+            expected_persona = getattr(user, '_expected_persona', None)
+            liabilities = generate_liabilities(session, user, idx, accounts, expected_persona=expected_persona)
             all_liabilities.extend(liabilities)
 
-            # Consent (most users opt in)
-            if random.random() > 0.1:  # 90% opt in
-                consent = ConsentEventCreate(
-                    user_id=user.user_id,
-                    action="opt_in",
-                    reason="Initial signup",
-                    consent_given_by="user_dashboard",
-                    timestamp=user.created_at + timedelta(minutes=5)
-                )
-                all_consents.append(ConsentEvent(**consent.model_dump()))
-            else:
-                # 10% opt out or haven't decided yet
-                if random.random() > 0.5:
-                    consent = ConsentEventCreate(
-                        user_id=user.user_id,
-                        action="opt_out",
-                        reason="Privacy concerns",
-                        consent_given_by="user_dashboard",
-                        timestamp=user.created_at + timedelta(days=random.randint(1, 30))
-                    )
-                    all_consents.append(ConsentEvent(**consent.model_dump()))
+            # Consent - ALL users start WITHOUT consent (opt_out by default)
+            # Why: This ensures users must explicitly grant consent before viewing insights
+            # This improves privacy and demonstrates the consent flow correctly
+            consent = ConsentEventCreate(
+                user_id=user.user_id,
+                action="opt_out",
+                reason="Default privacy setting - no consent given yet",
+                consent_given_by="system",
+                timestamp=user.created_at + timedelta(minutes=1)
+            )
+            all_consents.append(ConsentEvent(**consent.model_dump()))
 
         # Add all to session
         session.add_all(all_transactions)

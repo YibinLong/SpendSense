@@ -8,10 +8,12 @@ Endpoints:
 - POST /feedback - Record user feedback on recommendations
 """
 
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from spendsense.app.auth.dependencies import get_optional_user
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import Recommendation, User
 from spendsense.app.db.session import get_db
@@ -29,18 +31,20 @@ async def get_recommendations(
     window: int | None = Query(default=30, description="Time window in days (30 or 180)"),
     regenerate: bool | None = Query(default=False, description="Force regenerate recommendations"),
     db: Session = Depends(get_db),
+    current_user: Annotated[User | None, Depends(get_optional_user)] = None,
 ) -> list[RecommendationItem]:
     """
     Get personalized recommendations for a user.
     
-    This endpoint requires active consent.
+    This endpoint requires active consent UNLESS the requester is an operator.
+    Operators can view any user's recommendations for monitoring and operational purposes.
     Returns 3-5 education items and 1-3 partner offers with rationales.
     
     Why this exists:
     - Main recommendation endpoint
     - Returns items with concrete data-driven rationales
     - All items include mandatory educational disclaimer
-    - Enforces consent and eligibility guardrails
+    - Enforces consent and eligibility guardrails (except for operators)
     
     Query params:
         window: Time window in days (30 or 180), default 30
@@ -61,13 +65,16 @@ async def get_recommendations(
             ...
         ]
     
-    Returns 403 if consent not found.
+    Returns 403 if consent not found (and requester is not an operator).
     Returns 404 if user or persona not found.
     """
-    logger.info("getting_recommendations", user_id=user_id, window_days=window)
+    # Check if requester is an operator
+    is_operator = current_user is not None and current_user.role == "operator"
+    
+    logger.info("getting_recommendations", user_id=user_id, window_days=window, is_operator=is_operator)
 
-    # Check consent
-    if not check_consent(user_id, db):
+    # Check consent (skip for operators)
+    if not is_operator and not check_consent(user_id, db):
         logger.warning("recommendations_access_denied_no_consent", user_id=user_id)
 
         # Get detailed consent status to distinguish between opt-out and never consented
@@ -90,6 +97,9 @@ async def get_recommendations(
                 "guidance": "POST /consent with action='opt_in' to continue",
             },
         )
+    
+    if is_operator:
+        logger.info("operator_access_granted", operator_id=current_user.user_id, target_user_id=user_id)
 
     # Verify user exists
     user = db.query(User).filter(User.user_id == user_id).first()

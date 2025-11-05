@@ -72,11 +72,12 @@ async def record_consent_action(
 
     try:
         # Record the consent event
+        # Note: consent_data.by maps to consent_given_by in the database
         event = record_consent(
             user_id=user_id,
             action=consent_data.action,
             reason=consent_data.reason,
-            by=consent_data.by,
+            by=consent_data.by or "api",
             session=db,
         )
 

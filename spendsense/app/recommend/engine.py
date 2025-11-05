@@ -89,9 +89,9 @@ def build_rationale(
         if max_util > 0:
             rationale_parts.append(f"Your credit utilization is {max_util}%")
         if has_interest:
-            rationale_parts.append("you're paying interest charges")
+            rationale_parts.append("You're paying interest charges")
         if is_overdue:
-            rationale_parts.append("you have overdue payments")
+            rationale_parts.append("You have overdue payments")
 
         rationale_parts.append("Consider this resource to help reduce your credit burden")
 
@@ -259,11 +259,29 @@ def generate_recommendations(
         offer_count=len(offer_candidates),
     )
 
+    # Check if recommendations already exist for this user+window combo
+    # If yes, delete them to avoid duplicates
+    existing_recs = session.query(Recommendation).filter(
+        Recommendation.user_id == user_id,
+        Recommendation.window_days == window_days,
+    ).all()
+    
+    if existing_recs:
+        logger.info("deleting_existing_recommendations", user_id=user_id, window_days=window_days, count=len(existing_recs))
+        for rec in existing_recs:
+            session.delete(rec)
+        session.flush()
+
     # Build final recommendations
     recommendations = []
+    seen_titles = set()  # Track titles to avoid duplicates within same generation
 
     # Process education items (target 3-5)
     for item in education_candidates[:5]:
+        # Skip if we've already added this title
+        if item["title"] in seen_titles:
+            logger.debug("skipping_duplicate_title", title=item["title"])
+            continue
         rationale = build_rationale(item, persona_id, signals)
 
         # Tone check
@@ -293,9 +311,14 @@ def generate_recommendations(
         )
         session.add(rec)
         recommendations.append(rec)
+        seen_titles.add(item["title"])  # Mark this title as seen
 
     # Process offers (target 1-3)
     for item in offer_candidates[:3]:
+        # Skip if we've already added this title
+        if item["title"] in seen_titles:
+            logger.debug("skipping_duplicate_title", title=item["title"])
+            continue
         # Safety check
         if not validate_offer_safety(item):
             logger.warning("offer_blocked_unsafe", item_id=item["id"])
@@ -344,6 +367,7 @@ def generate_recommendations(
         )
         session.add(rec)
         recommendations.append(rec)
+        seen_titles.add(item["title"])  # Mark this title as seen
 
     # Commit all recommendations
     session.commit()

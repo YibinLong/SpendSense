@@ -135,6 +135,23 @@ export interface ConsentResponse {
   message: string
 }
 
+export interface Transaction {
+  id: number
+  transaction_id: string
+  account_id: string
+  amount: number
+  currency: string
+  transaction_date: string
+  posted_date?: string | null
+  merchant_name?: string | null
+  category?: string | null
+  subcategory?: string | null
+  transaction_type: string
+  pending: boolean
+  payment_channel?: string | null
+  created_at: string
+}
+
 export class HttpError extends Error {
   status: number
   body: unknown
@@ -170,7 +187,8 @@ class ApiClient {
    */
   private async fetch<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    suppressToast: boolean = false
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`
     
@@ -202,20 +220,22 @@ class ApiClient {
           (typeof (errorBody as any).error === 'string' && (errorBody as any).error) ||
           `Request failed with status ${response.status}`
 
-        // Handle different error types
-        if (response.status === 401) {
-          // Unauthorized - clear token and redirect to login
-          clearToken()
-          toast.error('Session Expired', { description: 'Please log in again' })
-          window.location.href = '/login'
-        } else if (response.status === 403) {
-          toast.error('Access Denied', { description: message })
-        } else if (response.status === 404) {
-          toast.error('Not Found', { description: message })
-        } else if (response.status >= 500) {
-          toast.error('Server Error', { description: message })
-        } else {
-          toast.error('Error', { description: message })
+        // Handle different error types (unless toast is suppressed)
+        if (!suppressToast) {
+          if (response.status === 401) {
+            // Unauthorized - clear token and redirect to login
+            clearToken()
+            toast.error('Session Expired', { description: 'Please log in again' })
+            window.location.href = '/login'
+          } else if (response.status === 403) {
+            toast.error('Access Denied', { description: message })
+          } else if (response.status === 404) {
+            toast.error('Not Found', { description: message })
+          } else if (response.status >= 500) {
+            toast.error('Server Error', { description: message })
+          } else {
+            toast.error('Error', { description: message })
+          }
         }
 
         throw new HttpError(response.status, message, errorBody)
@@ -223,7 +243,7 @@ class ApiClient {
 
       return response.json()
     } catch (error) {
-      if (error instanceof TypeError && error.message.includes('fetch')) {
+      if (!suppressToast && error instanceof TypeError && error.message.includes('fetch')) {
         toast.error('Network Error', {
           description: 'Cannot connect to the backend. Please ensure the server is running.',
         })
@@ -237,7 +257,8 @@ class ApiClient {
   // ========================================================================
 
   async getUsers(): Promise<User[]> {
-    return this.fetch<User[]>('/users')
+    // Suppress 403 toast for regular users (expected error)
+    return this.fetch<User[]>('/users', {}, true)
   }
 
   async createUser(userData: { user_id: string; email_masked?: string; phone_masked?: string }): Promise<User> {
@@ -261,6 +282,14 @@ class ApiClient {
 
   async getRecommendations(userId: string, windowDays: number = 30): Promise<RecommendationItem[]> {
     return this.fetch<RecommendationItem[]>(`/recommendations/${userId}?window=${windowDays}`)
+  }
+
+  // ========================================================================
+  // Transactions Endpoint
+  // ========================================================================
+
+  async getTransactions(userId: string, limit: number = 100, offset: number = 0): Promise<Transaction[]> {
+    return this.fetch<Transaction[]>(`/transactions/${userId}?limit=${limit}&offset=${offset}`)
   }
 
   // ========================================================================
@@ -302,17 +331,22 @@ export const apiClient = new ApiClient(API_BASE)
 // ============================================================================
 
 /**
- * Fetch all users.
+ * Fetch all users (operators only).
  * 
  * Why this exists:
  * - Used in User Dashboard selector and Operator View user list
+ * - Only works for operators (regular users get 403)
  * - Automatically caches and refetches
+ * 
+ * Note: This query will fail with 403 for regular users. That's expected.
+ * Use retry: false to avoid retry loops on 403.
  */
 export function useUsers() {
   return useQuery({
     queryKey: ['users'],
     queryFn: () => apiClient.getUsers(),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false, // Don't retry on 403 (regular users can't access this)
   })
 }
 
@@ -328,9 +362,10 @@ export function useUserProfile(userId: string | undefined, windowDays: number = 
     queryKey: ['profile', userId, windowDays],
     queryFn: () => apiClient.getUserProfile(userId!, windowDays),
     enabled: !!userId, // Only fetch if userId is provided
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 0, // Don't cache - always check consent status
     retry: false, // Avoid retry loops on 403 before consent
     refetchOnWindowFocus: false,
+    refetchOnMount: true, // Always refetch on mount to check consent status
   })
 }
 
@@ -340,15 +375,20 @@ export function useUserProfile(userId: string | undefined, windowDays: number = 
  * Why this exists:
  * - Used in User Dashboard to display education items and offers
  * - Includes rationales and disclosure
+ * 
+ * @param userId - User ID to fetch recommendations for
+ * @param windowDays - Time window (30 or 180 days)
+ * @param shouldFetch - Whether to enable fetching (used to control when insights are loaded)
  */
-export function useRecommendations(userId: string | undefined, windowDays: number = 30) {
+export function useRecommendations(userId: string | undefined, windowDays: number = 30, shouldFetch: boolean = true) {
   return useQuery({
     queryKey: ['recommendations', userId, windowDays],
     queryFn: () => apiClient.getRecommendations(userId!, windowDays),
-    enabled: !!userId,
+    enabled: !!userId && shouldFetch, // Only fetch if userId is provided AND we should fetch
     staleTime: 2 * 60 * 1000,
     retry: false,
     refetchOnWindowFocus: false,
+    refetchOnMount: true, // Always refetch on mount to check consent status
   })
 }
 
@@ -416,6 +456,50 @@ export function useApproveRecommendation() {
     },
     onError: (error: Error) => {
       toast.error('Failed to process recommendation', {
+        description: error.message,
+      })
+    },
+  })
+}
+
+/**
+ * Fetch transactions for a user.
+ * 
+ * Why this exists:
+ * - Used in User Dashboard to display transaction history
+ * - Supports pagination with limit and offset
+ */
+export function useTransactions(userId: string | undefined, limit: number = 100, offset: number = 0) {
+  return useQuery({
+    queryKey: ['transactions', userId, limit, offset],
+    queryFn: () => apiClient.getTransactions(userId!, limit, offset),
+    enabled: !!userId,
+    staleTime: 2 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  })
+}
+
+/**
+ * Revoke consent for a user (opt-out) and refresh related queries.
+ */
+export function useRevokeConsent() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ userId, reason, by }: { userId: string; reason?: string; by?: string }) =>
+      apiClient.postConsent({ user_id: userId, action: 'opt_out', reason, by: by ?? 'user_dashboard' }),
+    onSuccess: (_data, variables) => {
+      toast.success('Consent revoked', {
+        description: 'Your data will no longer be processed.',
+      })
+      // Remove cached data for profile and recommendations to force 403 on next access
+      // Why: We don't want to invalidate (refetch immediately), we want to clear the cache
+      // so that when the user tries to access Insights tab again, it will fetch fresh and get 403
+      queryClient.removeQueries({ queryKey: ['profile', variables.userId] })
+      queryClient.removeQueries({ queryKey: ['recommendations', variables.userId] })
+    },
+    onError: (error: Error) => {
+      toast.error('Failed to revoke consent', {
         description: error.message,
       })
     },

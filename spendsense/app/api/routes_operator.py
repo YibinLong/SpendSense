@@ -362,3 +362,50 @@ async def get_latest_report_pdf(
     )
 
 
+@router.get("/metrics")
+async def get_metrics(
+    current_user: Annotated[User, Depends(require_operator)],
+):
+    """
+    Get evaluation metrics (JSON format).
+    
+    Why this exists:
+    - Provides structured metrics data for dashboard visualization
+    - Returns coverage, explainability, latency, auditability metrics
+    - Enables chart-based reporting instead of markdown
+    
+    Returns:
+        {
+            "coverage": {...},
+            "explainability": {...},
+            "latency": {...},
+            "auditability": {...},
+            "metadata": {...}
+        }
+    
+    Returns 404 if no metrics file exists (run `python run_metrics.py` first)
+    """
+    logger.info("getting_metrics", operator=current_user.user_id)
+    
+    from pathlib import Path
+    from spendsense.app.core.config import settings
+    import json
+    
+    metrics_path = Path(settings.data_dir) / "eval_metrics.json"
+    
+    if not metrics_path.exists():
+        logger.warning("metrics_not_found", path=str(metrics_path))
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No metrics found. Run 'python run_metrics.py' to generate metrics.",
+        )
+    
+    # Read metrics content
+    with open(metrics_path, 'r') as f:
+        metrics_data = json.load(f)
+    
+    logger.debug("metrics_loaded", keys=list(metrics_data.keys()))
+    
+    return metrics_data
+
+

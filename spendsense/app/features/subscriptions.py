@@ -30,19 +30,20 @@ def detect_recurring_merchants(
     window_days: int
 ) -> list[str]:
     """
-    Detect merchants with ≥3 occurrences in the window.
+    Detect merchants with recurring charges in the window.
     
-    Why ≥3 occurrences:
-    - PRD specifies this threshold for identifying subscriptions
-    - Avoids false positives from one-off duplicate charges
-    - Captures monthly, bi-weekly, and weekly subscriptions
+    Why threshold varies by window:
+    - 30-day window: ≥1 occurrence (monthly subscriptions only appear once)
+    - 90+ day window: ≥3 occurrences (monthly subscriptions appear 3+ times)
+    - PRD specifies "recurring merchants ≥3" meaning ≥3 different merchants, not occurrences
+    - Avoids false positives from one-off duplicate charges in longer windows
     
     Args:
         transactions: List of transactions to analyze (already filtered to window)
         window_days: Number of days in the analysis window (for logging)
     
     Returns:
-        List of merchant names that appear ≥3 times in subscription category
+        List of merchant names that appear recurrently in subscription category
     
     Edge cases handled:
     - Missing merchant names (skip)
@@ -62,17 +63,28 @@ def detect_recurring_merchants(
         if merchant_name:  # Skip None values
             merchant_counts[merchant_name] = merchant_counts.get(merchant_name, 0) + 1
 
-    # Filter for ≥3 occurrences
+    # Threshold depends on window size
+    # 30-day window: monthly subscriptions appear ~1 time, so threshold = 1
+    # 90+ day window: monthly subscriptions appear 3+ times, so threshold = 3
+    if window_days <= 45:
+        min_occurrences = 1  # For 30-day window, monthly subs appear once
+    elif window_days <= 75:
+        min_occurrences = 2  # For 60-day window, monthly subs appear twice  
+    else:
+        min_occurrences = 3  # For 90+ day window, monthly subs appear 3+ times
+
+    # Filter for recurring merchants
     recurring_merchants = [
         merchant for merchant, count in merchant_counts.items()
-        if count >= 3
+        if count >= min_occurrences
     ]
 
     logger.debug(
         "recurring_merchants_detected",
         window_days=window_days,
         total_merchants=len(merchant_counts),
-        recurring_count=len(recurring_merchants)
+        recurring_count=len(recurring_merchants),
+        min_occurrences=min_occurrences
     )
 
     return recurring_merchants

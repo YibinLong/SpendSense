@@ -139,6 +139,7 @@ from spendsense.app.api import (
     routes_operator,
     routes_profiles,
     routes_recommendations,
+    routes_transactions,
     routes_users,
 )
 
@@ -148,6 +149,7 @@ app.include_router(routes_users.router, prefix="/users", tags=["users"])
 app.include_router(routes_consent.router, prefix="/consent", tags=["consent"])
 app.include_router(routes_profiles.router, prefix="/profile", tags=["profiles"])
 app.include_router(routes_recommendations.router, prefix="/recommendations", tags=["recommendations"])
+app.include_router(routes_transactions.router, prefix="/transactions", tags=["transactions"])
 app.include_router(routes_operator.router, prefix="/operator", tags=["operator"])
 
 

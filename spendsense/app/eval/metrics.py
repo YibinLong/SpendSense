@@ -526,12 +526,17 @@ def compute_fairness_metrics(session: Session) -> dict[str, Any]:
     
     demographics_analysis["ethnicity"] = ethnicity_analysis
     
+    # Count total personas assigned
+    total_personas = session.query(func.count(func.distinct(Persona.user_id))).scalar() or 0
+    
     metrics = {
         "demographics": demographics_analysis,
         "disparities": disparities,
         "warnings": warnings,
         "threshold_pct": threshold,
         "total_users_analyzed": total_users,
+        "total_users": total_users,  # For frontend compatibility
+        "total_personas": total_personas,  # Number of users with assigned personas
     }
     
     logger.info(f"Fairness metrics: {len(disparities)} disparities detected, {len(warnings)} warnings")
