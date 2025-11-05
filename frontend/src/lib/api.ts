@@ -194,9 +194,9 @@ class ApiClient {
     
     // Add Authorization header if token exists
     const token = getToken()
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     }
     
     if (token) {
@@ -308,6 +308,14 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(approval),
     })
+  }
+
+  async getFairnessMetrics(): Promise<any> {
+    return this.fetch<any>('/operator/fairness')
+  }
+
+  async getOperatorMetrics(): Promise<any> {
+    return this.fetch<any>('/operator/metrics')
   }
 
   // ========================================================================
@@ -459,6 +467,40 @@ export function useApproveRecommendation() {
         description: error.message,
       })
     },
+  })
+}
+
+/**
+ * Fetch fairness metrics for operator view.
+ * 
+ * Why this exists:
+ * - Used in Operator View Fairness tab
+ * - Shows demographic distribution and persona assignments
+ * - Helps identify potential bias in the system
+ */
+export function useFairnessMetrics() {
+  return useQuery({
+    queryKey: ['fairnessMetrics'],
+    queryFn: () => apiClient.getFairnessMetrics(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
+  })
+}
+
+/**
+ * Fetch operator evaluation metrics.
+ * 
+ * Why this exists:
+ * - Used in Operator View Reports tab
+ * - Shows coverage, explainability, auditability metrics
+ * - Provides system health monitoring
+ */
+export function useOperatorMetrics() {
+  return useQuery({
+    queryKey: ['operatorMetrics'],
+    queryFn: () => apiClient.getOperatorMetrics(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false,
   })
 }
 
