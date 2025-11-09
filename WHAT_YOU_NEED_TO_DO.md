@@ -1,15 +1,16 @@
-# 🎯 What YOU Need to Do - Quick Summary
+# 🎯 What YOU Need to Do - Quick Summary (100% FREE)
 
 I've done all the code setup for you! Here's what **you** need to do manually on the Render and Vercel websites.
+
+**All steps use FREE tiers - no credit card required!**
 
 ---
 
 ## ✅ What I Already Did
 
-1. ✅ Created `render.yaml` - tells Render how to deploy your backend
-2. ✅ Created `frontend/vercel.json` - tells Vercel how to deploy your frontend
-3. ✅ Updated `spendsense/app/main.py` - added CORS for Vercel domains
-4. ✅ Created deployment guides and checklists
+1. ✅ Created `frontend/vercel.json` - tells Vercel how to deploy your frontend
+2. ✅ Updated `spendsense/app/main.py` - added CORS for Vercel domains
+3. ✅ Created deployment guides and checklists
 
 ---
 
@@ -28,15 +29,51 @@ git push origin main
 
 ---
 
-### TASK 2: Deploy Backend on Render.com (10 minutes)
+### TASK 2: Deploy Backend on Render.com (10 minutes) - FREE
 
-1. Go to **[render.com](https://render.com)** → Sign up/Login
-2. Click **"New +"** button → Select **"Blueprint"**
-3. **Connect GitHub** (if not already connected)
-4. Find your **SpendSense** repository
-5. Render detects `render.yaml` automatically
-6. Click **"Apply"** or **"Create Resources"**
-7. ⏰ Wait 5-10 minutes for deployment
+1. Go to **[render.com](https://render.com)** → Sign up/Login (no credit card needed)
+2. Click **"New +"** button → Select **"Web Service"** (NOT Blueprint)
+3. Click **"Connect GitHub"** (if not already connected)
+4. Find and select your **SpendSense** repository
+5. Configure the Web Service:
+
+   **Fill in these fields:**
+   
+   | Field | Value |
+   |-------|-------|
+   | **Name** | `spendsense-backend` (or anything you want) |
+   | **Region** | Choose closest to you (Oregon, Ohio, Frankfurt, Singapore) |
+   | **Branch** | `main` |
+   | **Root Directory** | Leave empty (entire repo) |
+   | **Runtime** | **Python 3** |
+   | **Build Command** | `pip install -r requirements.txt` |
+   | **Start Command** | `uvicorn spendsense.app.main:app --host 0.0.0.0 --port $PORT` |
+   | **Instance Type** | **Free** ⭐ |
+
+6. Scroll down to **"Environment Variables"** section
+7. Click **"Add Environment Variable"** and add these **ONE BY ONE**:
+
+   ```
+   APP_ENV = prod
+   SEED = 42
+   DATABASE_URL = sqlite:///./data/spendsense.db
+   DATA_DIR = ./data
+   PARQUET_DIR = ./data/parquet
+   LOG_LEVEL = WARNING
+   DEBUG = false
+   JWT_SECRET_KEY = your-super-secret-key-minimum-32-characters-long-please-change-this
+   JWT_ALGORITHM = HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES = 1440
+   FRONTEND_PORT = 5173
+   ```
+
+   **Important for JWT_SECRET_KEY**: Replace with any random string of at least 32 characters. Example:
+   ```
+   JWT_SECRET_KEY = 8a3f9b2e7c1d4a5e6f8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2
+   ```
+
+8. Click **"Create Web Service"** at the bottom
+9. ⏰ Wait 5-10 minutes for deployment (watch the logs)
 
 **Result**: You'll get a URL like `https://spendsense-backend-xxxx.onrender.com`
 
@@ -48,7 +85,7 @@ git push origin main
 
 1. In Render dashboard, click your **spendsense-backend** service
 2. Click **"Shell"** tab (left sidebar)
-3. Wait for terminal to connect
+3. Wait for terminal to connect (may take 30 seconds)
 4. Type this command:
    ```bash
    python reset_and_populate.py
@@ -68,26 +105,35 @@ Since `.env.production` is blocked from git, create it manually:
    ```
    VITE_API_BASE=https://spendsense-backend-xxxx.onrender.com
    ```
-3. Save the file (DO NOT commit it)
+3. Save the file (DO NOT commit it - it's in .gitignore)
 
 **Why**: Tells your frontend where to find the backend API.
 
 ---
 
-### TASK 5: Deploy Frontend on Vercel.com (5 minutes)
+### TASK 5: Deploy Frontend on Vercel.com (5 minutes) - FREE
 
-1. Go to **[vercel.com](https://vercel.com)** → Sign up/Login
+1. Go to **[vercel.com](https://vercel.com)** → Sign up/Login (no credit card needed)
 2. Click **"Add New..."** → **"Project"**
-3. Import your GitHub repository
-4. **IMPORTANT**: Click "Edit" and set **Root Directory** to: `frontend`
-5. Framework should auto-detect as **"Vite"** ✅
+3. Click **"Import Git Repository"**
+4. Find your **SpendSense** repository and click **"Import"**
+5. **IMPORTANT**: Configure these settings:
+
+   | Field | Value |
+   |-------|-------|
+   | **Framework Preset** | Vite (should auto-detect) |
+   | **Root Directory** | Click "Edit" → Set to `frontend` → Click "Continue" |
+   | **Build Command** | `npm run build` (auto-filled) |
+   | **Output Directory** | `dist` (auto-filled) |
+   | **Install Command** | `npm install` (auto-filled) |
+
 6. Expand **"Environment Variables"** section
 7. Add ONE variable:
-   - **Key**: `VITE_API_BASE`
+   - **Name**: `VITE_API_BASE`
    - **Value**: `https://spendsense-backend-xxxx.onrender.com` (from Task 2)
-   - **Environments**: Check all boxes
+   - **Environment**: Select all (Production, Preview, Development)
 8. Click **"Deploy"**
-9. ⏰ Wait 2-5 minutes
+9. ⏰ Wait 2-5 minutes (watch the build logs)
 
 **Result**: You'll get a URL like `https://spendsense.vercel.app`
 
@@ -104,8 +150,10 @@ Since `.env.production` is blocked from git, create it manually:
 2. **Test Frontend**:
    - Visit your Vercel URL in browser
    - Press F12 to open DevTools → Console tab
-   - Try logging in
-   - Check for errors
+   - Try logging in with these test credentials:
+     - Email: `user_001@example.com`
+     - Password: `password123`
+   - Check for errors in console
 
 **If you see CORS errors**: Your Vercel URL might not match what I set. Proceed to Task 7.
 
@@ -119,14 +167,14 @@ If your Vercel URL is NOT `https://spendsense.vercel.app`:
 
 1. Open `spendsense/app/main.py`
 2. Find line 85: `"https://spendsense.vercel.app"`
-3. Replace with your ACTUAL Vercel URL
+3. Replace with your ACTUAL Vercel URL from Task 5
 4. Save, commit, push:
    ```bash
    git add spendsense/app/main.py
    git commit -m "Update CORS with production URL"
    git push origin main
    ```
-5. Render auto-redeploys in ~3 minutes
+5. Render auto-redeploys in ~3 minutes (watch in Render dashboard)
 
 ---
 
@@ -138,6 +186,8 @@ Your app will be live at:
 - **Backend**: `https://your-backend.onrender.com`
 - **Frontend**: `https://spendsense.vercel.app`
 
+Both are 100% FREE (no credit card required)!
+
 ---
 
 ## 📚 Need More Help?
@@ -148,18 +198,39 @@ Your app will be live at:
 
 ---
 
-## ⚠️ Important Notes
+## ⚠️ Important Notes About FREE Tier
 
-1. **Free Tier Limitations**:
-   - Render: Database resets after 15 min inactivity
-   - Render: First request after inactivity takes 30-60 seconds (cold start)
+1. **Render Free Tier**:
+   - ✅ 750 hours/month of runtime (plenty for demos)
+   - ⚠️ Database resets after 15 min of inactivity
+   - ⚠️ First request after inactivity takes 30-60 seconds (cold start)
+   - ⚠️ Spins down after 15 minutes with no traffic
    
-2. **Environment Variables**:
+2. **Vercel Free Tier**:
+   - ✅ Unlimited deployments
+   - ✅ No cold starts
+   - ✅ Global CDN
+   - ✅ Perfect for this use case!
+
+3. **Environment Variables**:
    - `.env.production` should NOT be committed (already in .gitignore)
-   - Set `VITE_API_BASE` in Vercel dashboard instead
+   - Set `VITE_API_BASE` in Vercel dashboard (not in code)
+   - Set all backend vars in Render dashboard (not in code)
 
-3. **Database**:
+4. **Database**:
    - You created it in Task 3 with sample data
-   - On free tier, it resets when backend spins down
-   - For production, upgrade to paid plan or use PostgreSQL
+   - On free tier, it **resets when backend spins down** (no traffic for 15 min)
+   - To keep it running: Visit your backend URL every 10 minutes OR upgrade to paid
 
+---
+
+## 🔑 Test User Credentials
+
+After deployment, log in with these users (created by `reset_and_populate.py`):
+
+- **User 1**: `user_001@example.com` / `password123`
+- **User 2**: `user_002@example.com` / `password123`
+- **User 3**: `user_003@example.com` / `password123`
+- **Operator**: `operator@spendsense.com` / `operator123`
+
+All passwords are the same: `password123`
