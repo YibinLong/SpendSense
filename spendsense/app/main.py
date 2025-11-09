@@ -18,6 +18,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import configure_logging, get_logger
@@ -67,27 +68,49 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# CORS Debugging Middleware - logs all requests
+class CORSDebugMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        logger = get_logger(__name__)
+        logger.info(
+            "incoming_request",
+            method=request.method,
+            path=request.url.path,
+            origin=request.headers.get("origin"),
+            headers=dict(request.headers)
+        )
+        response = await call_next(request)
+        logger.info(
+            "outgoing_response",
+            status=response.status_code,
+            headers=dict(response.headers)
+        )
+        return response
+
+# Add debug middleware first
+app.add_middleware(CORSDebugMiddleware)
+
 # Configure CORS to allow frontend to call the API
-# This allows requests from the frontend running on a different port
+# VERY PERMISSIVE for debugging - allows all Vercel domains
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"https://.*\.vercel\.app",  # Allow all Vercel deployments
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "http://localhost:5174",  # Additional port
+        "http://localhost:5174",
         "http://127.0.0.1:5174",
-        "http://localhost:3000",  # In case frontend runs on different port
+        "http://localhost:3000",
         "http://127.0.0.1:3000",
         f"http://localhost:{settings.frontend_port}",
         f"http://127.0.0.1:{settings.frontend_port}",
-        # Production frontend URLs (Vercel)
-        "https://spend-sense-alpha-liard.vercel.app",  # Your Vercel deployment
+        "https://spend-sense-alpha-liard.vercel.app",
     ],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
-    expose_headers=["*"],  # Expose all headers
-    max_age=3600,  # Cache preflight responses for 1 hour
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
 
 
