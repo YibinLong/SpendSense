@@ -81,12 +81,12 @@ app.add_middleware(
         f"http://localhost:{settings.frontend_port}",
         f"http://127.0.0.1:{settings.frontend_port}",
         # Production frontend URLs (Vercel)
-        "https://*.vercel.app",  # Allow all Vercel preview deployments
-        "https://spend-sense-alpha-liard.vercel.app/",  # Production deployment (update with your actual domain)
+        "https://spend-sense-alpha-liard.vercel.app",  # Your Vercel deployment
     ],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
+    expose_headers=["*"],  # Expose all headers
     max_age=3600,  # Cache preflight responses for 1 hour
 )
 
