@@ -80,6 +80,9 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         f"http://localhost:{settings.frontend_port}",
         f"http://127.0.0.1:{settings.frontend_port}",
+        # Production frontend URLs (Vercel)
+        "https://*.vercel.app",  # Allow all Vercel preview deployments
+        "https://spendsense.vercel.app",  # Production deployment (update with your actual domain)
     ],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
