@@ -23,6 +23,7 @@ from spendsense.app.db.models import OperatorReview, Recommendation, User
 from spendsense.app.db.session import get_db
 from spendsense.app.schemas.operator import ApprovalRequest, ApprovalResponse, OperatorReviewResponse
 from spendsense.app.schemas.recommendation import RecommendationItem
+from spendsense.app.eval.traces import build_decision_trace
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -266,6 +267,38 @@ async def get_fairness_metrics(
     )
     
     return metrics
+
+
+@router.get("/trace/{user_id}")
+async def get_decision_trace(
+    user_id: str,
+    window: int | None = Query(default=30, description="Time window in days (30 or 180)"),
+    current_user: Annotated[User, Depends(require_operator)] = None,
+    db: Annotated[Session, Depends(get_db)] = None,
+):
+    """
+    Get full decision trace for a user and window (operator only).
+    
+    Why this exists:
+    - PRD requires operator access to decision traces ("why this recommendation was made")
+    - Returns persona, signals, recommendations, and timestamps
+    
+    Returns 404 if user not found.
+    """
+    logger.info("getting_decision_trace", operator=current_user.user_id, user_id=user_id, window=window)
+
+    # Ensure window is an int
+    window_days = window if window is not None else 30
+
+    trace = build_decision_trace(user_id, window_days, db)
+
+    if "error" in trace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=trace.get("error", "Not found"),
+        )
+
+    return trace
 
 
 @router.get("/reports/latest")

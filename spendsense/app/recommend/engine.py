@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 
 from spendsense.app.core.logging import get_logger
 from spendsense.app.db.models import (
+    Account,
     CreditSignal,
     IncomeSignal,
     Persona,
@@ -324,8 +325,20 @@ def generate_recommendations(
             logger.warning("offer_blocked_unsafe", item_id=item["id"])
             continue
 
+        # Build user_data for eligibility checks (e.g., existing accounts like savings)
+        accounts = session.query(Account).filter(
+            Account.user_id == user_id,
+            Account.holder_category == "individual",
+        ).all()
+        has_savings_account = any(
+            getattr(acc, "account_subtype", "") == "savings" for acc in accounts
+        )
+        user_data: dict[str, Any] = {
+            "has_savings_account": has_savings_account
+        }
+
         # Eligibility check
-        eligible, eligibility_reason = check_eligibility(item, signals)
+        eligible, eligibility_reason = check_eligibility(item, signals, user_data)
         if not eligible:
             logger.debug(
                 "offer_filtered_ineligible",

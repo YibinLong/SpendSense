@@ -70,6 +70,20 @@ def check_eligibility(
     eligibility_criteria = item.get("eligibility_criteria", {})
     item_type = item.get("content_type", "unknown")
 
+    # Block savings-account offers when user already has a savings account
+    # PRD: "Filter based on existing accounts (don't offer savings account if they have one)"
+    if item_type == "savings_account":
+        has_savings_account = False
+        if user_data and isinstance(user_data, dict):
+            has_savings_account = bool(user_data.get("has_savings_account"))
+        if has_savings_account:
+            logger.info(
+                "offer_blocked_existing_savings",
+                item_id=item.get("id"),
+                content_type=item_type,
+            )
+            return False, "User already has a savings account"
+
     # Block predatory products
     if item_type in BLOCKED_PRODUCT_TYPES:
         logger.info(
