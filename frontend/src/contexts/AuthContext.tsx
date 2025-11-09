@@ -12,7 +12,8 @@
  *   const { user, isAuthenticated, login, logout } = useAuth();
  */
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { setToken, getToken, clearToken, decodeToken, isTokenExpired } from '../lib/authUtils';
 
 interface User {

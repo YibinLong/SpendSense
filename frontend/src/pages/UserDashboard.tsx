@@ -39,7 +39,7 @@ import { useUsers, useUserProfile, useRecommendations, useTransactions, useGrant
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { CommonIcons } from '@/lib/iconMap'
-import { TrendingUp, TrendingDown, Activity, AlertCircle, Receipt, ShieldOff } from 'lucide-react'
+import { Activity, AlertCircle, Receipt, ShieldOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { parseUserInfo, formatSignalCount } from '@/lib/userUtils'
 import { useAuth } from '@/contexts/AuthContext'
@@ -76,7 +76,7 @@ export function UserDashboard() {
   )
 
   // Fetch transactions for the selected user
-  const { data: transactions, isLoading: transactionsLoading, error: transactionsError } = useTransactions(urlUserId, 100, 0)
+  const { data: transactions, isLoading: transactionsLoading } = useTransactions(urlUserId, 100, 0)
 
   // Process transactions for spending breakdown chart
   // Why: We calculate spending by category to show users where their money goes
