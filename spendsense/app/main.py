@@ -17,7 +17,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from spendsense.app.core.config import settings
@@ -91,10 +91,10 @@ class CORSDebugMiddleware(BaseHTTPMiddleware):
 app.add_middleware(CORSDebugMiddleware)
 
 # Configure CORS to allow frontend to call the API
-# VERY PERMISSIVE for debugging - allows all Vercel domains
+# EXTREMELY PERMISSIVE (temporary to unblock deployment)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"https://.*\.vercel\.app",  # Allow all Vercel deployments
+    allow_origin_regex=r".*",  # Allow ALL origins (temporary)
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
@@ -106,12 +106,21 @@ app.add_middleware(
         f"http://127.0.0.1:{settings.frontend_port}",
         "https://spend-sense-alpha-liard.vercel.app",
     ],
-    allow_credentials=True,
+    allow_credentials=False,  # Simpler CORS; we use Authorization header, not cookies
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
-    max_age=3600,
+    max_age=86400,
 )
+
+# Catch-all OPTIONS handler to ensure preflight requests always succeed
+@app.options("/{full_path:path}")
+async def preflight_catch_all(full_path: str, request: Request) -> PlainTextResponse:
+    """
+    Respond to any CORS preflight request with 204 and let CORSMiddleware
+    attach the appropriate Access-Control-* headers.
+    """
+    return PlainTextResponse("", status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get("/health")
