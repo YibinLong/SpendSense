@@ -343,7 +343,7 @@ spendsense/
 - Auditability: 100% recommendations have decision traces.
 
 
-## 🧱 TASK_LIST.md STRUCTURE
+## 🧱 ../deployment/TASK_LIST.md STRUCTURE
 Epics → Stories → Tasks
 - Epic: Data Foundation
   - Story: Generate synthetic Plaid-like dataset
@@ -378,4 +378,3 @@ Epics → Stories → Tasks
 - SQLite + Parquet keep data local, simple, and fast for analysis.
 - structlog makes it easy to debug and audit “why” a recommendation happened.
 - The operator view provides human oversight, which is critical for trust.
-

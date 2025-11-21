@@ -63,7 +63,7 @@ Use this checklist to deploy SpendSense step-by-step. Check off each item as you
 
 - [ ] **Step 9**: Initialize database
   - Go to Render dashboard → Your service → "Shell" tab
-  - Run: `python reset_and_populate.py`
+  - Run: `python -m scripts.reset_and_populate`
   - Wait for completion
 
 ---
@@ -204,4 +204,4 @@ After deployment, use these to log in:
 - **Regular User**: `user_001@example.com` / `password123`
 - **Operator**: `operator@spendsense.com` / `operator123`
 
-(Created by `reset_and_populate.py` in Step 9)
+(Created by `scripts/reset_and_populate.py` in Step 9)

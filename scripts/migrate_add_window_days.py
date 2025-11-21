@@ -5,7 +5,7 @@ This script is needed for existing databases that were created before the window
 field was added to the Recommendation model.
 
 Usage:
-    python migrate_add_window_days.py
+    python -m scripts.migrate_add_window_days
 
 What it does:
 - Checks if the window_days column exists in the recommendations table
@@ -14,11 +14,9 @@ What it does:
 """
 
 import sqlite3
-import sys
-from pathlib import Path
+from scripts._bootstrap import add_project_root
 
-# Add spendsense to path
-sys.path.insert(0, str(Path(__file__).parent))
+add_project_root()
 
 from spendsense.app.core.config import settings
 from spendsense.app.core.logging import get_logger
@@ -93,5 +91,4 @@ if __name__ == "__main__":
     
     print()
     print("Migration complete!")
-
 

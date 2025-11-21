@@ -6,6 +6,10 @@ This is a helper script for development/testing to allow all users
 to access their profiles and recommendations without manually granting consent.
 """
 
+from scripts._bootstrap import add_project_root
+
+add_project_root()
+
 from datetime import datetime
 
 from spendsense.app.db.session import get_session, init_db
@@ -50,4 +54,3 @@ def grant_all_consent():
 
 if __name__ == "__main__":
     grant_all_consent()
-

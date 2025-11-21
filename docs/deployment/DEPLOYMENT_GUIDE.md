@@ -70,7 +70,7 @@ Your backend is running but has an empty database. Let's populate it:
 3. Wait for the shell to connect
 4. Run this command:
    ```bash
-   python reset_and_populate.py
+   python -m scripts.reset_and_populate
    ```
 5. Wait for it to complete (creates users, transactions, etc.)
 
@@ -247,7 +247,7 @@ Set this manually in Vercel dashboard:
 - Changes to Vercel env vars require redeployment
 
 ### 4. **Database Initialization**
-- You need to manually run `reset_and_populate.py` after backend deployment
+- You need to manually run `python -m scripts.reset_and_populate` after backend deployment
 - This creates test users and sample data
 - For production, you'd want a proper database migration strategy
 
@@ -304,4 +304,3 @@ Your SpendSense app should now be live:
 - **Frontend App**: `https://spendsense.vercel.app`
 
 Questions? Check the troubleshooting section or review the Render/Vercel docs.
-

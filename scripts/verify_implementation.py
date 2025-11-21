@@ -5,6 +5,10 @@ Quick verification script for Data Foundation Epic implementation.
 This script runs all the key validation steps to verify the implementation.
 """
 
+from scripts._bootstrap import add_project_root
+
+add_project_root()
+
 import sys
 from pathlib import Path
 

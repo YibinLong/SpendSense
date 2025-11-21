@@ -9,8 +9,12 @@ Why this exists:
 - Provides a clean slate for testing consent flow
 
 Usage:
-    python reset_consent.py
+    python -m scripts.reset_consent
 """
+
+from scripts._bootstrap import add_project_root
+
+add_project_root()
 
 from datetime import datetime
 

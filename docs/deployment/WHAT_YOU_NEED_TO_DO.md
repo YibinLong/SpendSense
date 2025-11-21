@@ -88,7 +88,7 @@ git push origin main
 3. Wait for terminal to connect (may take 30 seconds)
 4. Type this command:
    ```bash
-   python reset_and_populate.py
+   python -m scripts.reset_and_populate
    ```
 5. Press Enter and wait for it to finish
 
@@ -226,7 +226,7 @@ Both are 100% FREE (no credit card required)!
 
 ## 🔑 Test User Credentials
 
-After deployment, log in with these users (created by `reset_and_populate.py`):
+After deployment, log in with these users (created by `scripts/reset_and_populate.py`):
 
 - **User 1**: `user_001@example.com` / `password123`
 - **User 2**: `user_002@example.com` / `password123`

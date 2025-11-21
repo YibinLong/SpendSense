@@ -23,11 +23,15 @@ PRD Targets:
 - Fairness: No disparities >threshold% across demographics
 
 Usage:
-    python run_metrics.py [--latency-sample-size N] [--window 30|180] [--report]
+    python -m scripts.run_metrics [--latency-sample-size N] [--window 30|180] [--report]
 """
 
 import argparse
 from pathlib import Path
+
+from scripts._bootstrap import add_project_root
+
+add_project_root()
 
 from spendsense.app.db.session import get_session
 from spendsense.app.core.config import settings
@@ -222,4 +226,3 @@ if __name__ == "__main__":
         window_days=args.window,
         generate_report=args.report,
     )
-

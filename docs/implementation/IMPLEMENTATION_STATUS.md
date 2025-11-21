@@ -10,7 +10,7 @@
 - ✅ Auth module created: password.py, jwt.py, dependencies.py
 - ✅ Auth endpoints created: POST /auth/signup, /auth/login, /auth/logout, GET /auth/me
 - ✅ Route guards added to existing routes (require_operator, require_card_user)
-- ✅ Migration script created: migrate_add_auth_demographics.py
+- ✅ Migration script created: scripts/migrate_add_auth_demographics.py
 - ✅ Seed.py updated with operator account, passwords (pattern: usr000001123), and demographics
 
 ### Frontend Authentication
@@ -127,7 +127,7 @@ def save_report_with_timestamp(report_path: Path) -> Path:
     # Keep history of reports
 ```
 
-11. **Update run_metrics.py**
+11. **Update scripts/run_metrics.py**
 ```python
 # Add --report flag
 if args.report:
@@ -210,10 +210,10 @@ def test_pdf_generation():
 17. **Integration test:**
 ```bash
 # Full flow test
-python migrate_add_auth_demographics.py
-python reset_and_populate.py
-python run_pipelines.py
-python run_metrics.py --report
+python -m scripts.migrate_add_auth_demographics
+python -m scripts.reset_and_populate
+python -m scripts.run_pipelines
+python -m scripts.run_metrics --report
 # Check ./data/eval_report.md and .pdf exist
 # Start backend and frontend
 # Login as operator@spendsense.local / operator123
@@ -235,10 +235,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES=1440
 FAIRNESS_THRESHOLD=20
 
 # 3. Run migration (adds auth & demographic columns, creates operator account)
-python migrate_add_auth_demographics.py
+python -m scripts.migrate_add_auth_demographics
 
 # 4. Seed database with demographics and passwords
-python reset_and_populate.py
+python -m scripts.reset_and_populate
 
 # 5. Start backend
 uvicorn spendsense.app.main:app --reload
@@ -318,4 +318,3 @@ Operator account:
 - Seed script creates 50 users with realistic demographics
 - Frontend foundation (AuthContext, utils, API client) is ready
 - Just need to create the UI pages to wire everything together
-

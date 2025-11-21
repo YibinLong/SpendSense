@@ -10,8 +10,12 @@ This script:
 5. Ensures every user has signals, personas, and recommendations
 
 Usage:
-    python reset_and_populate.py
+    python -m scripts.reset_and_populate
 """
+
+from scripts._bootstrap import add_project_root
+
+add_project_root()
 
 from spendsense.app.db.session import drop_all_tables, init_db, get_session
 from spendsense.app.db.seed import seed_database
@@ -206,4 +210,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

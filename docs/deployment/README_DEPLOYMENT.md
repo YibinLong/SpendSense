@@ -123,7 +123,7 @@ open https://spendsense.vercel.app
 |---------|----------|
 | **CORS error in browser console** | Update backend CORS with your Vercel URL (see Task 7) |
 | **"Network Error" in frontend** | Check `VITE_API_BASE` in Vercel dashboard |
-| **Can't login** | Database empty - run `python reset_and_populate.py` in Render Shell |
+| **Can't login** | Database empty - run `python -m scripts.reset_and_populate` in Render Shell |
 | **Backend returns 500** | Check logs in Render dashboard |
 | **Slow first request** | Cold start - normal on free tier |
 
@@ -184,4 +184,3 @@ Both platforms support **auto-deployment**:
 2. Follow the 7 tasks
 3. Test your deployment
 4. Share your live URL! 🎉
-

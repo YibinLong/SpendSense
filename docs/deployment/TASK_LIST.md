@@ -1,6 +1,6 @@
 ## SpendSense TASK_LIST
 
-This is a practical, beginner-friendly task list derived directly from `PRD.md`. Work top-to-bottom within each vertical slice so you can demo real value quickly. Each section explains why it exists and what to do.
+This is a practical, beginner-friendly task list derived directly from `../requirements/PRD.md`. Work top-to-bottom within each vertical slice so you can demo real value quickly. Each section explains why it exists and what to do.
 
 ---
 
@@ -263,7 +263,7 @@ Why: Provide human-readable 1-2 page executive summaries of system performance. 
 - [x] Add executive summary section with pass/fail indicators per PRD targets
 
 ### Story: Report generation CLI
-- [x] Add `--report` flag to `run_metrics.py` to generate summary report
+- [x] Add `--report` flag to `scripts/run_metrics.py` to generate summary report
 - [x] Export reports to `./data/eval_report.md` and `./data/eval_report.pdf`
 - [x] Add timestamp and metadata to reports
 - [x] Include sample recommendations with rationales in report

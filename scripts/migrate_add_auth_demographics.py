@@ -15,14 +15,12 @@ Why this exists:
 Run this BEFORE running seed.py on an existing database.
 
 Usage:
-    python migrate_add_auth_demographics.py
+    python -m scripts.migrate_add_auth_demographics
 """
 
-import sys
-from pathlib import Path
+from scripts._bootstrap import add_project_root
 
-# Add parent directory to Python path so we can import spendsense modules
-sys.path.insert(0, str(Path(__file__).parent))
+add_project_root()
 
 from sqlalchemy import text
 
@@ -211,4 +209,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

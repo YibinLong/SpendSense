@@ -6,6 +6,10 @@ This script computes signals, assigns personas, and generates recommendations
 for all users in the database.
 """
 
+from scripts._bootstrap import add_project_root
+
+add_project_root()
+
 from datetime import datetime
 from spendsense.app.db.session import get_session
 from spendsense.app.db.models import (
@@ -146,4 +150,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

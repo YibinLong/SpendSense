@@ -53,7 +53,7 @@ If working across large Epics or multiple PRs:
 
 * **Monitor remaining context.**
 * If ≥60–70% of context remains at PR completion → **pause** and notify the user.
-* Update `TASK_LIST.md` with what’s done.
+* Update `../deployment/TASK_LIST.md` with what’s done.
 * Wait for a new chat to continue (avoid context loss).
 
 ---
@@ -114,7 +114,7 @@ Only include if relevant.
 
 ---
 
-## **🧱 TASK_LIST.md STRUCTURE**
+## **🧱 ../deployment/TASK_LIST.md STRUCTURE**
 
 Use: **Epics → Stories → Tasks**
 
@@ -137,4 +137,3 @@ Use: **Epics → Stories → Tasks**
 * Write tight, clear bullets.
 * Include `.env`, `.gitignore`, example configs, and setup commands.
 * If info is missing, **state an assumption** and continue.
-

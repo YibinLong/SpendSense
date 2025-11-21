@@ -46,7 +46,7 @@ VITE_API_BASE=http://127.0.0.1:8000
 EOF
 
 # 5. Initialize database with synthetic data
-python reset_and_populate.py
+python -m scripts.reset_and_populate
 # This creates 50+ users with transactions, computes signals, assigns personas, generates recommendations
 
 # 6. Start backend (Terminal 1)
@@ -218,7 +218,7 @@ The system includes comprehensive automated evaluation:
 
 ```bash
 # Run evaluation metrics and generate report
-python run_metrics.py
+python -m scripts.run_metrics
 ```
 
 **Generated outputs:**
@@ -338,10 +338,10 @@ uvicorn spendsense.app.main:app --reload --host 127.0.0.1 --port 8000
 cd frontend && npm run dev
 
 # Reset database and repopulate
-python reset_and_populate.py
+python -m scripts.reset_and_populate
 
 # Grant consent for testing
-python grant_consent.py user_abc123
+python -m scripts.grant_consent user_abc123
 ```
 
 ---
@@ -371,7 +371,7 @@ python grant_consent.py user_abc123
 1. Create module in `features/` (e.g., `features/debt.py`)
 2. Add SQLAlchemy model to `db/models.py`
 3. Add Pydantic schema to `schemas/signal.py`
-4. Wire into `reset_and_populate.py` pipeline
+4. Wire into `scripts/reset_and_populate.py` pipeline
 5. Update persona rules to use new signal
 
 **Debug a recommendation:**
@@ -383,11 +383,11 @@ python grant_consent.py user_abc123
 
 ## 📚 Documentation
 
-- **`PRD.md`** - Full product requirements
-- **`IMPLEMENTATION_SUMMARY.md`** - What's been built
-- **`TASK_LIST.md`** - Development task breakdown
-- **`docs/API_TESTING.md`** - Curl examples for manual testing
-- **`Peak6_SpendSense_Requirements.md`** - Original project spec
+- **`docs/requirements/PRD.md`** - Full product requirements
+- **`docs/implementation/IMPLEMENTATION_SUMMARY.md`** - What's been built
+- **`docs/deployment/TASK_LIST.md`** - Development task breakdown
+- **`docs/testing/API_TESTING.md`** - Curl examples for manual testing
+- **`docs/requirements/Peak6_SpendSense_Requirements.md`** - Original project spec
 
 ---
 
@@ -432,4 +432,3 @@ This is a solo development project for learning purposes. For questions or issue
 ---
 
 **Built with ❤️ for explainable financial technology**
-

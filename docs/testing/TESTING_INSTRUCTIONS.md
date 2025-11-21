@@ -327,6 +327,6 @@ The Data Foundation Epic is **complete**. Ready for:
 - **Feature metrics:** 20+ per user per window
 - **Personas covered:** All 5 personas have data patterns in synthetic dataset
 
-**All requirements from PRD.md and TASK_LIST.md have been fulfilled.** ✅
+**All requirements from ../requirements/PRD.md and ../deployment/TASK_LIST.md have been fulfilled.** ✅
 
 

@@ -366,6 +366,6 @@ Now that your development environment is ready, you can start building features:
 4. **Epic: Recommendations** - Build recommendation engine
 5. **Epic: Frontend UI** - Create user and operator views
 
-Check `TASK_LIST.md` for detailed task breakdown!
+Check `../deployment/TASK_LIST.md` for detailed task breakdown!
 
 
