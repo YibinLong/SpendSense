@@ -95,7 +95,7 @@ class RecommendationItem(BaseModel):
 
 Since the `Recommendation` table already exists in some databases, a migration script was created:
 
-**File:** `migrate_add_window_days.py`
+**File:** `scripts/migrate_add_window_days.py`
 
 This script:
 - Checks if `window_days` column exists
@@ -104,7 +104,7 @@ This script:
 
 **Usage:**
 ```bash
-python migrate_add_window_days.py
+python -m scripts.migrate_add_window_days
 ```
 
 For new databases, just run `init_db()` and the column will be created automatically.
@@ -150,5 +150,4 @@ curl "http://localhost:8000/recommendations/user_123?window=30"
 2. `spendsense/app/api/routes_recommendations.py` - Updated cache lookup query
 3. `spendsense/app/recommend/engine.py` - Store `window_days` when creating recommendations
 4. `spendsense/app/schemas/recommendation.py` - Added `window_days` to API response schema
-5. `migrate_add_window_days.py` - Migration script for existing databases
-
+5. `scripts/migrate_add_window_days.py` - Migration script for existing databases

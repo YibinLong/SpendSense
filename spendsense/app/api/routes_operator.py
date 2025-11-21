@@ -320,7 +320,7 @@ async def get_latest_report(
             "exists": true
         }
     
-    Returns 404 if no report exists (run `python run_metrics.py --report` first)
+    Returns 404 if no report exists (run `python -m scripts.run_metrics --report` first)
     """
     logger.info("getting_latest_report", operator=current_user.user_id)
     
@@ -333,7 +333,7 @@ async def get_latest_report(
         logger.warning("report_not_found", path=str(report_path))
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No report found. Run 'python run_metrics.py --report' to generate one.",
+            detail="No report found. Run 'python -m scripts.run_metrics --report' to generate one.",
         )
     
     # Get file metadata
@@ -369,7 +369,7 @@ async def get_latest_report_pdf(
     
     Returns: PDF file download
     
-    Returns 404 if no PDF exists (run `python run_metrics.py --report` first)
+    Returns 404 if no PDF exists (run `python -m scripts.run_metrics --report` first)
     """
     logger.info("getting_latest_report_pdf", operator=current_user.user_id)
     
@@ -383,7 +383,7 @@ async def get_latest_report_pdf(
         logger.warning("pdf_not_found", path=str(pdf_path))
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No PDF report found. Run 'python run_metrics.py --report' to generate one.",
+            detail="No PDF report found. Run 'python -m scripts.run_metrics --report' to generate one.",
         )
     
     logger.debug("pdf_download", path=str(pdf_path))
@@ -416,7 +416,7 @@ async def get_metrics(
             "metadata": {...}
         }
     
-    Returns 404 if no metrics file exists (run `python run_metrics.py` first)
+    Returns 404 if no metrics file exists (run `python -m scripts.run_metrics` first)
     """
     logger.info("getting_metrics", operator=current_user.user_id)
     
@@ -430,7 +430,7 @@ async def get_metrics(
         logger.warning("metrics_not_found", path=str(metrics_path))
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No metrics found. Run 'python run_metrics.py' to generate metrics.",
+            detail="No metrics found. Run 'python -m scripts.run_metrics' to generate metrics.",
         )
     
     # Read metrics content
@@ -440,5 +440,4 @@ async def get_metrics(
     logger.debug("metrics_loaded", keys=list(metrics_data.keys()))
     
     return metrics_data
-
 

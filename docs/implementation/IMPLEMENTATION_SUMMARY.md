@@ -2,7 +2,7 @@
 
 ## ✅ Completed Implementation
 
-All epics from TASK_LIST.md lines 81-136 have been successfully implemented:
+All epics from ../deployment/TASK_LIST.md lines 81-136 have been successfully implemented:
 
 ### 1. **Persona System** ✅
 - **Files Created:**
@@ -257,7 +257,7 @@ Use this to verify everything works:
 
 ### Modified Files (2 files)
 - `spendsense/app/main.py` - Added router includes + exception handlers
-- `TASK_LIST.md` - Checked off completed tasks
+- `../deployment/TASK_LIST.md` - Checked off completed tasks
 
 ---
 
@@ -311,4 +311,3 @@ Use this to verify everything works:
 - Includes comprehensive tests and documentation
 
 **Ready for:** Frontend integration, operator dashboard, and vertical slice demos.
-

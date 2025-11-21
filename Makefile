@@ -72,7 +72,7 @@ setup: venv install frontend-install
 	@echo ""
 	@echo "Next steps:"
 	@echo "  1. Activate venv: source .venv/bin/activate"
-	@echo "  2. Create .env file in project root (see PRD.md for contents)"
+	@echo "  2. Create .env file in project root (see docs/requirements/PRD.md for contents)"
 	@echo "  3. Create frontend/.env.local with VITE_API_BASE=http://127.0.0.1:8000"
 	@echo "  4. Run backend: make backend"
 	@echo "  5. Run frontend: make frontend (in another terminal)"
@@ -116,5 +116,3 @@ help:
 
 # Default target
 .DEFAULT_GOAL := help
-
-
